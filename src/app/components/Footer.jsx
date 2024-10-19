@@ -33,7 +33,7 @@ export default function Footer() {
                     </a>
                 </div>
 
-                <p className="text-center text-gray-700 font-medium">&copy; 2024 Company Ltd. All rights reserved.  Designed by <a href="https://github.com/khaledas90" className="text-blue-500 hover:text-blue-700">Khaled Ahmed</a></p>
+                <p className="text-center text-gray-700 font-medium">&copy; 2024 Company Ltd. All rights reserved.</p>
             </footer>
 
         </>
