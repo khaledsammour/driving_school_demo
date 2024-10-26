@@ -1,6 +1,8 @@
 import React from 'react';
 
-export default function PricingCard({ key, id, Tittle, price, features }) {
+export default function PricingCard({ key, id, Tittle, price, discount, features }) {
+    console.log("features:", features);
+
     return (
         <div className="m-4 flex flex-col justify-between p-5 bg-white border rounded shadow-sm" key={id}>
             <div className="mb-6">
@@ -8,7 +10,7 @@ export default function PricingCard({ key, id, Tittle, price, features }) {
                 <div className="flex items-center justify-between pb-6 mb-6 border-b">
                     <div>
                         <p className="text-sm font-bold tracking-wider uppercase">Get started for</p>
-                        <p className="text-3xl font-extrabold">{price}</p>
+                        <p className="text-3xl font-bold mx-3 ">${price}<span className="text-lg mx-3 text-gray-500">{discount}% off</span> </p>
                     </div>
                     <div className="flex items-center justify-center w-24 h-24 rounded-full bg-blue-gray-50">
                         <svg className="w-10 h-10 text-gray-600" viewBox="0 0 24 24" strokeLinecap="round" strokeWidth="2">

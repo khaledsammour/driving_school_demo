@@ -1,10 +1,8 @@
 import localFont from "next/font/local";
 import "./globals.css";
-import Navbar from "./components/Navbar";
 import ProviderLang from "./ProviderLang";
-import Footer from "./components/Footer";
 import { Toaster } from "react-hot-toast";
-
+import LayoutProvider from "./components/LayoutProvider";
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
@@ -21,18 +19,18 @@ export const metadata = {
   description: "Formula one driving school",
 };
 
+
 export default function RootLayout({ children }) {
+   
+
   return (
     <ProviderLang  >
       <html lang="en" suppressHydrationWarning={true}>
         <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-          <Navbar />
-          <Toaster
-  position="top-center"
-  reverseOrder={false}
-/>
+         <LayoutProvider>
+  <Toaster position="top-center" reverseOrder={false} />
           {children}
-          <Footer/>
+         </LayoutProvider>
         </body>
       </html>
     </ProviderLang>

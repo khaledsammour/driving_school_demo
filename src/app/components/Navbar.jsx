@@ -8,29 +8,25 @@ import EnglandImg from '@/app/assets/english.png';
 import ArabicImg from '@/app/assets/arab.png';
 import { FormattedMessage } from "react-intl";
 import { LanguageContext } from "@/app/ProviderLang";
-import { FaAngleDown } from "react-icons/fa6";
-import { checkUserLoggedIn, Logout } from '@/app/services/authService';
+import { checkUserLoggedIn } from '@/app/services/authService';
 import toast from "react-hot-toast";
+import { useRouter } from 'next/navigation';
+import Dropdown from './Drobdown';
+import imgUser from '@/app/assets/userImg.jpg';
+import imgAdmin from '@/app/assets/admin.png';
 export default function Header() {
     const [isOpen, setOpen] = useState(false);
-    const [close, setClose] = useState(true);
     const [openLang, setOpenLang] = useState(false);
-    const [ToggleDropdown, setToggleDropdown] = useState(false)
-    const [openDropdown, setOpenDropdown] = useState(false)
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [lang, setLang] = useState('en');
     const closeSearch = useRef(null);
-    const closeDropdown = useRef(null)
     const { switchLanguage } = useContext(LanguageContext);
+    const router = useRouter();
 
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (closeSearch.current && !closeSearch.current.contains(event.target)) {
-                setClose(true);
                 setOpenLang(false);
-            }
-            if (closeDropdown.current && !closeDropdown.current.contains(event.target)) {
-                setToggleDropdown(false);
             }
         };
 
@@ -43,29 +39,18 @@ export default function Header() {
                 document.removeEventListener('mousedown', handleClickOutside);
             }
         };
-
-
-
     }, []);
 
     useEffect(() => {
-        checkUserLoggedIn((loggedIn, userData) => {
+        checkUserLoggedIn((loggedIn) => {
             setIsLoggedIn(loggedIn);
         });
     }, []);
 
-    const handleLogOut = () => {
-        Logout();
-        setIsLoggedIn(false);
-        toast.success('Successfully logged out !');
-    }
     const toggleLangMenu = () => {
         setOpenLang((prevState) => !prevState);
     };
 
-    const DropdownUser = () => {
-        setOpenDropdown(!openDropdown);
-    };
     return (
         <header className="shadow-lg ">
             <nav className="bg-white border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-gray-800">
@@ -76,56 +61,27 @@ export default function Header() {
                             DRS
                         </span>
                     </Link>
-
                     <div className="flex items-center lg:order-2">
                         <div className="mx-2">
                             <div className="lang-menu relative text-right font-bold w-24" ref={closeSearch}>
                                 <div className="selected-lang flex items-center justify-end cursor-pointer" onClick={toggleLangMenu}>
-                                    <Image src={lang === "en" ? EnglandImg : ArabicImg} alt="English" className="w-9 h-9 mx-2" width={42} height={42} />
-                                    <FaAngleDown className="w-[13px] h-[13px] text-gray-500" />
+                                    <Image src={lang === "en" ? EnglandImg : ArabicImg} alt="Language" className="w-9 h-9 mx-2" width={42} height={42} />
                                 </div>
                                 <ul className={`${openLang ? "block" : "hidden"} z-50 menuLang absolute right-0 top-14 bg-white border border-gray-200 rounded-lg shadow-md w-32`}>
                                     <li className="flex items-center cursor-pointer px-1 py-1 hover:bg-gray-100" onClick={() => { setLang('ar'); switchLanguage("ar"); setOpenLang(false); }}>
                                         <Image src={ArabicImg} alt="Arabic" className="w-9 h-9 mx-2" width={42} height={42} />
-                                        <span className="w-6 h-6 mx-2"> Arabic</span>
+                                        <span> Arabic</span>
                                     </li>
                                     <li className="flex items-center cursor-pointer px-1 py-1 hover:bg-gray-100" onClick={() => { setLang('en'); switchLanguage("en"); setOpenLang(false); }}>
                                         <Image src={EnglandImg} alt="English" className="w-9 h-9 mx-2" width={42} height={42} />
-                                        <span className="w-6 h-6 mx-2"> English</span>
+                                        <span> English</span>
                                     </li>
                                 </ul>
                             </div>
                         </div>
                         {
                             isLoggedIn ? (
-                                <div className="relative inline-block text-left">
-                                    <button
-                                        onClick={DropdownUser}
-                                        className="flex text-sm mx-2 lg:mx-5 bg-gray-800 rounded-full focus:ring-4 focus:ring-gray-300 dark:focus:ring-gray-600"
-                                        type="button"
-                                    >
-                                        <span className="sr-only">Open user menu</span>
-                                        <img className="w-8 h-8 rounded-full" src="/docs/images/people/profile-picture-3.jpg" alt="user photo" />
-                                    </button>
-
-                                    {openDropdown && (
-                                        <div className="absolute right-0  top-14 z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600">
-
-                                            <ul className="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownUserAvatarButton">
-                                                <li>
-                                                    <a href="#" className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Dashboard</a>
-                                                </li>
-                                                <li>
-                                                    <a href="#" className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">Profile</a>
-                                                </li>
-
-                                            </ul>
-                                            <div className="py-2">
-                                                <span onClick={handleLogOut} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 cursor-pointer dark:text-gray-200">Sign out</span>
-                                            </div>
-                                        </div>
-                                    )}
-                                </div>
+                                <Dropdown imgSrc={imgUser.src} isAdmin={false} />
                             ) : (
                                 <Link
                                     href="/login"
@@ -136,16 +92,12 @@ export default function Header() {
                             )
                         }
 
-
                         <div className="lg:hidden flex">
                             <Hamburger toggled={isOpen} toggle={setOpen} />
                         </div>
                     </div>
 
-                    <div
-                        className={`${isOpen ? 'block' : 'hidden'} justify-between items-center w-full lg:flex lg:w-auto lg:order-1`}
-                        id="mobile-menu-2"
-                    >
+                    <div className={`${isOpen ? 'block' : 'hidden'} justify-between items-center w-full lg:flex lg:w-auto lg:order-1`} id="mobile-menu-2">
                         <ul className="flex flex-col mt-4 font-medium lg:flex-row lg:space-x-8 lg:mt-0">
                             <li>
                                 <Link
@@ -192,6 +144,6 @@ export default function Header() {
                     </div>
                 </div>
             </nav>
-        </header >
+        </header>
     );
 }

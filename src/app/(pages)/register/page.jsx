@@ -33,17 +33,29 @@ export default function Page() {
 
 
         try {
-            await Register(email, password);
-            toast.success('Successfully registered !');
-            router.push('/login');
-        } catch (error) {
-            setError(error.message);
-            toast.error(error.message)
+            await Register(email, password, {
+                first_name: name || '',
+                last_name: '',
+                middle_name: '',
+                third_name: '',
+                date: '',
+                address: '',
+                gender: '',
+                language: '',
+                phone: '',
+                license_info: '',
+            });
 
+            toast.success("User registered successfully");
+            router.push('/');
+        } catch (error) {
+            console.error("Error adding user:", error);
+            toast.error(error.message);
         }
 
         setError('');
     }
+
 
     return (
         <div className="min-h-screen bg-gray-100 text-gray-900 flex justify-center">

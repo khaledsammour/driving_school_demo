@@ -6,14 +6,13 @@ import Link from 'next/link';
 import ImgLogin from '@/app/assets/login.jpg';
 import { Login } from '@/app/services/authService';
 import toast from 'react-hot-toast';
-import { useRouter } from 'next/navigation';
+import { redirect } from 'next/navigation';
 
 export default function Page() {
     const [error, setError] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-    const router = useRouter();
 
     const validateEmail = (email) => {
         const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -23,27 +22,40 @@ export default function Page() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+
         if (!validateEmail(email)) {
             setError('Please enter a valid email address.');
-            toast.error('Please enter a valid email address.')
+            toast.error('Please enter a valid email address.');
             return;
         }
+
         if (password.length < 6) {
             setError('Password must be at least 6 characters long.');
-            toast.error('Password must be at least 6 characters long.')
+            toast.error('Password must be at least 6 characters long.');
             return;
         }
 
         setError('');
 
         try {
-            await Login(email, password);
-            toast.success('Successfully logged !')
-            router.push('/');
+            if (email === 'admin@gmail.com' && password === 'admin@6030') {
+                await Login(email, password);
+                toast.success('Successfully logged in as admin!');
+                redirect('/admin');
+
+            } else {
+                await Login(email, password);
+                console.log(email, password);
+
+                toast.success('Successfully logged in!');
+                redirect('/');
+            }
+
+            setEmail('');
+            setPassword('');
         } catch (error) {
             setError(error.message);
-            toast.error(error.message)
-
+            toast.error(error.message);
         }
     };
 
@@ -55,7 +67,7 @@ export default function Page() {
                         <h1 className="text-2xl xl:text-3xl font-extrabold">Sign in</h1>
                         <div className="w-full flex-1 mt-10">
                             <div className="mx-auto max-w-xs">
-                                <form action="" className='mt-12' onSubmit={handleSubmit}>
+                                <form className='mt-12' onSubmit={handleSubmit}>
                                     <input
                                         className="w-full px-8 py-4 mb-3 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
                                         type="email"
@@ -72,6 +84,7 @@ export default function Page() {
                                         value={password}
                                         onChange={(e) => setPassword(e.target.value)}
                                     />
+                                    {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
                                     <button type='submit' className="mt-5 tracking-wide font-semibold bg-indigo-500 text-gray-100 w-full py-4 rounded-lg hover:bg-indigo-700 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none">
                                         <svg
                                             className="w-6 h-6"

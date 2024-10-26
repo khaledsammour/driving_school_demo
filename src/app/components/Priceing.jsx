@@ -1,9 +1,36 @@
-import React from 'react';
+"use client";
+import React, { useEffect, useState } from 'react';
 import PricingCard from './PricingCard';
-import { PricingData } from '@/app/utils/dataPricing';
+import Loader from './loader';
+import { fetchPackagesFromFirestore } from '@/app/services/packageService';
 
 export default function Pricing() {
-    console.log(PricingData);
+    const [Packages, setPackages] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
+
+    useEffect(() => {
+        const getPackages = async () => {
+            try {
+                const AllPackages = await fetchPackagesFromFirestore();
+                console.log("Fetched Packages:", AllPackages);
+
+                setPackages(AllPackages);
+            } catch (err) {
+                setError("Failed to fetch users.");
+                console.error(err);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        getPackages();
+    }, []);
+
+    console.log("Packages:", Packages);
+
+    if (loading) return <Loader />;
+    if (error) return toast.error(error);
 
     return (
         <div className="pricing py-10">
@@ -12,13 +39,14 @@ export default function Pricing() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mx-3 my-5">
-                {PricingData.map((item) => (
+                {Packages.map((item) => (
                     <PricingCard
                         key={item.id}
                         id={item.id}
-                        Tittle={item.title}
+                        Tittle={item.name}
                         price={item.price}
-                        features={item.features}
+                        discount={item.discount}
+                        features={item.include}
                     />
                 ))}
             </div>
