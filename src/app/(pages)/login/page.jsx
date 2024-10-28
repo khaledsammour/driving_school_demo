@@ -6,14 +6,14 @@ import Link from 'next/link';
 import ImgLogin from '@/app/assets/login.jpg';
 import { Login } from '@/app/services/authService';
 import toast from 'react-hot-toast';
-import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 export default function Page() {
     const [error, setError] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
-
+    const router = useRouter();
     const validateEmail = (email) => {
         const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         return regex.test(email);
@@ -21,7 +21,6 @@ export default function Page() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
 
         if (!validateEmail(email)) {
             setError('Please enter a valid email address.');
@@ -41,23 +40,30 @@ export default function Page() {
             if (email === 'admin@gmail.com' && password === 'admin@6030') {
                 await Login(email, password);
                 toast.success('Successfully logged in as admin!');
-                redirect('/admin');
+                router.push('/');
 
+                // Ensure `localStorage` is only accessed in the client
+                if (typeof window !== "undefined") {
+                    localStorage.setItem('typeUser', 'admin');
+                }
             } else {
                 await Login(email, password);
                 console.log(email, password);
 
                 toast.success('Successfully logged in!');
-                redirect('/');
-            }
+                router.push('/');
 
-            setEmail('');
-            setPassword('');
+                // Ensure `localStorage` is only accessed in the client
+                if (typeof window !== "undefined") {
+                    localStorage.setItem('typeUser', 'user');
+                }
+            }
         } catch (error) {
             setError(error.message);
             toast.error(error.message);
         }
     };
+
 
     return (
         <div className="min-h-screen bg-gray-100 text-gray-900 flex justify-center">

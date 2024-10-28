@@ -8,29 +8,28 @@ import TableUsers from '@/app/components/TableUsers';
 import { BiHome } from 'react-icons/bi';
 
 export default function AdminPage() {
-    const [totalUsers, setTotalUsers] = useState(0);
-    const [loading, setLoading] = useState(true);
-    const [error, setError] = useState(null);
+    // const [totalUsers, setTotalUsers] = useState(0);
+    // const [loading, setLoading] = useState(true);
+    // const [error, setError] = useState(null);
 
-    useEffect(() => {
-        const fetchUserData = async () => {
-            try {
-                // Replace with your API endpoint
-                const response = await fetch('/api/users');
-                if (!response.ok) {
-                    throw new Error('Network response was not ok');
-                }
-                const data = await response.json();
-                setTotalUsers(data.totalUsers); 
-            } catch (error) {
-                setError(error.message);
-            } finally {
-                setLoading(false);
-            }
-        };
-
-        fetchUserData();
-    }, []);
+    // useEffect(() => {
+    //     const fetchUserData = async () => {
+    //         try {
+    //             // Replace with your API endpoint
+    //             const response = await fetch('/api/users');
+    //             if (!response.ok) {
+    //                 throw new Error('Network response was not ok');
+    //             }
+    //             const data = await response.json();
+    //             setTotalUsers(data.totalUsers);
+    //         } catch (error) {
+    //             setError(error.message);
+    //         } finally {
+    //             setLoading(false);
+    //         }
+    //     };
+    //     fetchUserData();
+    // }, []);
 
     return (
         <div className="Admin py-6">
@@ -52,7 +51,7 @@ export default function AdminPage() {
                         <FaRegUser className="text-text-color text-4xl" />
                         <span className="text text-lg font-medium text-black">Total Users</span>
                         <span className="number text-4xl font-medium text-black">
-                            {loading ? '...' : error ? 0 : totalUsers}
+                            {/* {loading ? '...' : error ? 0 : totalUsers} */}0
                         </span>
                     </div>
 

@@ -9,7 +9,8 @@ export const Register = async (email, password, additionalData = {}) => {
     try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
-
+ console.log(user);
+ 
         await setDoc(doc(db, "users", user.uid), {
             email: user.email,
             uid: user.uid,
@@ -102,7 +103,7 @@ export const checkUserLoggedIn = (callback) => {
 
 export const Logout = async () => {
     try {
-        await signOut(auth);
+        await signOut(auth); 
         console.log("Logout successful");
     } catch (error) {
         console.error("Logout error:", error.message);

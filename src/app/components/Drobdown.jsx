@@ -5,8 +5,9 @@ import { Logout } from "../services/authService";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-export default function Dropdown({ imgSrc, isAdmin }) {
+export default function Dropdown({ imgSrc }) {
     const [openDropdown, setOpenDropdown] = useState(false);
+    const [isAdmin, setIsAdmin] = useState(null);
     const router = useRouter();
     const dropdownRef = useRef(null);
 
@@ -19,11 +20,21 @@ export default function Dropdown({ imgSrc, isAdmin }) {
             await Logout();
             toast.success("Successfully logged out!");
             router.push("/login");
+            if (typeof window !== "undefined") {
+                localStorage.removeItem("typeUser");
+            }
         } catch (error) {
             console.error("Logout failed:", error);
             toast.error("Logout failed. Please try again.");
         }
     };
+
+    // Set `isAdmin` based on localStorage after the component mounts
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            setIsAdmin(localStorage.getItem("typeUser"));
+        }
+    }, []);
 
     // Close dropdown when clicking outside
     useEffect(() => {
@@ -41,6 +52,7 @@ export default function Dropdown({ imgSrc, isAdmin }) {
         };
     }, []);
 
+    
     return (
         <div className="dropdown" ref={dropdownRef}>
             <div className="relative z-50 inline-block text-left">
@@ -54,21 +66,11 @@ export default function Dropdown({ imgSrc, isAdmin }) {
                 </button>
 
                 {openDropdown && (
-                    <div className="absolute right-0 z-50 top-14  bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600">
+                    <div className="absolute right-0 z-50 top-14 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600">
                         <ul className="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownUserAvatarButton">
                             <li>
-                                <Link href={isAdmin ? "/admin" : "/"} className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                                <Link href={isAdmin === "admin" ? "/admin" : "/user"} className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
                                     Dashboard
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="/" className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                                    Home
-                                </Link>
-                            </li>
-                            <li>
-                                <Link href="/profile" className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                                    Profile
                                 </Link>
                             </li>
                         </ul>
@@ -83,6 +85,6 @@ export default function Dropdown({ imgSrc, isAdmin }) {
                     </div>
                 )}
             </div>
-        </div >
+        </div>
     );
 }

@@ -6,19 +6,21 @@ import ImgSignUp from '@/app/assets/signUp.jpg';
 import toast from 'react-hot-toast';
 import { Register } from '@/app/services/authService';
 import { useRouter } from 'next/navigation';
+
 export default function Page() {
     const [error, setError] = useState('');
-
+    const [showPassword, setShowPassword] = useState(false);
     const router = useRouter();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const name = e.target.name.value;
+        const firstName = e.target.firstName.value;
+        const lastName = e.target.lastName.value;
         const email = e.target.email.value;
         const password = e.target.password.value;
+        const phone = e.target.phone.value;
 
-
-        if (!name || !email || !password) {
+        if (!firstName || !lastName || !email || !password || !phone) {
             setError('All fields are required.');
             toast.error('All fields are required.');
             return;
@@ -31,23 +33,36 @@ export default function Page() {
             return;
         }
 
+        const phonePattern = /^\d{10}$/;
+        if (!phonePattern.test(phone)) {
+            setError('Please enter a valid phone number (10 digits).');
+            toast.error('Please enter a valid phone number (10 digits).');
+            return;
+        }
 
         try {
             await Register(email, password, {
-                first_name: name || '',
-                last_name: '',
+                first_name: firstName || '',
+                last_name: lastName || '',
                 middle_name: '',
                 third_name: '',
                 date: '',
+                password: password,
                 address: '',
                 gender: '',
                 language: '',
-                phone: '',
+                phone: phone || '',
                 license_info: '',
             });
 
             toast.success("User registered successfully");
             router.push('/');
+
+            // Ensure `localStorage` is only accessed in the client
+            if (typeof window !== "undefined") {
+                localStorage.setItem('typeUser', 'user');
+            }
+
         } catch (error) {
             console.error("Error adding user:", error);
             toast.error(error.message);
@@ -55,7 +70,6 @@ export default function Page() {
 
         setError('');
     }
-
 
     return (
         <div className="min-h-screen bg-gray-100 text-gray-900 flex justify-center">
@@ -69,10 +83,15 @@ export default function Page() {
                                     <input
                                         className="w-full px-8 py-4 mb-3 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
                                         type="text"
-                                        name="name"
-                                        placeholder="Name"
+                                        name="firstName"
+                                        placeholder="First Name"
                                     />
-
+                                    <input
+                                        className="w-full px-8 py-4 mb-3 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
+                                        type="text"
+                                        name="lastName"
+                                        placeholder="Last Name"
+                                    />
                                     <input
                                         className="w-full px-8 py-4 mb-3 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
                                         type="email"
@@ -80,11 +99,24 @@ export default function Page() {
                                         placeholder="Email"
                                     />
                                     <input
-                                        className="w-full px-8 py-4 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
-                                        type="password"
+                                        className="w-full px-8 py-4 mb-3 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
+                                        type="text"
+                                        name="phone"
+                                        placeholder="Phone Number"
+                                    />
+                                    <input
+                                        className="w-full px-8 py-4 mb-3 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
+                                        type={showPassword ? 'text' : 'password'}
                                         name="password"
                                         placeholder="Password"
                                     />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="text-sm text-gray-500 mt-1"
+                                    >
+                                        {showPassword ? 'Hide Password' : 'Show Password'}
+                                    </button>
                                     <button className="mt-5 tracking-wide font-semibold bg-indigo-500 text-gray-100 w-full py-4 rounded-lg hover:bg-indigo-700 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none">
                                         <svg className="w-6 h-6 -ml-2" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                             <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
