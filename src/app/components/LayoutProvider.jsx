@@ -7,12 +7,15 @@ import { usePathname } from "next/navigation";
 export default function LayoutProvider({ children }) {
   const pathname = usePathname();
   const isAdminRoute = pathname.startsWith('/admin');
+  const isUserRoute = pathname.startsWith('/user');
+
+ 
 
   return (
     <>
-      {!isAdminRoute && <Navbar />}
+      {!isAdminRoute && !isUserRoute && <Navbar />}
       {children}
-      {!isAdminRoute && <Footer />}
+      {!isAdminRoute && !isUserRoute && <Footer />}
     </>
   )
 }

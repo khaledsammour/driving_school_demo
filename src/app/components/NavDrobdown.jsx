@@ -5,7 +5,7 @@ import { Logout } from "../services/authService";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
-export default function Dropdown({ imgSrc }) {
+export default function NavDrobdown({ imgSrc }) {
     const [openDropdown, setOpenDropdown] = useState(false);
     const [isAdmin, setIsAdmin] = useState(null);
     const router = useRouter();
@@ -22,6 +22,7 @@ export default function Dropdown({ imgSrc }) {
             router.push("/login");
             if (typeof window !== "undefined") {
                 localStorage.removeItem("typeUser");
+                localStorage.removeItem("IdUser");
             }
         } catch (error) {
             console.error("Logout failed:", error);
@@ -52,7 +53,7 @@ export default function Dropdown({ imgSrc }) {
         };
     }, []);
 
-    
+
     return (
         <div className="dropdown" ref={dropdownRef}>
             <div className="relative z-50 inline-block text-left">

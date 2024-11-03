@@ -4,18 +4,18 @@ import React, { useState } from 'react';
 import {
     addDoc,
     collection,
-    doc,
     serverTimestamp,
-    setDoc,
 } from "firebase/firestore";
 import { auth, db, storage } from '@/app/firebase';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-
+import { FaRegEye } from "react-icons/fa6";
+import { FaRegEyeSlash } from "react-icons/fa";
 export default function Page() {
 
     const route = useRouter();
+    const [showPassword, setShowPassword] = useState(false);
     const [formData, setFormData] = useState({
         first_name: '',
         middle_name: '',
@@ -59,6 +59,7 @@ export default function Page() {
                 address: formData.address,
                 gender: formData.gender,
                 language: formData.language,
+                password: formData.password,
                 phone: formData.phone,
                 licenseInfo: formData.licenseInfo,
                 createdAt: serverTimestamp(),
@@ -66,7 +67,7 @@ export default function Page() {
 
             console.log("Document written with ID: ", docRef.id);
             toast.success("User added successfully");
-            route("/admin/users");
+            route.push("/admin/users");
 
         } catch (error) {
             console.log(error);
@@ -171,15 +172,24 @@ export default function Page() {
                                 <label htmlFor="password" className="text-sm text-gray-700 block mb-1 font-medium">
                                     Password
                                 </label>
-                                <input
-                                    type="password"
-                                    name="password"
-                                    id="password"
-                                    value={formData.password}
-                                    onChange={handleChange}
-                                    className="bg-gray-100 border border-gray-200 rounded py-1 px-3 block focus:ring-blue-500 focus:border-blue-500 text-gray-700 w-full"
-                                    placeholder="Enter your password"
-                                />
+                                <div className="relative">
+                                    <input
+                                        type={showPassword ? "text" : "password"}
+                                        name="password"
+                                        id="password"
+                                        value={formData.password}
+                                        onChange={handleChange}
+                                        className="bg-gray-100 border border-gray-200 rounded py-1 px-3 block focus:ring-blue-500 focus:border-blue-500 text-gray-700 w-full"
+                                        placeholder="Enter your password"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5"
+                                    >
+                                        {showPassword ? <FaRegEye className="h-5 w-5 text-gray-400" /> : <FaRegEyeSlash className="h-5 w-5 text-gray-400" />}
+                                    </button>
+                                </div>
                             </div>
                             <div>
                                 <label htmlFor="gender" className="text-sm text-gray-700 block mb-1 font-medium">

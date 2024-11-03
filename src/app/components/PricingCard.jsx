@@ -1,7 +1,8 @@
+import Link from 'next/link';
 import React from 'react';
 
-export default function PricingCard({ key, id, Tittle, price, discount, features }) {
-    console.log("features:", features);
+export default function PricingCard({ id, Tittle, price, discount, features }) {
+    // console.log("features:", features);
 
     return (
         <div className="m-4 flex flex-col justify-between p-5 bg-white border rounded shadow-sm" key={id}>
@@ -31,8 +32,8 @@ export default function PricingCard({ key, id, Tittle, price, discount, features
                     <p className="mb-2 font-bold tracking-wide">Features</p>
                     <ul className="space-y-2">
                         {
-                            features.map((feature) => (
-                                <li className="flex items-center">
+                            features.map((feature, index) => (
+                                <li className="flex items-center" key={index}>
                                     <div className="mr-2">
                                         <svg className="w-4 h-4 text-purple-600" viewBox="0 0 24 24" strokeLinecap="round" strokeWidth="2">
                                             <polyline fill="none" stroke="currentColor" points="6,12 10,16 18,8"></polyline>
@@ -48,12 +49,12 @@ export default function PricingCard({ key, id, Tittle, price, discount, features
                 </div>
             </div>
             <div>
-                <a
-                    href="#"
+                <Link
+                    href="/payment"
                     className="inline-flex items-center justify-center w-full h-12 px-6 mb-4 font-medium tracking-wide text-white transition duration-200 bg-gray-800 rounded shadow-md hover:bg-gray-900 focus:shadow-outline focus:outline-none"
                 >
                     Get started
-                </a>
+                </Link>
 
             </div>
         </div>

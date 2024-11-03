@@ -12,10 +12,12 @@ export const fetchPackagesFromFirestore = async () => {
         }));
         return packagesList;
     } catch (error) {
-        console.error("Error fetching packages:", error.message);
+        console.error("Firestore fetch error:", error);
+        toast.error("Error fetching packages. Check your connection.");
         throw error;
     }
-}
+};
+
 
 
 export const deletePackageFromFirestore = async (id) => {

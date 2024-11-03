@@ -11,7 +11,7 @@ import { LanguageContext } from "@/app/ProviderLang";
 import { checkUserLoggedIn } from '@/app/services/authService';
 import toast from "react-hot-toast";
 import { useRouter } from 'next/navigation';
-import Dropdown from './Drobdown';
+import NavDrobdown from './NavDrobdown';
 import imgUser from '@/app/assets/userImg.jpg';
 import imgAdmin from '@/app/assets/admin.png';
 export default function Header() {
@@ -81,7 +81,7 @@ export default function Header() {
                         </div>
                         {
                             isLoggedIn ? (
-                                <Dropdown imgSrc={imgUser.src} isAdmin={false} />
+                                <NavDrobdown imgSrc={imgUser.src} isAdmin={false} />
                             ) : (
                                 <Link
                                     href="/login"

@@ -33,7 +33,7 @@ export default function Page() {
             return;
         }
 
-        const phonePattern = /^\d{10}$/;
+        const phonePattern = /^\d{11}$/;
         if (!phonePattern.test(phone)) {
             setError('Please enter a valid phone number (10 digits).');
             toast.error('Please enter a valid phone number (10 digits).');
@@ -58,7 +58,6 @@ export default function Page() {
             toast.success("User registered successfully");
             router.push('/');
 
-            // Ensure `localStorage` is only accessed in the client
             if (typeof window !== "undefined") {
                 localStorage.setItem('typeUser', 'user');
             }

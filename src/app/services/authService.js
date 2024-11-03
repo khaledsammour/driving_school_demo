@@ -10,7 +10,7 @@ export const Register = async (email, password, additionalData = {}) => {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
  console.log(user);
- 
+  localStorage.setItem('IdUser', user.uid);
         await setDoc(doc(db, "users", user.uid), {
             email: user.email,
             uid: user.uid,
@@ -56,8 +56,11 @@ export const Login = async (email, password) => {
 
     try {
         const loginUser = await signInWithEmailAndPassword(auth, email, password);
-        console.log("Login successful:", loginUser.user);
+        // console.log("Login successful:", loginUser.user.uid);
+        console.log("Login successful:  id", loginUser.user.uid);
+        localStorage.setItem('IdUser', loginUser.user.uid);
         toast.success("Login successful!");
+       
         return loginUser.user;
     } catch (error) {
         if (error.code === 'auth/user-not-found') {
@@ -91,6 +94,8 @@ export const checkUserLoggedIn = (callback) => {
     if (user) {
   
       console.log('User is logged in:', user);
+      console.log('User is logged in:', user.uid);
+        // localStorage.setItem('IdUser', user.uid);
       callback(true, user);
     } else {
      

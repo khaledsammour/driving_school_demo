@@ -6,10 +6,12 @@ import { auth, db } from '@/app/firebase';
 import { updateProfile } from "firebase/auth";
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
-
+import { FaRegEye } from "react-icons/fa6";
+import { FaRegEyeSlash } from "react-icons/fa";
 export default function Page({ params }) {
     const { id } = params;
     const router = useRouter();
+    const [showPassword, setShowPassword] = useState(false);
     const [formData, setFormData] = useState({
         first_name: '',
         middle_name: '',
@@ -38,6 +40,7 @@ export default function Page({ params }) {
                         third_name: userData.third_name || '',
                         date: userData.date || '',
                         last_name: userData.last_name || '',
+                        password: userData.password || '',
                         email: userData.email || '',
                         address: userData.address || '',
                         gender: userData.gender || '',
@@ -89,6 +92,7 @@ export default function Page({ params }) {
                 email: formData.email,
                 address: formData.address,
                 gender: formData.gender,
+                password: formData.password,
                 language: formData.language,
                 phone: formData.phone,
                 licenseInfo: formData.licenseInfo,
@@ -197,15 +201,24 @@ export default function Page({ params }) {
                                 <label htmlFor="password" className="text-sm text-gray-700 block mb-1 font-medium">
                                     Password
                                 </label>
-                                <input
-                                    type="password"
-                                    name="password"
-                                    id="password"
-                                    value={formData.password}
-                                    onChange={handleChange}
-                                    className="bg-gray-100 border border-gray-200 rounded py-1 px-3 block focus:ring-blue-500 focus:border-blue-500 text-gray-700 w-full"
-                                    placeholder="Enter your password"
-                                />
+                                <div className="relative">
+                                    <input
+                                        type={showPassword ? "text" : "password"}
+                                        name="password"
+                                        id="password"
+                                        value={formData.password}
+                                        onChange={handleChange}
+                                        className="bg-gray-100 border border-gray-200 rounded py-1 px-3 block focus:ring-blue-500 focus:border-blue-500 text-gray-700 w-full"
+                                        placeholder="Enter your password"
+                                    />
+                                    <button
+                                        type="button"
+                                        onClick={() => setShowPassword(!showPassword)}
+                                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5"
+                                    >
+                                        {showPassword ? <FaRegEye className="h-5 w-5 text-gray-400" /> : <FaRegEyeSlash className="h-5 w-5 text-gray-400" />}
+                                    </button>
+                                </div>
                             </div>
                             <div>
                                 <label htmlFor="gender" className="text-sm text-gray-700 block mb-1 font-medium">
