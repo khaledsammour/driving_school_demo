@@ -9,12 +9,16 @@ import {
     BiSearch,
 } from "react-icons/bi";
 import logo from "@/app/assets/logo.png";
-import adminImg from "@/app/assets/admin.png";
+import userImg from "@/app/assets/userImg.jpg";
 import Link from "next/link";
 import { Logout } from "@/app/services/authService";
 import toast from "react-hot-toast";
 import { redirect } from 'next/navigation';
 import NavDrobdown from "@/app/components/NavDrobdown";
+import { CgProfile } from "react-icons/cg";
+import { MdOutlinePayment } from "react-icons/md";
+import { MdOutlinePlayLesson } from "react-icons/md";
+import { TbLicense } from "react-icons/tb";
 export default function Layout({ children }) {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -28,7 +32,7 @@ export default function Layout({ children }) {
         redirect('/login')
     }
     return (
-        <div className="admin_dashboard flex min-h-screen">
+        <div className="user_dashboard flex min-h-screen">
             <aside>
                 <div
                     className={`fixed top-0 left-0 h-full ${isSidebarOpen ? "w-64" : "w-16"
@@ -67,7 +71,7 @@ export default function Layout({ children }) {
                         <ul className="space-y-3">
                             <li className="text-black hover:text-blue-500 cursor-pointer">
                                 <Link
-                                    href="/admin"
+                                    href="/user"
                                     className={`flex items-center p-3 ${!isSidebarOpen
                                         ? "justify-center"
                                         : "justify-start"
@@ -84,35 +88,69 @@ export default function Layout({ children }) {
                             </li>
                             <li className="text-black hover:text-blue-500 cursor-pointer">
                                 <Link
-                                    href="/admin/users"
+                                    href="/driver/lessons"
                                     className={`flex items-center p-3 ${!isSidebarOpen
                                         ? "justify-center"
                                         : "justify-start"
                                         }`}
                                 >
-                                    <BiUser className="w-6 h-6" />
+                                    <MdOutlinePlayLesson className="w-6 h-6" />
                                     <span
                                         className={`ml-3 text-base ${!isSidebarOpen && "hidden"
                                             } transition-all duration-300`}
                                     >
-                                        Users
+                                        Lessons
                                     </span>
                                 </Link>
                             </li>
                             <li className="text-black hover:text-blue-500 cursor-pointer">
                                 <Link
-                                    href="/admin/packages"
+                                    href="/driver/license"
                                     className={`flex items-center p-3 ${!isSidebarOpen
                                         ? "justify-center"
                                         : "justify-start"
                                         }`}
                                 >
-                                    <BiPackage className="w-6 h-6" />
+                                    <TbLicense className="w-6 h-6" />
                                     <span
                                         className={`ml-3 text-base ${!isSidebarOpen && "hidden"
                                             } transition-all duration-300`}
                                     >
-                                        Packages
+                                        License
+                                    </span>
+                                </Link>
+                            </li>
+                            <li className="text-black hover:text-blue-500 cursor-pointer">
+                                <Link
+                                    href="/driver/Payments"
+                                    className={`flex items-center p-3 ${!isSidebarOpen
+                                        ? "justify-center"
+                                        : "justify-start"
+                                        }`}
+                                >
+                                    <MdOutlinePayment className="w-6 h-6" />
+                                    <span
+                                        className={`ml-3 text-base ${!isSidebarOpen && "hidden"
+                                            } transition-all duration-300`}
+                                    >
+                                        Payments
+                                    </span>
+                                </Link>
+                            </li>
+                            <li className="text-black hover:text-blue-500 cursor-pointer">
+                                <Link
+                                    href="/driver/Profile"
+                                    className={`flex items-center p-3 ${!isSidebarOpen
+                                        ? "justify-center"
+                                        : "justify-start"
+                                        }`}
+                                >
+                                    <CgProfile className="w-6 h-6" />
+                                    <span
+                                        className={`ml-3 text-base ${!isSidebarOpen && "hidden"
+                                            } transition-all duration-300`}
+                                    >
+                                        Profile
                                     </span>
                                 </Link>
                             </li>
@@ -141,11 +179,11 @@ export default function Layout({ children }) {
             </aside>
 
             <section
-                className={`flex-1 min-h-screen transition-all duration-75 bg-white ${isSidebarOpen ? "pl-64" : "pl-16"
+                className={`flex-1 min-h-screen z-40 transition-all duration-75 bg-white ${isSidebarOpen ? "pl-64" : "pl-16"
                     }`}
             >
                 <div
-                    className={`fixed top-0 flex items-center justify-between ${isSidebarOpen ? "left-64" : "left-16"
+                    className={`fixed top-0 z-[inherit] flex items-center justify-between ${isSidebarOpen ? "left-64" : "left-16"
                         } right-0 shadow-sm bg-white py-3 px-4 text-black transition-all duration-300`}
                 >
                     <div className="relative w-full max-w-md">
@@ -160,13 +198,15 @@ export default function Layout({ children }) {
                         />
                     </div>
                     <div className="">
-                        <NavDrobdown imgSrc={adminImg.src} isAdmin={true} />
+                        <NavDrobdown imgSrc={userImg.src} isAdmin={false} />
                     </div>
 
                 </div>
 
                 <div className="pt-20 p-4">{children}</div>
             </section>
+
+
         </div>
     );
 }

@@ -19,6 +19,8 @@ import toast from "react-hot-toast";
 import { deleteDoc, doc } from "firebase/firestore";
 import { db } from "@/app/firebase";
 import Link from "next/link";
+import { getFunctions } from "firebase/functions";
+import { httpsCallable } from "firebase/functions";
 
 export default function TableUsers() {
     const [users, setUsers] = useState([]);
@@ -53,20 +55,57 @@ export default function TableUsers() {
         console.log("Edit user with ID:", id);
     };
 
+
+    // const handleDelete = async (event, id) => {
+    //     if (event) event.preventDefault();
+
+    //     const functions = getFunctions();
+    //     const deleteUser = httpsCallable(functions, "deleteUserById");
+
+    //     try {
+
+    //         //    await deleteDoc(doc(db, "users", id));
+
+
+    //         getAuth()
+    //             .deleteUser(id)
+    //             .then(() => {
+    //                 console.log('Successfully deleted user');
+    //             })
+    //             .catch((error) => {
+    //                 console.log('Error deleting user:', error);
+    //             });
+    //         toast.success(result.data.message);
+    //         toast.success("User deleted successfully");
+    //     } catch (error) {
+    //         console.error("Error deleting user:", error.message);
+    //         toast.error("Failed to delete user. Please try again.");
+    //     }
+
+    //     console.log("Deleted user with ID:", id);
+    // };
+
     const handleDelete = async (event, id) => {
         if (event) event.preventDefault();
+
+        //    await deleteDoc(doc(db, "users", id));
+
+        const functions = getFunctions();
+        const deleteUser = httpsCallable(functions, "deleteUserById");
+
         try {
-            await deleteDoc(doc(db, "users", id));
+            const result = await deleteUser({ id });
+            console.log(result);
+            
+ 
             setUsers((prevUsers) => prevUsers.filter((user) => user.id !== id));
             toast.success("User deleted successfully");
-        } catch (err) {
-            console.error("Failed to delete user:", err);
+        } catch (error) {
+            console.error("Error deleting user:", error.message);
             toast.error("Failed to delete user. Please try again.");
         }
-        console.log("Delete user with ID:", id);
     };
 
-    // Filter users based on the search term
     const filteredUsers = users.filter((user) =>
         `${user.first_name} ${user.last_name}`.toLowerCase().includes(searchTerm.toLowerCase())
     );

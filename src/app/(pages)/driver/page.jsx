@@ -34,8 +34,8 @@ export default function UserPage() {
 
                     <div className="box bg-[#e7d1fc] rounded-lg flex flex-col items-center p-4 transition-all duration-150 hover:shadow-lg">
                         <LuPackageCheck className="text-text-color text-4xl" />
-                        <span className="text text-lg font-medium text-black">Current package</span>
-                        <span className="number text-4xl font-medium text-black"> Free</span>
+                        <span className="text text-lg font-medium text-black">Total Payment</span>
+                        <span className="number text-4xl font-medium text-black">$ 50</span>
                     </div>
                 </div>
 

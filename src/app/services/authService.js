@@ -24,6 +24,7 @@ export const Register = async (email, password, additionalData = {}) => {
             license_info: additionalData.license_info || "",
             middle_name: additionalData.middle_name || "",
             third_name: additionalData.third_name || "",
+            type: additionalData.type || "",
             date: additionalData.date || "",
             createdAt: serverTimestamp(),
         });

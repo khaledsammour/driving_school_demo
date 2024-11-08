@@ -22,11 +22,13 @@ export default function Page() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+
         if (!validateEmail(email)) {
             setError('Please enter a valid email address.');
             toast.error('Please enter a valid email address.');
             return;
         }
+
 
         if (password.length < 6) {
             setError('Password must be at least 6 characters long.');
@@ -37,32 +39,21 @@ export default function Page() {
         setError('');
 
         try {
-            if (email === 'admin@gmail.com' && password === 'admin@6030') {
-                await Login(email, password);
-                toast.success('Successfully logged in as admin!');
-                router.push('/');
 
-                // Ensure `localStorage` is only accessed in the client
-                if (typeof window !== "undefined") {
-                    localStorage.setItem('typeUser', 'admin');
-                }
-            } else {
-                await Login(email, password);
-                console.log(email, password);
 
-                toast.success('Successfully logged in!');
-                router.push('/');
+            await Login(email, password);
 
-                // Ensure `localStorage` is only accessed in the client
-                if (typeof window !== "undefined") {
-                    localStorage.setItem('typeUser', 'user');
-                }
-            }
+
+            toast.success('Successfully logged in!');
+            router.push('/');
+
         } catch (error) {
+
             setError(error.message);
             toast.error(error.message);
         }
     };
+
 
 
     return (
