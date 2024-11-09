@@ -18,6 +18,7 @@ import NavDrobdown from "@/app/components/NavDrobdown";
 import { CgProfile } from "react-icons/cg";
 import { MdOutlinePayment } from "react-icons/md";
 import { MdOutlinePlayLesson } from "react-icons/md";
+import { TbLicense } from "react-icons/tb";
 export default function Layout({ children }) {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -38,22 +39,24 @@ export default function Layout({ children }) {
                         } bg-white transition-all duration-300 ease-in-out border-r border-gray-300 z-50`}
                 >
                     <div className="flex items-center p-4">
-                        <div className="flex justify-center items-center w-12">
-                            <img
-                                src={logo.src}
-                                alt="Logo"
-                                className={`w-10 h-10 rounded-full ${!isSidebarOpen && "hidden"
-                                    } object-cover`}
-                            />
-                        </div>
-                        <span
-                            className={`text-black font-bold text-lg ml-3 ${!isSidebarOpen && "hidden"
-                                } whitespace-nowrap`}
-                        >
-                            Formula One
-                        </span>
+                        <Link href="/" className="flex items-center">
+                            <div className="flex justify-center items-center w-12">
+                                <img
+                                    src={logo.src}
+                                    alt="Logo"
+                                    className={`w-10 h-10 rounded-full ${!isSidebarOpen && "hidden"
+                                        } object-cover`}
+                                />
+                            </div>
+                            <span
+                                className={`text-black font-bold text-lg ml-3 ${!isSidebarOpen && "hidden"
+                                    } whitespace-nowrap`}
+                            >
+                                Formula One
+                            </span>
+                        </Link>
                         <div
-                            className={`ml-auto  top-1${!isSidebarOpen ? "absolute left-5" : "absolute right-4"
+                            className={`ml-auto  top-6 ${!isSidebarOpen ? " absolute left-5" : "absolute right-4"
                                 }`}
                         >
                             <BiMenu
@@ -85,7 +88,7 @@ export default function Layout({ children }) {
                             </li>
                             <li className="text-black hover:text-blue-500 cursor-pointer">
                                 <Link
-                                    href="/user/Lessons"
+                                    href="/user/lessons"
                                     className={`flex items-center p-3 ${!isSidebarOpen
                                         ? "justify-center"
                                         : "justify-start"
@@ -97,6 +100,23 @@ export default function Layout({ children }) {
                                             } transition-all duration-300`}
                                     >
                                         Lessons
+                                    </span>
+                                </Link>
+                            </li>
+                            <li className="text-black hover:text-blue-500 cursor-pointer">
+                                <Link
+                                    href="/user/license"
+                                    className={`flex items-center p-3 ${!isSidebarOpen
+                                        ? "justify-center"
+                                        : "justify-start"
+                                        }`}
+                                >
+                                    <TbLicense className="w-6 h-6" />
+                                    <span
+                                        className={`ml-3 text-base ${!isSidebarOpen && "hidden"
+                                            } transition-all duration-300`}
+                                    >
+                                        License
                                     </span>
                                 </Link>
                             </li>
@@ -159,11 +179,11 @@ export default function Layout({ children }) {
             </aside>
 
             <section
-                className={`flex-1 min-h-screen transition-all duration-75 bg-white ${isSidebarOpen ? "pl-64" : "pl-16"
+                className={`flex-1 min-h-screen z-40 transition-all duration-75 bg-white ${isSidebarOpen ? "pl-64" : "pl-16"
                     }`}
             >
                 <div
-                    className={`fixed top-0 flex items-center justify-between ${isSidebarOpen ? "left-64" : "left-16"
+                    className={`fixed top-0 z-[inherit] flex items-center justify-between ${isSidebarOpen ? "left-64" : "left-16"
                         } right-0 shadow-sm bg-white py-3 px-4 text-black transition-all duration-300`}
                 >
                     <div className="relative w-full max-w-md">

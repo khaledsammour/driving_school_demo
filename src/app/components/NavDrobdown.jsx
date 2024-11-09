@@ -4,16 +4,51 @@ import toast from "react-hot-toast";
 import { Logout } from "../services/authService";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-
+import { db } from "@/app/firebase";
+import { doc, getDoc } from "firebase/firestore";
 export default function NavDrobdown({ imgSrc }) {
     const [openDropdown, setOpenDropdown] = useState(false);
-    const [isAdmin, setIsAdmin] = useState(null);
+    const [typeUser, setTypeUser] = useState();
+    const [IdUser, setIdUser] = useState(null);
     const router = useRouter();
     const dropdownRef = useRef(null);
+
+
+    useEffect(() => {
+        const storedId = localStorage.getItem("IdUser");
+        if (storedId) {
+            setIdUser(storedId);
+        }
+    }, []);
+
 
     const toggleDropdown = () => {
         setOpenDropdown((prev) => !prev);
     };
+
+
+
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            if (!IdUser) return;
+
+            try {
+                const docRef = doc(db, "users", IdUser);
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists()) {
+                    const userData = docSnap.data();
+                    setTypeUser(userData.type);
+                } else {
+                    console.log("No such document!");
+                }
+            } catch (error) {
+                console.error("Error fetching user:", error);
+            }
+        };
+
+        fetchUser();
+    }, [IdUser]);
 
     const handleLogOut = async () => {
         try {
@@ -30,12 +65,6 @@ export default function NavDrobdown({ imgSrc }) {
         }
     };
 
-    // Set `isAdmin` based on localStorage after the component mounts
-    useEffect(() => {
-        if (typeof window !== "undefined") {
-            setIsAdmin(localStorage.getItem("typeUser"));
-        }
-    }, []);
 
     // Close dropdown when clicking outside
     useEffect(() => {
@@ -70,7 +99,7 @@ export default function NavDrobdown({ imgSrc }) {
                     <div className="absolute right-0 z-50 top-14 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600">
                         <ul className="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="dropdownUserAvatarButton">
                             <li>
-                                <Link href={isAdmin === "admin" ? "/admin" : "/user"} className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+                                <Link href={typeUser === "user" ? "/user" : typeUser === "driver" ? "/driver" : "/admin" } className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
                                     Dashboard
                                 </Link>
                             </li>

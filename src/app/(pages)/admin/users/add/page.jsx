@@ -24,6 +24,7 @@ export default function Page() {
         last_name: '',
         email: '',
         address: '',
+        type: '',
         password: '',
         gender: '',
         language: '',
@@ -59,6 +60,7 @@ export default function Page() {
                 address: formData.address,
                 gender: formData.gender,
                 language: formData.language,
+                type: formData.type,
                 password: formData.password,
                 phone: formData.phone,
                 licenseInfo: formData.licenseInfo,
@@ -168,62 +170,91 @@ export default function Page() {
                                     placeholder="Enter your address"
                                 />
                             </div>
-                            <div>
-                                <label htmlFor="password" className="text-sm text-gray-700 block mb-1 font-medium">
-                                    Password
-                                </label>
-                                <div className="relative">
+                            <div className="lg:col-span-2 grid grid-cols-2 gap-4">
+                                <div>
+                                    <label htmlFor="password" className="text-sm text-gray-700 block mb-1 font-medium">
+                                        Password
+                                    </label>
+                                    <div className="relative">
+                                        <input
+                                            type={showPassword ? "text" : "password"}
+                                            name="password"
+                                            id="password"
+                                            value={formData.password}
+                                            onChange={handleChange}
+                                            className="bg-gray-100 border border-gray-200 rounded py-1 px-3 block focus:ring-blue-500 focus:border-blue-500 text-gray-700 w-full"
+                                            placeholder="Enter your password"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowPassword(!showPassword)}
+                                            className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5"
+                                        >
+                                            {showPassword ? <FaRegEye className="h-5 w-5 text-gray-400" /> : <FaRegEyeSlash className="h-5 w-5 text-gray-400" />}
+                                        </button>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label htmlFor="date" className="text-sm text-gray-700 block mb-1 font-medium">
+                                        Date
+                                    </label>
                                     <input
-                                        type={showPassword ? "text" : "password"}
-                                        name="password"
-                                        id="password"
-                                        value={formData.password}
+                                        type="date"
+                                        name="date"
+                                        id="date"
+                                        value={formData.date}
                                         onChange={handleChange}
                                         className="bg-gray-100 border border-gray-200 rounded py-1 px-3 block focus:ring-blue-500 focus:border-blue-500 text-gray-700 w-full"
-                                        placeholder="Enter your password"
                                     />
-                                    <button
-                                        type="button"
-                                        onClick={() => setShowPassword(!showPassword)}
-                                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5"
-                                    >
-                                        {showPassword ? <FaRegEye className="h-5 w-5 text-gray-400" /> : <FaRegEyeSlash className="h-5 w-5 text-gray-400" />}
-                                    </button>
                                 </div>
-                            </div>
-                            <div>
-                                <label htmlFor="gender" className="text-sm text-gray-700 block mb-1 font-medium">
-                                    Gender
-                                </label>
-                                <select
-                                    name="gender"
-                                    id="gender"
-                                    value={formData.gender}
-                                    onChange={handleChange}
-                                    className="bg-gray-100 border border-gray-200 rounded py-1 px-3 block focus:ring-blue-500 focus:border-blue-500 text-gray-700 w-full"
-                                >
-                                    <option value="">Select Gender</option>
-                                    <option value="male">Male</option>
-                                    <option value="female">Female</option>
-                                    <option value="other">Other</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label htmlFor="language" className="text-sm text-gray-700 block mb-1 font-medium">
-                                    Language
-                                </label>
-                                <select
-                                    name="language"
-                                    id="language"
-                                    value={formData.language}
-                                    onChange={handleChange}
-                                    className="bg-gray-100 border border-gray-200 rounded py-1 px-3 block focus:ring-blue-500 focus:border-blue-500 text-gray-700 w-full"
-                                >
-                                    <option value="">Select Language</option>
-                                    <option value="english">English</option>
-                                    <option value="arabic">Arabic</option>
-                                    <option value="french">French</option>
-                                </select>
+                          </div>
+                            <div className="lg:col-span-2 grid grid-cols-3 gap-4">
+                                <div>
+                                    <label htmlFor="gender" className="text-sm text-gray-700 block mb-1 font-medium">
+                                        Gender
+                                    </label>
+                                    <select
+                                        name="gender"
+                                        id="gender"
+                                        value={formData.gender}
+                                        onChange={handleChange}
+                                        className="bg-gray-100 border border-gray-200 rounded py-1 px-3 block focus:ring-blue-500 focus:border-blue-500 text-gray-700 w-full"
+                                    >
+                                        <option value="male">Male</option>
+                                        <option value="female">Female</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label htmlFor="type" className="text-sm text-gray-700 block mb-1 font-medium">
+                                        Type
+                                    </label>
+                                    <select
+                                        name="type"
+                                        id="type"
+                                        value={formData.type}
+                                        onChange={handleChange}
+                                        className="bg-gray-100 border border-gray-200 rounded py-1 px-3 block focus:ring-blue-500 focus:border-blue-500 text-gray-700 w-full"
+                                    >
+                                        <option value="user">User</option>
+                                        <option value="driver">Driver</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label htmlFor="language" className="text-sm text-gray-700 block mb-1 font-medium">
+                                        Language
+                                    </label>
+                                    <select
+                                        name="language"
+                                        id="language"
+                                        value={formData.language}
+                                        onChange={handleChange}
+                                        className="bg-gray-100 border border-gray-200 rounded py-1 px-3 block focus:ring-blue-500 focus:border-blue-500 text-gray-700 w-full"
+                                    >
+                                        <option value="english">English</option>
+                                        <option value="arabic">Arabic</option>
+                                        <option value="french">French</option>
+                                    </select>
+                                </div>
                             </div>
                             <div>
                                 <label htmlFor="phone" className="text-sm text-gray-700 block mb-1 font-medium">
@@ -253,19 +284,7 @@ export default function Page() {
                                     placeholder="Enter license information"
                                 />
                             </div>
-                            <div>
-                                <label htmlFor="date" className="text-sm text-gray-700 block mb-1 font-medium">
-                                    Date
-                                </label>
-                                <input
-                                    type="date"
-                                    name="date"
-                                    id="date"
-                                    value={formData.date}
-                                    onChange={handleChange}
-                                    className="bg-gray-100 border border-gray-200 rounded py-1 px-3 block focus:ring-blue-500 focus:border-blue-500 text-gray-700 w-full"
-                                />
-                            </div>
+                       
                         </div>
                         <div className="space-x-4 mt-8">
                             <button
@@ -284,6 +303,7 @@ export default function Page() {
                             </Link>
                         </div>
                     </form>
+
                 </div>
             </div>
         </>

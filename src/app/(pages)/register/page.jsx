@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation';
 export default function Page() {
     const [error, setError] = useState('');
     const [showPassword, setShowPassword] = useState(false);
+    const [type, setType] = useState('');
     const router = useRouter();
 
     const handleSubmit = async (e) => {
@@ -20,7 +21,7 @@ export default function Page() {
         const password = e.target.password.value;
         const phone = e.target.phone.value;
 
-        if (!firstName || !lastName || !email || !password || !phone) {
+        if (!firstName || !lastName || !email || !password || !phone || !type) {
             setError('All fields are required.');
             toast.error('All fields are required.');
             return;
@@ -49,17 +50,18 @@ export default function Page() {
                 date: '',
                 password: password,
                 address: '',
-                gender: '',
+                gender: 'male',
                 language: '',
                 phone: phone || '',
                 license_info: '',
+                type: type || '',
             });
 
             toast.success("User registered successfully");
             router.push('/');
 
             if (typeof window !== "undefined") {
-                localStorage.setItem('typeUser', 'user');
+                localStorage.setItem('typeUser', type || 'admin');
             }
 
         } catch (error) {
@@ -103,6 +105,10 @@ export default function Page() {
                                         name="phone"
                                         placeholder="Phone Number"
                                     />
+                                    <div className="flex items-center gap-2 mb-3 justify-between">
+                                        <span onClick={() => setType('user')} className={`w-full cursor-pointer bg-gray-200 text-gray-600  py-4 rounded-lg hover:bg-indigo-700 hover:text-white ${type === 'user' ? 'bg-indigo-700 text-white' : ''} transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none`}>User</span>
+                                        <span onClick={() => setType('driver')} className={`w-full cursor-pointer bg-gray-200 text-gray-600  py-4 rounded-lg hover:bg-indigo-700 hover:text-white ${type === 'driver' ? 'bg-indigo-700 text-white' : ''} transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none`}>Driver</span>
+                                    </div>
                                     <input
                                         className="w-full px-8 py-4 mb-3 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
                                         type={showPassword ? 'text' : 'password'}

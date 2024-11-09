@@ -3,11 +3,12 @@ import Link from 'next/link';
 import React, { useState, useEffect } from 'react';
 import { collection, serverTimestamp, doc, getDoc, setDoc } from "firebase/firestore";
 import { auth, db } from '@/app/firebase';
-import { updateProfile } from "firebase/auth";
+import { updateProfile, updateEmail, updatePassword, sendEmailVerification } from "firebase/auth";
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
 import { FaRegEye } from "react-icons/fa6";
 import { FaRegEyeSlash } from "react-icons/fa";
+
 export default function Page({ params }) {
     const { id } = params;
     const router = useRouter();
@@ -20,13 +21,14 @@ export default function Page({ params }) {
         last_name: '',
         email: '',
         address: '',
+        password: '',
+        type: '',
         gender: '',
         language: '',
         phone: '',
         licenseInfo: '',
     });
 
-    // Fetch user data when component mounts
     useEffect(() => {
         const fetchUser = async () => {
             try {
@@ -42,6 +44,7 @@ export default function Page({ params }) {
                         last_name: userData.last_name || '',
                         password: userData.password || '',
                         email: userData.email || '',
+                        type: userData.type || '',
                         address: userData.address || '',
                         gender: userData.gender || '',
                         language: userData.language || '',
@@ -74,38 +77,56 @@ export default function Page({ params }) {
             const user = auth.currentUser;
 
             if (user) {
-                // Update Profile Display Name (if you want to update it)
+                // إذا كان البريد الإلكتروني قد تغير
+                let emailUpdated = false;
+
+                // تحقق من تغيير البريد الإلكتروني
+                if (formData.email !== user.email) {
+                    // تحديث البريد الإلكتروني في Firebase Authentication
+                    await updateEmail(user, formData.email);
+                    emailUpdated = true;
+                }
+
+                // إذا كانت كلمة المرور قد تم تغييرها
+                if (formData.password) {
+                    await updatePassword(user, formData.password);
+                }
+
+                // تحديث اسم المستخدم في Firebase Authentication (اختياري)
                 await updateProfile(user, {
                     displayName: `${formData.first_name} ${formData.last_name}`,
                 });
+
+                // تحديث البيانات الأخرى في Firestore
+                const userDocRef = doc(db, "users", id);
+
+                await setDoc(userDocRef, {
+                    first_name: formData.first_name,
+                    middle_name: formData.middle_name,
+                    third_name: formData.third_name,
+                    date: formData.date,
+                    last_name: formData.last_name,
+                    email: formData.email,
+                    address: formData.address,
+                    gender: formData.gender,
+                    password: formData.password,
+                    language: formData.language,
+                    type: formData.type,
+                    phone: formData.phone,
+                    licenseInfo: formData.licenseInfo,
+                    updatedAt: serverTimestamp(),
+                }, { merge: true });
+
+                toast.success('User updated successfully');
+                router.push('/admin/users');
             }
-
-            // Update existing user data in Firestore
-            const userDocRef = doc(db, "users", id);
-
-            await setDoc(userDocRef, {
-                first_name: formData.first_name,
-                middle_name: formData.middle_name,
-                third_name: formData.third_name,
-                date: formData.date,
-                last_name: formData.last_name,
-                email: formData.email,
-                address: formData.address,
-                gender: formData.gender,
-                password: formData.password,
-                language: formData.language,
-                phone: formData.phone,
-                licenseInfo: formData.licenseInfo,
-                updatedAt: serverTimestamp(),
-            }, { merge: true });
-
-            router.push("/admin/users");
-            toast.success("User updated successfully");
         } catch (error) {
             console.error('Error updating user:', error);
             toast.error(`Error: ${error.message}`);
         }
     };
+
+
     return (
         <>
             <div className="update">
@@ -197,62 +218,91 @@ export default function Page({ params }) {
                                     placeholder="Enter your address"
                                 />
                             </div>
-                            <div>
-                                <label htmlFor="password" className="text-sm text-gray-700 block mb-1 font-medium">
-                                    Password
-                                </label>
-                                <div className="relative">
+                            <div className="lg:col-span-2 grid grid-cols-2 gap-4">
+                                <div>
+                                    <label htmlFor="password" className="text-sm text-gray-700 block mb-1 font-medium">
+                                        Password
+                                    </label>
+                                    <div className="relative">
+                                        <input
+                                            type={showPassword ? "text" : "password"}
+                                            name="password"
+                                            id="password"
+                                            value={formData.password}
+                                            onChange={handleChange}
+                                            className="bg-gray-100 border border-gray-200 rounded py-1 px-3 block focus:ring-blue-500 focus:border-blue-500 text-gray-700 w-full"
+                                            placeholder="Enter your password"
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowPassword(!showPassword)}
+                                            className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5"
+                                        >
+                                            {showPassword ? <FaRegEye className="h-5 w-5 text-gray-400" /> : <FaRegEyeSlash className="h-5 w-5 text-gray-400" />}
+                                        </button>
+                                    </div>
+                                </div>
+                                <div>
+                                    <label htmlFor="date" className="text-sm text-gray-700 block mb-1 font-medium">
+                                        Date
+                                    </label>
                                     <input
-                                        type={showPassword ? "text" : "password"}
-                                        name="password"
-                                        id="password"
-                                        value={formData.password}
+                                        type="date"
+                                        name="date"
+                                        id="date"
+                                        value={formData.date}
                                         onChange={handleChange}
                                         className="bg-gray-100 border border-gray-200 rounded py-1 px-3 block focus:ring-blue-500 focus:border-blue-500 text-gray-700 w-full"
-                                        placeholder="Enter your password"
                                     />
-                                    <button
-                                        type="button"
-                                        onClick={() => setShowPassword(!showPassword)}
-                                        className="absolute inset-y-0 right-0 pr-3 flex items-center text-sm leading-5"
-                                    >
-                                        {showPassword ? <FaRegEye className="h-5 w-5 text-gray-400" /> : <FaRegEyeSlash className="h-5 w-5 text-gray-400" />}
-                                    </button>
                                 </div>
                             </div>
-                            <div>
-                                <label htmlFor="gender" className="text-sm text-gray-700 block mb-1 font-medium">
-                                    Gender
-                                </label>
-                                <select
-                                    name="gender"
-                                    id="gender"
-                                    value={formData.gender}
-                                    onChange={handleChange}
-                                    className="bg-gray-100 border border-gray-200 rounded py-1 px-3 block focus:ring-blue-500 focus:border-blue-500 text-gray-700 w-full"
-                                >
-                                    <option value="">Select Gender</option>
-                                    <option value="male">Male</option>
-                                    <option value="female">Female</option>
-                                    <option value="other">Other</option>
-                                </select>
-                            </div>
-                            <div>
-                                <label htmlFor="language" className="text-sm text-gray-700 block mb-1 font-medium">
-                                    Language
-                                </label>
-                                <select
-                                    name="language"
-                                    id="language"
-                                    value={formData.language}
-                                    onChange={handleChange}
-                                    className="bg-gray-100 border border-gray-200 rounded py-1 px-3 block focus:ring-blue-500 focus:border-blue-500 text-gray-700 w-full"
-                                >
-                                    <option value="">Select Language</option>
-                                    <option value="english">English</option>
-                                    <option value="arabic">Arabic</option>
-                                    <option value="french">French</option>
-                                </select>
+                            <div className="lg:col-span-2 grid grid-cols-3 gap-4">
+                                <div>
+                                    <label htmlFor="gender" className="text-sm text-gray-700 block mb-1 font-medium">
+                                        Gender
+                                    </label>
+                                    <select
+                                        name="gender"
+                                        id="gender"
+                                        value={formData.gender}
+                                        onChange={handleChange}
+                                        className="bg-gray-100 border border-gray-200 rounded py-1 px-3 block focus:ring-blue-500 focus:border-blue-500 text-gray-700 w-full"
+                                    >
+                                        <option value="male">Male</option>
+                                        <option value="female">Female</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label htmlFor="type" className="text-sm text-gray-700 block mb-1 font-medium">
+                                        Type
+                                    </label>
+                                    <select
+                                        name="type"
+                                        id="type"
+                                        value={formData.type}
+                                        onChange={handleChange}
+                                        className="bg-gray-100 border border-gray-200 rounded py-1 px-3 block focus:ring-blue-500 focus:border-blue-500 text-gray-700 w-full"
+                                    >
+                                        <option value="user">User</option>
+                                        <option value="driver">Driver</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label htmlFor="language" className="text-sm text-gray-700 block mb-1 font-medium">
+                                        Language
+                                    </label>
+                                    <select
+                                        name="language"
+                                        id="language"
+                                        value={formData.language}
+                                        onChange={handleChange}
+                                        className="bg-gray-100 border border-gray-200 rounded py-1 px-3 block focus:ring-blue-500 focus:border-blue-500 text-gray-700 w-full"
+                                    >
+                                        <option value="english">English</option>
+                                        <option value="arabic">Arabic</option>
+                                        <option value="french">French</option>
+                                    </select>
+                                </div>
                             </div>
                             <div>
                                 <label htmlFor="phone" className="text-sm text-gray-700 block mb-1 font-medium">
@@ -282,19 +332,7 @@ export default function Page({ params }) {
                                     placeholder="Enter license information"
                                 />
                             </div>
-                            <div>
-                                <label htmlFor="date" className="text-sm text-gray-700 block mb-1 font-medium">
-                                    Date
-                                </label>
-                                <input
-                                    type="date"
-                                    name="date"
-                                    id="date"
-                                    value={formData.date}
-                                    onChange={handleChange}
-                                    className="bg-gray-100 border border-gray-200 rounded py-1 px-3 block focus:ring-blue-500 focus:border-blue-500 text-gray-700 w-full"
-                                />
-                            </div>
+
                         </div>
                         <div className="space-x-4 mt-8">
                             <button
