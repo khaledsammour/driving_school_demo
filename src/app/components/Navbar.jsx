@@ -56,10 +56,7 @@ export default function Header() {
             <nav className="bg-white border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-gray-800">
                 <div className="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
                     <Link href="/" className="flex items-center">
-                        <Image src={logo} alt="Logo" className="mx-2" width={50} height={50} />
-                        <span className="self-center flex items-center text-md lg:text-lg font-semibold whitespace-nowrap dark:text-white">
-                            DRS
-                        </span>
+                        <Image src={logo} alt="Logo" className="mx-2" width={60} height={60} />
                     </Link>
                     <div className="flex items-center lg:order-2">
                         <div className="mx-2">
@@ -76,19 +73,33 @@ export default function Header() {
                                         <Image src={EnglandImg} alt="English" className="w-9 h-9 mx-2" width={42} height={42} />
                                         <span> English</span>
                                     </li>
+                                    <li className="flex items-center cursor-pointer px-1 py-1 hover:bg-gray-100" onClick={() => { setLang('fr'); switchLanguage("fr"); setOpenLang(false); }}>
+                                        <Image src={EnglandImg} alt="English" className="w-9 h-9 mx-2" width={42} height={42} />
+                                        <span> France</span>
+                                    </li>
                                 </ul>
                             </div>
                         </div>
                         {
                             isLoggedIn ? (
-                                <NavDrobdown imgSrc={imgUser.src} isAdmin={false} />
+                              <div className="mt-1">
+                                    <NavDrobdown imgSrc={imgUser.src} isAdmin={false} />
+                              </div>
                             ) : (
-                                <Link
-                                    href="/login"
-                                    className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-none font-medium rounded-lg text-sm px-4 lg:px-7 py-2 lg:py-2.5 mr-2 dark:bg-blue-600 dark:hover:bg-blue-700 focus:outline-none dark:focus:ring-blue-800"
-                                >
-                                    Log in
-                                </Link>
+                                <div className="mx-2">
+                                    <Link
+                                        href="/login"
+                                        className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-none font-medium rounded-lg text-sm px-4 lg:px-7 py-2 lg:py-2.5 mr-2 "
+                                    >
+                                        Members Portal
+                                    </Link>
+                                    <Link
+                                        href="/login"
+                                            className="text-blue-700 border border-blue-800 hover:bg-blue-800 hover:text-white focus:ring-none font-medium rounded-lg text-sm px-4 lg:px-7 py-2 lg:py-2.5 mr-2 "
+                                    >
+                                        Online Training Portal
+                                    </Link>
+                                </div>
                             )
                         }
 
@@ -110,14 +121,6 @@ export default function Header() {
                             </li>
                             <li>
                                 <Link
-                                    href="/Lessons"
-                                    className="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-blue-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700"
-                                >
-                                    <FormattedMessage id="lessons" />
-                                </Link>
-                            </li>
-                            <li>
-                                <Link
                                     href="/Services"
                                     className="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-blue-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700"
                                 >
@@ -130,6 +133,14 @@ export default function Header() {
                                     className="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-blue-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700"
                                 >
                                     <FormattedMessage id="pricing" />
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
+                                    href="/contactUs"
+                                    className="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-blue-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700"
+                                >
+                                    <FormattedMessage id="about_us" />
                                 </Link>
                             </li>
                             <li>

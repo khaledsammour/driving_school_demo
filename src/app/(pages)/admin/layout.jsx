@@ -13,11 +13,11 @@ import adminImg from "@/app/assets/admin.png";
 import Link from "next/link";
 import { Logout } from "@/app/services/authService";
 import toast from "react-hot-toast";
-import { redirect } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import NavDrobdown from "@/app/components/NavDrobdown";
 export default function Layout({ children }) {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
+    const router = useRouter();
     const toggleSidebar = () => {
         setIsSidebarOpen(!isSidebarOpen);
     };
@@ -25,7 +25,7 @@ export default function Layout({ children }) {
     const handleLogOut = () => {
         Logout();
         toast.success('Successfully logged out !');
-        redirect('/login')
+        router.push('/login')
     }
     return (
         <div className="admin_dashboard flex min-h-screen">

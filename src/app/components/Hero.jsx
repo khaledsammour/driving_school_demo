@@ -2,6 +2,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import LottieHandler from './lottieHandler';
+import Link from 'next/link';
 
 export default function Hero() {
     // Define animation variants
@@ -27,11 +28,13 @@ export default function Hero() {
                         transition={{ duration: 0.5 }}
                     >
                         <h1 className="text-4xl tracking-tight font-extrabold text-gray-800 sm:text-5xl md:text-6xl">
-                            <span className="block xl:inline">Learn the art of driving cars</span>
-                            <span className="block text-indigo-600 xl:inline"> easily and safely</span>
+                            <span className="block xl:inline">Let us get you ready to drive! </span>
+                            <span className="block text-indigo-600 xl:inline">We teach the art of driving safely. </span>
                         </h1>
                         <p className="mt-3 text-base text-gray-500 sm:mt-5 sm:text-lg sm:max-w-xl sm:mx-auto md:mt-5 md:text-xl lg:mx-0">
-                            Learn to drive with confidence and safety with our comprehensive courses specially designed to help you pass your driving test on the first try. Join the thousands of students who have learned to drive with us and prepare to become a professional driver with complete confidence.
+                            Unlock the road to freedom and confidence with our driving lessons tailored just for you. Whether
+                            you're a beginner or looking to brush up on your skills, we offer personalized training to help you
+                            master the road. Join us and start your journey towards becoming a confident, safe driver.
                         </p>
                         <div className="mt-5 sm:mt-8 sm:flex sm:justify-center lg:justify-start">
                             <div className="rounded-md shadow">
@@ -43,12 +46,12 @@ export default function Hero() {
                                 </a>
                             </div>
                             <div className="mt-3 sm:mt-0 sm:ml-3">
-                                <a
-                                    href="#"
+                                <Link
+                                    href="/Services"
                                     className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-gray-800 bg-indigo-100 hover:bg-indigo-200 md:py-4 md:text-lg md:px-10"
                                 >
                                     Learn more
-                                </a>
+                                </Link>
                             </div>
                         </div>
                     </motion.div>

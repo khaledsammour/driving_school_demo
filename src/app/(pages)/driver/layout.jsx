@@ -13,15 +13,17 @@ import userImg from "@/app/assets/userImg.jpg";
 import Link from "next/link";
 import { Logout } from "@/app/services/authService";
 import toast from "react-hot-toast";
-import { redirect } from 'next/navigation';
 import NavDrobdown from "@/app/components/NavDrobdown";
 import { CgProfile } from "react-icons/cg";
 import { MdOutlinePayment } from "react-icons/md";
 import { MdOutlinePlayLesson } from "react-icons/md";
 import { TbLicense } from "react-icons/tb";
+import { useRouter } from "next/navigation";
+import { TbLicense } from "react-icons/tb";
+import { IoDocumentsSharp } from "react-icons/io5";
 export default function Layout({ children }) {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
+    const router = useRouter();
     const toggleSidebar = () => {
         setIsSidebarOpen(!isSidebarOpen);
     };
@@ -29,7 +31,7 @@ export default function Layout({ children }) {
     const handleLogOut = () => {
         Logout();
         toast.success('Successfully logged out !');
-        redirect('/login')
+        router.push('/login')
     }
     return (
         <div className="user_dashboard flex min-h-screen">
@@ -100,6 +102,40 @@ export default function Layout({ children }) {
                                             } transition-all duration-300`}
                                     >
                                         Lessons
+                                    </span>
+                                </Link>
+                            </li>
+                            <li className="text-black hover:text-blue-500 cursor-pointer">
+                                <Link
+                                    href="/driver/license"
+                                    className={`flex items-center p-3 ${!isSidebarOpen
+                                        ? "justify-center"
+                                        : "justify-start"
+                                        }`}
+                                >
+                                    <TbLicense className="w-6 h-6" />
+                                    <span
+                                        className={`ml-3 text-base ${!isSidebarOpen && "hidden"
+                                            } transition-all duration-300`}
+                                    >
+                                        License
+                                    </span>
+                                </Link>
+                            </li>
+                            <li className="text-black hover:text-blue-500 cursor-pointer">
+                                <Link
+                                    href="/driver/documents"
+                                    className={`flex items-center p-3 ${!isSidebarOpen
+                                        ? "justify-center"
+                                        : "justify-start"
+                                        }`}
+                                >
+                                    <IoDocumentsSharp className="w-6 h-6" />
+                                    <span
+                                        className={`ml-3 text-base ${!isSidebarOpen && "hidden"
+                                            } transition-all duration-300`}
+                                    >
+                                        Documents
                                     </span>
                                 </Link>
                             </li>
