@@ -9,6 +9,7 @@ export default function Footer() {
                 {/* Navigation links using Next.js Link component */}
                 <nav className="flex justify-center flex-wrap gap-6 text-gray-500 font-medium">
                     <Link href="/" className="hover:text-gray-900">Home</Link>
+                    <Link href="/AboutUs" className="hover:text-gray-900">About us</Link>
                     <Link href="/Services" className="hover:text-gray-900">Services</Link>
                     <Link href="/Pricing" className="hover:text-gray-900">Pricing</Link>
                     <Link href="/contactUs" className="hover:text-gray-900">Contact</Link>

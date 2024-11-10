@@ -1,13 +1,19 @@
+import AdditionalResources from '@/app/components/AdditionalResources'
+import Features from '@/app/components/Features'
+import HowToUse from '@/app/components/HowToUse'
+import Pricing from '@/app/components/Priceing'
 import Services from '@/app/components/Services'
-import Testimonials from '@/app/components/Testimonials'
 import React from 'react'
 
 export default function page() {
     return (
         <>
             <div className="services py-7">
+                <Features />
                 <Services />
-                <Testimonials />
+                <HowToUse />
+                <Pricing />
+                <AdditionalResources />
             </div>
         </>
     )

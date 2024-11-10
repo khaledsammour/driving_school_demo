@@ -10,7 +10,7 @@ import { FormattedMessage } from "react-intl";
 import { LanguageContext } from "@/app/ProviderLang";
 import { checkUserLoggedIn } from '@/app/services/authService';
 import toast from "react-hot-toast";
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import NavDrobdown from './NavDrobdown';
 import imgUser from '@/app/assets/userImg.jpg';
 import imgAdmin from '@/app/assets/admin.png';
@@ -22,6 +22,9 @@ export default function Header() {
     const closeSearch = useRef(null);
     const { switchLanguage } = useContext(LanguageContext);
     const router = useRouter();
+    const pathname = usePathname();
+
+
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -82,23 +85,23 @@ export default function Header() {
                         </div>
                         {
                             isLoggedIn ? (
-                              <div className="mt-1">
+                                <div className="mt-1">
                                     <NavDrobdown imgSrc={imgUser.src} isAdmin={false} />
-                              </div>
+                                </div>
                             ) : (
-                                <div className="mx-2">
+                                <div className="mx-2 lg:block hidden">
                                     <Link
                                         href="/login"
                                         className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-none font-medium rounded-lg text-sm px-4 lg:px-7 py-2 lg:py-2.5 mr-2 "
                                     >
                                         Members Portal
                                     </Link>
-                                    <Link
-                                        href="/login"
-                                            className="text-blue-700 border border-blue-800 hover:bg-blue-800 hover:text-white focus:ring-none font-medium rounded-lg text-sm px-4 lg:px-7 py-2 lg:py-2.5 mr-2 "
+                                    <a
+                                        href="https://formulaonedrivingschool.trubicars.ca/auth/mfa/login.php"
+                                        className="text-blue-700 border border-blue-800 hover:bg-blue-800 hover:text-white focus:ring-none font-medium rounded-lg text-sm px-4 lg:px-7 py-2 lg:py-2.5 mr-2 "
                                     >
                                         Online Training Portal
-                                    </Link>
+                                    </a>
                                 </div>
                             )
                         }
@@ -113,16 +116,26 @@ export default function Header() {
                             <li>
                                 <Link
                                     href="/"
-                                    className="block py-2 pr-4 pl-3 text-white rounded bg-blue-700 lg:bg-transparent lg:text-blue-700 lg:p-0 dark:text-white"
-                                    aria-current="page"
+                                    className={`block py-2 pr-4 pl-3 rounded ${pathname === "/" ? "text-blue-700" : "text-gray-700"
+                                        } lg:p-0`}
                                 >
                                     <FormattedMessage id="home" />
                                 </Link>
                             </li>
                             <li>
                                 <Link
+                                    href="/AboutUs"
+                                    className={`block py-2 pr-4 pl-3 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-blue-700 lg:p-0 ${pathname === "/AboutUs" ? "text-blue-700" : "text-gray-700"
+                                        }`}
+                                >
+                                    <FormattedMessage id="about_us" />
+                                </Link>
+                            </li>
+                            <li>
+                                <Link
                                     href="/Services"
-                                    className="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-blue-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700"
+                                    className={`block py-2 pr-4 pl-3 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-blue-700 lg:p-0 ${pathname === "/Services" ? "text-blue-700" : "text-gray-700"
+                                        }`}
                                 >
                                     <FormattedMessage id="services" />
                                 </Link>
@@ -130,7 +143,8 @@ export default function Header() {
                             <li>
                                 <Link
                                     href="/Pricing"
-                                    className="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-blue-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700"
+                                    className={`block py-2 pr-4 pl-3 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-blue-700 lg:p-0 ${pathname === "/Pricing" ? "text-blue-700" : "text-gray-700"
+                                        }`}
                                 >
                                     <FormattedMessage id="pricing" />
                                 </Link>
@@ -138,18 +152,27 @@ export default function Header() {
                             <li>
                                 <Link
                                     href="/contactUs"
-                                    className="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-blue-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700"
-                                >
-                                    <FormattedMessage id="about_us" />
-                                </Link>
-                            </li>
-                            <li>
-                                <Link
-                                    href="/contactUs"
-                                    className="block py-2 pr-4 pl-3 text-gray-700 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-blue-700 lg:p-0 dark:text-gray-400 lg:dark:hover:text-white dark:hover:bg-gray-700 dark:hover:text-white lg:dark:hover:bg-transparent dark:border-gray-700"
+                                    className={`block py-2 pr-4 pl-3 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-blue-700 lg:p-0 ${pathname === "/contactUs" ? "text-blue-700" : "text-gray-700"
+                                        }`}
                                 >
                                     <FormattedMessage id="contact_us" />
                                 </Link>
+                            </li>
+                            <li>
+                                <div className="mx-2 lg:hidden block my-3">
+                                    <Link
+                                        href="/login"
+                                        className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-none font-medium rounded-lg text-sm px-4 lg:px-7 py-2 lg:py-2.5 mr-2 "
+                                    >
+                                        Members Portal
+                                    </Link>
+                                    <a
+                                        href="https://formulaonedrivingschool.trubicars.ca/auth/mfa/login.php"
+                                        className="text-blue-700 border border-blue-800 hover:bg-blue-800 hover:text-white focus:ring-none font-medium rounded-lg text-sm px-4 lg:px-7 py-2 lg:py-2.5 mr-2 "
+                                    >
+                                        Online Training Portal
+                                    </a>
+                                </div>
                             </li>
                         </ul>
                     </div>

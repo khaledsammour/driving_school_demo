@@ -11,9 +11,14 @@ export default function UserPage() {
     return (
         <div className="User py-6">
             <div className="overview">
-                <div className="title flex items-center mb-12">
-                    <BiHome className='h-9 w-9 bg-primary rounded-lg text-blue-600 flex items-center justify-center text-xl' />
-                    <span className="text text-2xl font-bold ml-2 text-blue-600">Dashboard</span>
+                <div className="flex justify-between items-center">
+                    <div className="title flex items-center mb-12">
+                        <BiHome className='h-9 w-9 bg-primary rounded-lg text-blue-600 flex items-center justify-center text-xl' />
+                        <span className="text text-2xl font-bold ml-2 text-blue-600">Dashboard</span>
+                    </div>
+                    <div className="">
+
+                    </div>
                 </div>
 
                 <div className="boxes grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3">
