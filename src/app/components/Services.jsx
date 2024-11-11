@@ -1,5 +1,5 @@
 import React from 'react';
-import ServicesImg from '../assets/Services.jpg';
+import ServicesImg from '../assets/services.jpg';
 import Image from 'next/image';
 import { FaCheckCircle } from "react-icons/fa";
 
