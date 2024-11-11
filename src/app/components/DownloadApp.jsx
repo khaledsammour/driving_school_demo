@@ -1,5 +1,5 @@
 import React from 'react';
-import DownloadAppImg from '../assets/DownloadApp.png';
+import DownloadAppImg from '../assets/downloadapp.png';
 import { FaCheckCircle } from "react-icons/fa";
 import { FcGoogle } from "react-icons/fc";
 import { FaApple } from "react-icons/fa";
