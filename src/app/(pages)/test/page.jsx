@@ -16,14 +16,65 @@ export default function Page() {
     const [error, setError] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [selectedItems, setSelectedItems] = useState([]);
+    const [items, setItems] = useState([
+        {
+            id: 1,
+            name: 'The consent process will be: (check all that are true)',
+            isCheckbox: false,
+            isRadio: false,
+            children: [
+                {
+                    id: 1.1,
+                    name: 'Waived (Use "CHECKLIST: Waiver of Consent HHS (HRP-300)," "CHECKLIST: Waiver of Consent Emergency Research (HRP-301), or "Checklist: Waiver of Consent Leftover Specimens (HRP-302)"',
+                    isCheckbox: true,
+                    isRadio: false,
+                    children: []
+                },
+                {
+                    id: 1.2,
+                    name: 'Obtained in accordance with all criteria in Section 2',
+                    isCheckbox: true,
+                    isRadio: false,
+                    children: []
+                },
+            ]
+        }
+    ]);
     const [checked, setChecked] = React.useState([false, false]);
 
-    const handleChange1 = (event) => {
-        setChecked([event.target.checked, event.target.checked]);
+    const handleChange1 = (arr) => {
+        setSelectedItems(prevSelectedItems => {
+            const localSelectedItems = [...prevSelectedItems];  // Create a copy of the previous state
+
+            arr.forEach(id => {
+                if (localSelectedItems.includes(id)) {
+                    // Remove the item if it's already selected
+                    localSelectedItems.splice(localSelectedItems.indexOf(id), 1);
+                } else {
+                    // Add the item if it's not selected
+                    localSelectedItems.push(id);
+                }
+            });
+
+            return localSelectedItems;  // Return the new state
+        });
     };
 
-    const handleChange2 = (event) => {
-        setChecked([event.target.checked, checked[1]]);
+    const handleChange2 = (id) => {
+        setSelectedItems(prevSelectedItems => {
+            const localSelectedItems = [...prevSelectedItems];  // Create a copy of the previous state
+
+            if (localSelectedItems.includes(id)) {
+                // Remove the item if it's already selected
+                localSelectedItems.splice(localSelectedItems.indexOf(id), 1);
+            } else {
+                // Add the item if it's not selected
+                localSelectedItems.push(id);
+            }
+
+            return localSelectedItems;  // Return the new state
+        });
     };
 
     const handleChange3 = (event) => {
@@ -58,19 +109,15 @@ export default function Page() {
         FileDownload(pdfBlob, fileName + '.pdf')
 
     };
-    const children = (
-        <Box sx={{ display: 'flex', flexDirection: 'column', ml: 3 }}>
-            <FormControlLabel
-                label='Waived (Use "CHECKLIST: Waiver of Consent HHS (HRP-300)," "CHECKLIST: Waiver of Consent Emergency Research (HRP-301), or "Checklist: Waiver of Consent Leftover Specimens (HRP-302)"'
-                control={<Checkbox checked={checked[0]} onChange={handleChange2} />}
-            />
-            <FormControlLabel
-                label="Obtained in accordance with all criteria in Section 2"
-                control={<Checkbox checked={checked[1]} onChange={handleChange3} />}
-            />
-        </Box>
-    );
+    function containsAny(arr1, arr2) {
+        return arr1.some(item => arr2.includes(item));
+    }
 
+    const getIndeterminate = (selectedItems, children) => {
+        const allChecked = children.every(child => selectedItems.includes(child.id));
+        const noneChecked = children.every(child => !selectedItems.includes(child.id));
+        return !allChecked && !noneChecked;
+    };
 
     return (
         <div className="min-h-screen bg-gray-100 text-gray-900 flex justify-center">
@@ -81,7 +128,30 @@ export default function Page() {
                             <div className="mx-auto">
                                 <form className='mt-12' onSubmit={handleSubmit}>
                                     <div>
-                                        <FormControlLabel
+                                        {items.map(e => (
+                                            <div key={e.id}>
+                                                <FormControlLabel
+                                                    label={e.name}
+                                                    control={
+                                                        <Checkbox
+                                                            // checked={getIndeterminate(selectedItems, e.children.map(c => c.id) )}
+                                                            checked={e.children.every(child => selectedItems.includes(child.id))}
+                                                            indeterminate={getIndeterminate(selectedItems, e.children.map(c => c.id))}
+                                                            onChange={() => handleChange1(e.children.map(c => c.id))}
+                                                        />
+                                                    }
+                                                />
+                                                <Box sx={{ display: 'flex', flexDirection: 'column', ml: 3 }}>
+                                                    {e.children.map(c => (<FormControlLabel
+                                                        key={c.id}
+                                                        label={c.name}
+                                                        checked={selectedItems.includes(c.id)}
+                                                        control={<Checkbox onChange={() => handleChange2(c.id)} />}
+                                                    />))}
+                                                </Box>
+                                            </div>
+                                        ))}
+                                        {/* <FormControlLabel
                                             label="The consent process will be: (check all that are true)"
                                             control={
                                                 <Checkbox
@@ -91,7 +161,7 @@ export default function Page() {
                                                 />
                                             }
                                         />
-                                        {children}
+                                        {children} */}
                                     </div>
                                     {/* <input
                                         className="w-full px-8 py-4 mb-3 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
