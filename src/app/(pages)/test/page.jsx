@@ -1,9 +1,8 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
-import ImgLogin from '@/app/assets/login.jpg';
 import { Login } from '@/app/services/authService';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
@@ -14,6 +13,7 @@ import FileDownload from 'js-file-download';
 import { Radio, RadioGroup } from '@mui/material';
 
 export default function Page() {
+    const [changed, setChanged] = useState(false);
     const [items, setItems] = useState([
         {
             id: '1',
@@ -21,6 +21,7 @@ export default function Page() {
             isCheckbox: false,
             isRadio: false,
             isChecked: false,
+            isShown: true,
             children: [
                 {
                     id: '1.1',
@@ -28,6 +29,7 @@ export default function Page() {
                     isCheckbox: true,
                     isRadio: false,
                     isChecked: false,
+                    isShown: true,
                     children: []
                 },
                 {
@@ -36,6 +38,7 @@ export default function Page() {
                     isCheckbox: true,
                     isRadio: false,
                     isChecked: false,
+                    isShown: true,
                     children: []
                 },
                 {
@@ -44,6 +47,7 @@ export default function Page() {
                     isCheckbox: true,
                     isRadio: false,
                     isChecked: false,
+                    isShown: true,
                     children: []
                 },
                 {
@@ -52,6 +56,7 @@ export default function Page() {
                     isCheckbox: true,
                     isRadio: false,
                     isChecked: false,
+                    isShown: true,
                     children: []
                 },
                 {
@@ -60,6 +65,7 @@ export default function Page() {
                     isCheckbox: false,
                     isRadio: true,
                     isChecked: false,
+                    isShown: true,
                     children: [
                         {
                             id: '1.5.1',
@@ -67,6 +73,7 @@ export default function Page() {
                             isCheckbox: false,
                             isRadio: false,
                             isChecked: false,
+                            isShown: true,
                             children: []
                         },
                         {
@@ -75,6 +82,7 @@ export default function Page() {
                             isCheckbox: false,
                             isRadio: false,
                             isChecked: false,
+                            isShown: true,
                             children: []
                         },
                     ]
@@ -85,6 +93,7 @@ export default function Page() {
                     isCheckbox: true,
                     isRadio: false,
                     isChecked: false,
+                    isShown: true,
                     children: []
                 },
                 {
@@ -93,6 +102,7 @@ export default function Page() {
                     isCheckbox: true,
                     isRadio: false,
                     isChecked: false,
+                    isShown: true,
                     children: []
                 },
                 {
@@ -101,6 +111,7 @@ export default function Page() {
                     isCheckbox: false,
                     isRadio: true,
                     isChecked: false,
+                    isShown: true,
                     children: [
                         {
                             id: '1.8.1',
@@ -108,6 +119,7 @@ export default function Page() {
                             isCheckbox: false,
                             isRadio: false,
                             isChecked: false,
+                            isShown: true,
                             children: []
                         },
                         {
@@ -116,6 +128,7 @@ export default function Page() {
                             isCheckbox: false,
                             isRadio: false,
                             isChecked: false,
+                            isShown: true,
                             children: []
                         },
                     ]
@@ -126,6 +139,8 @@ export default function Page() {
                     isCheckbox: true,
                     isRadio: false,
                     isChecked: false,
+                    isShown: true,
+                    // prev: ['1.8.1', '1.8.2'],
                     children: [
                         {
                             id: '1.9.1',
@@ -133,6 +148,8 @@ export default function Page() {
                             isCheckbox: false,
                             isRadio: false,
                             isChecked: false,
+                            isShown: false,
+                            prev: ['1.9'],
                             children: []
                         },
                         {
@@ -141,6 +158,8 @@ export default function Page() {
                             isCheckbox: false,
                             isRadio: false,
                             isChecked: false,
+                            isShown: false,
+                            prev: ['1.9'],
                             children: []
                         },
                     ]
@@ -151,6 +170,8 @@ export default function Page() {
                     isCheckbox: true,
                     isRadio: false,
                     isChecked: false,
+                    isShown: false,
+                    prev: ['1.9.1', '1.9.2'],
                     children: [
                         {
                             id: '1.10.1',
@@ -158,6 +179,8 @@ export default function Page() {
                             isCheckbox: false,
                             isRadio: false,
                             isChecked: false,
+                            isShown: false,
+                            prev: ['1.10'],
                             children: []
                         },
                         {
@@ -166,6 +189,8 @@ export default function Page() {
                             isCheckbox: false,
                             isRadio: false,
                             isChecked: false,
+                            isShown: false,
+                            prev: ['1.10'],
                             children: []
                         },
                         {
@@ -174,6 +199,8 @@ export default function Page() {
                             isCheckbox: false,
                             isRadio: false,
                             isChecked: false,
+                            isShown: false,
+                            prev: ['1.10'],
                             children: []
                         },
                     ]
@@ -186,6 +213,8 @@ export default function Page() {
             isCheckbox: false,
             isRadio: false,
             isChecked: false,
+            isShown: false,
+            prev: ['1.10.1', '1.10.2', '1.10.3'],
             children: [
                 {
                     id: '2.1',
@@ -193,6 +222,7 @@ export default function Page() {
                     isCheckbox: true,
                     isRadio: false,
                     isChecked: false,
+                    isShown: true,
                     children: []
                 },
                 {
@@ -201,6 +231,7 @@ export default function Page() {
                     isCheckbox: true,
                     isRadio: false,
                     isChecked: false,
+                    isShown: true,
                     children: []
                 },
                 {
@@ -209,6 +240,7 @@ export default function Page() {
                     isCheckbox: true,
                     isRadio: false,
                     isChecked: false,
+                    isShown: true,
                     children: []
                 },
                 {
@@ -217,6 +249,7 @@ export default function Page() {
                     isCheckbox: true,
                     isRadio: false,
                     isChecked: false,
+                    isShown: true,
                     children: []
                 },
                 {
@@ -225,6 +258,7 @@ export default function Page() {
                     isCheckbox: true,
                     isRadio: false,
                     isChecked: false,
+                    isShown: true,
                     children: []
                 },
                 {
@@ -233,6 +267,7 @@ export default function Page() {
                     isCheckbox: true,
                     isRadio: false,
                     isChecked: false,
+                    isShown: true,
                     children: []
                 },
             ]
@@ -243,6 +278,8 @@ export default function Page() {
             isCheckbox: false,
             isRadio: false,
             isChecked: false,
+            isShown: false,
+            prev: ['2.1','2.2','2.3','2.4','2.5','2.6'],
             children: [
                 {
                     id: '3.1',
@@ -250,6 +287,7 @@ export default function Page() {
                     isCheckbox: true,
                     isRadio: false,
                     isChecked: false,
+                    isShown: true,
                     children: []
                 },
                 {
@@ -258,6 +296,7 @@ export default function Page() {
                     isCheckbox: true,
                     isRadio: false,
                     isChecked: false,
+                    isShown: true,
                     children: []
                 },
                 {
@@ -266,6 +305,7 @@ export default function Page() {
                     isCheckbox: true,
                     isRadio: false,
                     isChecked: false,
+                    isShown: true,
                     children: []
                 },
                 {
@@ -274,6 +314,7 @@ export default function Page() {
                     isCheckbox: true,
                     isRadio: false,
                     isChecked: false,
+                    isShown: true,
                     children: []
                 },
                 {
@@ -282,6 +323,7 @@ export default function Page() {
                     isCheckbox: true,
                     isRadio: false,
                     isChecked: false,
+                    isShown: true,
                     children: []
                 },
                 {
@@ -290,6 +332,7 @@ export default function Page() {
                     isCheckbox: true,
                     isRadio: false,
                     isChecked: false,
+                    isShown: true,
                     children: []
                 },
                 {
@@ -298,32 +341,47 @@ export default function Page() {
                     isCheckbox: true,
                     isRadio: false,
                     isChecked: false,
+                    isShown: true,
                     children: []
                 },
             ]
         }
     ]);
 
-    const toggleChecked = (items, id, isRadio = false) => {
+    const toggleChecked = (items, id, val, isRadio = false) => {
         return items.map(item => {
             if (item.id === id) {
                 return {
                     ...item,
-                    isChecked: !item.isChecked
+                    isChecked: val,
+                    children: (item.children.length > 0 && val == false) ? item.children.map(e => { return { ...e, isChecked: false } }) : item.children
                 };
             } else {
                 if (isRadio) {
                     return {
                         ...item,
-                        isChecked: false
+                        isChecked: false,
+                        children: (item.children.length > 0) ? item.children.map(e => { return { ...e, isChecked: false } }) : item.children
                     };
                 }
             }
 
+            if (item.prev){
+                for (let i = 0; i < item.prev.length; i++) {
+                    const element = item.prev[i];
+                    if (element.includes(id) && val == false) {
+                        return {
+                            ...item,
+                            isChecked: false,
+                            children: (item.children.length > 0) ? item.children.map(e => { return { ...e, isChecked: false } }) : item.children
+                        };
+                    }
+                }
+            }
             if (item.children && item.children.length > 0) {
                 return {
                     ...item,
-                    children: toggleChecked(item.children, id, item.isRadio)
+                    children: toggleChecked(item.children, id, val, item.isRadio)
                 };
             }
 
@@ -331,12 +389,69 @@ export default function Page() {
         });
     };
 
-    const handleChange2 = (id) => {
-        setItems(prevSelectedItems => {
-            const updatedItems = toggleChecked(prevSelectedItems, id);
-            return updatedItems;
+    const toggleShown = (innerItems) => {
+        return innerItems.map(item => {
+            if (item?.prev) {
+                var checked = false
+                for (let i = 0; i < item?.prev.length; i++) {
+                    const element = item?.prev[i];
+                    var changedItem = findObject(element, items);
+                    if (changedItem?.isChecked == true) {
+                        checked = true
+                    }
+                }
+
+                if (item.children && item.children.length > 0) {
+                    return {
+                        ...item,
+                        isShown: checked,
+                        children: toggleShown(item.children)
+                    };
+                }
+                return {
+                    ...item,
+                    isShown: checked,
+                };
+            }
+            if (item.children && item.children.length > 0) {
+                return {
+                    ...item,
+                    children: toggleShown(item.children)
+                };
+            }
+            return item;
         });
     };
+
+    const findObject = (id, findItems) => {
+        for (const item of findItems) {
+            if (item.id === id) {
+                return item;
+            } else if (item.children && item.children.length > 0) {
+                const found = findObject(id, item.children);
+                if (found) return found;
+            }
+        }
+        return null;
+    };
+
+    const handleChange2 = (id, val) => {        
+        setItems(prevSelectedItems => {
+            const updatedItems = toggleChecked(prevSelectedItems, id, val);
+            return updatedItems;
+        });
+        setChanged(true)
+    };
+
+    useEffect(() => {
+        if (changed) {            
+            setItems(prevSelectedItems => {
+                const updatedItems = toggleShown(prevSelectedItems);
+                return updatedItems;
+            });
+            setChanged(false)
+        }
+    }, [changed])
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -381,7 +496,6 @@ export default function Page() {
                 }
             }
         }
-        console.log(localItems)
         var fileName = 'test'
         const response = await fetch('https://api.gardencity-jo.com/garden_city_api/GenerateTest', {
             method: 'POST',
@@ -401,15 +515,6 @@ export default function Page() {
         const pdfBlob = await response.blob();
         FileDownload(pdfBlob, fileName + '.pdf')
     };
-    function containsAny(arr1, arr2) {
-        return arr1.some(item => arr2.includes(item));
-    }
-
-    const getIndeterminate = (selectedItems, children) => {
-        const allChecked = children.every(child => selectedItems.includes(child.id));
-        const noneChecked = children.every(child => !selectedItems.includes(child.id));
-        return !allChecked && !noneChecked;
-    };
 
     return (
         <div className="min-h-screen bg-gray-100 text-gray-900 flex justify-center">
@@ -420,31 +525,31 @@ export default function Page() {
                             <div className="mx-auto">
                                 <form className='mt-12' onSubmit={handleSubmit}>
                                     <div>
-                                        {items.map(item => (
+                                        {items.filter(e => e.isShown == true).map(item => (
                                             <div key={item.id}>
                                                 <p className='font-semibold'>{item.id}. {item.name}</p>
-                                                {item.children.map(e => (<div key={e.id}>
+                                                {item.children.filter(e => e.isShown).map(e => (<div key={e.id}>
                                                     {e.isCheckbox ? <FormControlLabel
                                                         label={e.id + ' ' + e.name}
                                                         control={
                                                             <Checkbox
-                                                                onChange={() => handleChange2(e.id)}
+                                                                onChange={(event) => { handleChange2(e.id, event.target.checked) }}
                                                             />
                                                         }
                                                     /> : <p className='p-2'>{e.id} {e.name}</p>}
                                                     <Box sx={{ display: 'flex', flexDirection: 'column', ml: 3 }}>
-                                                        {e.isRadio && <RadioGroup onChange={(event) => handleChange2(event.target.value)}>
-                                                            {e.children.map(c => (<FormControlLabel
+                                                        {e.isRadio && <RadioGroup onChange={(event) => { handleChange2(event.target.value, true) }}>
+                                                            {e.children.filter(e => e.isShown).map(c => (<FormControlLabel
                                                                 key={c.id}
                                                                 label={c.name}
                                                                 value={c.id}
                                                                 control={<Radio />}
                                                             />))}
                                                         </RadioGroup>}
-                                                        {e.isCheckbox && e.children.map(c => (<FormControlLabel
+                                                        {e.isCheckbox && e.children.filter(e => e.isShown).map(c => (<FormControlLabel
                                                             key={c.id}
                                                             label={c.name}
-                                                            control={<Checkbox onChange={() => handleChange2(c.id)} />}
+                                                            control={<Checkbox onChange={(event) => { handleChange2(c.id, event.target.checked) }} />}
                                                         />))}
                                                     </Box>
                                                 </div>))}
