@@ -10,7 +10,7 @@ import Box from '@mui/material/Box';
 import Checkbox from '@mui/material/Checkbox';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import FileDownload from 'js-file-download';
-import { Radio, RadioGroup } from '@mui/material';
+import { Input, Radio, RadioGroup } from '@mui/material';
 
 export default function Page() {
     const [changed, setChanged] = useState(false);
@@ -73,7 +73,8 @@ export default function Page() {
                             isCheckbox: false,
                             isRadio: false,
                             isChecked: false,
-                            isShown: true,
+                            isShown: false,
+                            prev: ['1.5'],
                             children: []
                         },
                         {
@@ -82,7 +83,8 @@ export default function Page() {
                             isCheckbox: false,
                             isRadio: false,
                             isChecked: false,
-                            isShown: true,
+                            isShown: false,
+                            prev: ['1.5'],
                             children: []
                         },
                     ]
@@ -119,7 +121,8 @@ export default function Page() {
                             isCheckbox: false,
                             isRadio: false,
                             isChecked: false,
-                            isShown: true,
+                            isShown: false,
+                            prev: ['1.8'],
                             children: []
                         },
                         {
@@ -128,7 +131,8 @@ export default function Page() {
                             isCheckbox: false,
                             isRadio: false,
                             isChecked: false,
-                            isShown: true,
+                            isShown: false,
+                            prev: ['1.8'],
                             children: []
                         },
                     ]
@@ -171,7 +175,7 @@ export default function Page() {
                     isRadio: false,
                     isChecked: false,
                     isShown: false,
-                    prev: ['1.9.1', '1.9.2'],
+                    prev: ['1.9.2'],
                     children: [
                         {
                             id: '1.10.1',
@@ -214,7 +218,7 @@ export default function Page() {
             isRadio: false,
             isChecked: false,
             isShown: false,
-            prev: ['1.10.1', '1.10.2', '1.10.3'],
+            prev: ['1.9.2'],
             children: [
                 {
                     id: '2.1',
@@ -279,7 +283,7 @@ export default function Page() {
             isRadio: false,
             isChecked: false,
             isShown: false,
-            prev: ['2.1','2.2','2.3','2.4','2.5','2.6'],
+            prev: ['1.10.3'],
             children: [
                 {
                     id: '3.1',
@@ -347,6 +351,9 @@ export default function Page() {
             ]
         }
     ]);
+    const [irbId, setIrbId] = useState('');
+    const [nameOfReviewer, setNameOfReviewer] = useState('');
+    const [date, setDate] = useState('');
 
     const toggleChecked = (items, id, val, isRadio = false) => {
         return items.map(item => {
@@ -366,7 +373,7 @@ export default function Page() {
                 }
             }
 
-            if (item.prev){
+            if (item.prev) {
                 for (let i = 0; i < item.prev.length; i++) {
                     const element = item.prev[i];
                     if (element.includes(id) && val == false) {
@@ -435,7 +442,7 @@ export default function Page() {
         return null;
     };
 
-    const handleChange2 = (id, val) => {        
+    const handleChange2 = (id, val) => {
         setItems(prevSelectedItems => {
             const updatedItems = toggleChecked(prevSelectedItems, id, val);
             return updatedItems;
@@ -444,7 +451,7 @@ export default function Page() {
     };
 
     useEffect(() => {
-        if (changed) {            
+        if (changed) {
             setItems(prevSelectedItems => {
                 const updatedItems = toggleShown(prevSelectedItems);
                 return updatedItems;
@@ -503,7 +510,10 @@ export default function Page() {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                items: localItems
+                items: localItems,
+                irbId: irbId,
+                nameOfReviewer: nameOfReviewer,
+                date: date,
             }),
         });
 
@@ -516,6 +526,7 @@ export default function Page() {
         FileDownload(pdfBlob, fileName + '.pdf')
     };
 
+
     return (
         <div className="min-h-screen bg-gray-100 text-gray-900 flex justify-center">
             <div className="max-w-screen-xl m-0 sm:m-10 bg-white shadow sm:rounded-lg flex justify-center flex-1">
@@ -525,18 +536,47 @@ export default function Page() {
                             <div className="mx-auto">
                                 <form className='mt-12' onSubmit={handleSubmit}>
                                     <div>
+                                        <div className='flex w-full justify-between'>
+                                            <Input
+                                                placeholder='IRB ID:'
+                                                name='irb_id'
+                                                type='text'
+                                                value={irbId}
+                                                onChange={(e) => {
+                                                    setIrbId(e.target.value);
+                                                }}
+                                            />
+                                            <Input
+                                                placeholder='Name of reviewer:'
+                                                name='nameOfReviewer'
+                                                type='text'
+                                                value={nameOfReviewer}
+                                                onChange={(e) => {
+                                                    setNameOfReviewer(e.target.value);
+                                                }}
+                                            />
+                                            <Input
+                                                placeholder='Date:'
+                                                name='date'
+                                                type='text'
+                                                value={date}
+                                                onChange={(e) => {
+                                                    setDate(e.target.value);
+                                                }}
+                                            />
+                                        </div>
                                         {items.filter(e => e.isShown == true).map(item => (
                                             <div key={item.id}>
                                                 <p className='font-semibold'>{item.id}. {item.name}</p>
                                                 {item.children.filter(e => e.isShown).map(e => (<div key={e.id}>
-                                                    {e.isCheckbox ? <FormControlLabel
+                                                    {<FormControlLabel
                                                         label={e.id + ' ' + e.name}
                                                         control={
                                                             <Checkbox
                                                                 onChange={(event) => { handleChange2(e.id, event.target.checked) }}
                                                             />
                                                         }
-                                                    /> : <p className='p-2'>{e.id} {e.name}</p>}
+                                                    />}
                                                     <Box sx={{ display: 'flex', flexDirection: 'column', ml: 3 }}>
                                                         {e.isRadio && <RadioGroup onChange={(event) => { handleChange2(event.target.value, true) }}>
                                                             {e.children.filter(e => e.isShown).map(c => (<FormControlLabel
