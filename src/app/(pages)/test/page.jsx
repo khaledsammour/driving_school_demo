@@ -140,8 +140,8 @@ export default function Page() {
                 {
                     id: '1.9',
                     name: 'The consent process will be: (check all that are true)',
-                    isCheckbox: true,
-                    isRadio: false,
+                    isCheckbox: false,
+                    isRadio: true,
                     isChecked: false,
                     isShown: true,
                     // prev: ['1.8.1', '1.8.2'],
@@ -171,8 +171,8 @@ export default function Page() {
                 {
                     id: '1.10',
                     name: 'Consent documentation will be: (check all that are true)',
-                    isCheckbox: true,
-                    isRadio: false,
+                    isCheckbox: false,
+                    isRadio: true,
                     isChecked: false,
                     isShown: false,
                     prev: ['1.9.2'],
@@ -354,8 +354,9 @@ export default function Page() {
     const [irbId, setIrbId] = useState('');
     const [nameOfReviewer, setNameOfReviewer] = useState('');
     const [date, setDate] = useState('');
-
-    const toggleChecked = (items, id, val, isRadio = false) => {
+    const [showUnchecked, setShowUnchecked] = useState(false);
+    
+    const toggleChecked = (items, id, val, isRadio = false, parentId=null) => {
         return items.map(item => {
             if (item.id === id) {
                 return {
@@ -364,7 +365,7 @@ export default function Page() {
                     children: (item.children.length > 0 && val == false) ? item.children.map(e => { return { ...e, isChecked: false } }) : item.children
                 };
             } else {
-                if (isRadio) {
+                if (parentId && isRadio && item.prev && item.prev.includes(parentId.id)) {
                     return {
                         ...item,
                         isChecked: false,
@@ -388,7 +389,7 @@ export default function Page() {
             if (item.children && item.children.length > 0) {
                 return {
                     ...item,
-                    children: toggleChecked(item.children, id, val, item.isRadio)
+                    children: toggleChecked(item.children, id, val, item.isRadio, parentId)
                 };
             }
 
@@ -441,10 +442,23 @@ export default function Page() {
         }
         return null;
     };
-
+    const findParent = (items, id, parent = null) => {
+        for (let item of items) {
+            if (item.id === id) {
+                return parent; // Return the current parent
+            }
+            if (item.children && item.children.length > 0) {
+                const foundParent = findParent(item.children, id, item);
+                if (foundParent) return foundParent; // If found in deeper recursion, return it
+            }
+        }
+        return null; // Return null if not found
+    };
+    
     const handleChange2 = (id, val) => {
+        const parent = findParent(items, id);
         setItems(prevSelectedItems => {
-            const updatedItems = toggleChecked(prevSelectedItems, id, val);
+            const updatedItems = toggleChecked(prevSelectedItems, id, val,null, parent);
             return updatedItems;
         });
         setChanged(true)
@@ -454,6 +468,7 @@ export default function Page() {
         if (changed) {
             setItems(prevSelectedItems => {
                 const updatedItems = toggleShown(prevSelectedItems);
+                console.log('updatedItems: ',updatedItems);
                 return updatedItems;
             });
             setChanged(false)
@@ -469,36 +484,40 @@ export default function Page() {
                 children: child.children.map(grandchild => ({ ...grandchild }))
             }))
         }));
-        for (let index = 0; index < localItems.length; index++) {
-            var element = localItems[index];
-            for (let firstIndex = 0; firstIndex < element.children.length; firstIndex++) {
-                var firstElement = element.children[firstIndex];
-                if (firstElement.children.length > 0 && firstElement.isRadio == false) {
-                    for (let secondIndex = 0; secondIndex < firstElement.children.length; secondIndex++) {
-                        var secondElement = firstElement.children[secondIndex];
-                        if (secondElement.isChecked == true) {
-                        } else {
-                            firstElement.children.splice(secondIndex, 1);
-                            secondIndex--;
+        if (showUnchecked){
+
+        } else {
+            for (let index = 0; index < localItems.length; index++) {
+                var element = localItems[index];
+                for (let firstIndex = 0; firstIndex < element.children.length; firstIndex++) {
+                    var firstElement = element.children[firstIndex];
+                    if (firstElement.children.length > 0 && firstElement.isRadio == false) {
+                        for (let secondIndex = 0; secondIndex < firstElement.children.length; secondIndex++) {
+                            var secondElement = firstElement.children[secondIndex];
+                            if (secondElement.isChecked == true) {
+                            } else {
+                                firstElement.children.splice(secondIndex, 1);
+                                secondIndex--;
+                            }
                         }
                     }
-                }
-                if (firstElement.children.length == 0) {
-                    if (firstElement.isChecked == true) {
-                    } else {
-                        element.children.splice(firstIndex, 1);
-                        firstIndex--;
+                    if (firstElement.children.length == 0) {
+                        if (firstElement.isChecked == true) {
+                        } else {
+                            element.children.splice(firstIndex, 1);
+                            firstIndex--;
+                        }
                     }
-                }
-                if (firstElement.isRadio == true) {
-                    var found = firstElement.children.find(e => e.isChecked == true);
-                    if (found) {
-                        firstElement.name = found?.name;
-                        firstElement.isChecked = true;
-                        firstElement.children = [];
-                    } else {
-                        element.children.splice(firstIndex, 1);
-                        firstIndex--;
+                    if (firstElement.isRadio == true) {
+                        var found = firstElement.children.find(e => e.isChecked == true && e.isShown == true);
+                        if (found  && firstElement.isShown == true) {
+                            firstElement.name = found?.name;
+                            firstElement.isChecked = true;
+                            firstElement.children = [];
+                        } else {
+                            element.children.splice(firstIndex, 1);
+                            firstIndex--;
+                        }
                     }
                 }
             }
@@ -596,6 +615,10 @@ export default function Page() {
                                             </div>
                                         ))}
                                     </div>
+                                    <FormControlLabel
+                                        label={'Show unchecked items'}
+                                        control={<Checkbox onChange={(event) => { setShowUnchecked(event.target.checked) }} />}
+                                    />
                                     <button type='submit' className="mt-5 tracking-wide font-semibold bg-indigo-500 text-gray-100 w-full py-4 rounded-lg hover:bg-indigo-700 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none">
                                         <svg
                                             className="w-6 h-6"
