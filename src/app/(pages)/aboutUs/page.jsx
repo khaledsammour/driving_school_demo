@@ -1,5 +1,5 @@
 import AboutSection from '@/app/components/AboutSection'
-import AlreadyAStudent from '@/app/components/AlreadyAstudent'
+import AlreadyAStudent from '@/app/components/AlreadyAStudent'
 import OurCore from '@/app/components/OurCore'
 import ReadyToLearnDriving from '@/app/components/ReadyToLearnDriving'
 import WhyChooseUs from '@/app/components/WhyChooseUs'
