@@ -124,8 +124,8 @@ export default function Header() {
                             </li>
                             <li>
                                 <Link
-                                    href="/AboutUs"
-                                    className={`block py-2 pr-4 pl-3 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-blue-700 lg:p-0 ${pathname === "/AboutUs" ? "text-blue-700" : "text-gray-700"
+                                    href="/aboutUs"
+                                    className={`block py-2 pr-4 pl-3 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-blue-700 lg:p-0 ${pathname === "/aboutUs" ? "text-blue-700" : "text-gray-700"
                                         }`}
                                 >
                                     <FormattedMessage id="about_us" />

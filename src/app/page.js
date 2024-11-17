@@ -4,6 +4,7 @@ import Services from "./components/Services";
 import Pricing from "./components/Priceing";
 import Testimonials from "./components/Testimonials";
 import DownloadApp from "./components/DownloadApp";
+import WhyChooseUs from "./components/WhyChooseUs";
 
 export default function Home() {
   return (
@@ -12,6 +13,7 @@ export default function Home() {
 
     <Hero/>
     <Services/>
+    <WhyChooseUs/>
     <Pricing/>
     <DownloadApp/>
     <Testimonials/>

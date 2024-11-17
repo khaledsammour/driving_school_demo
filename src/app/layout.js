@@ -3,6 +3,7 @@ import "./globals.css";
 import ProviderLang from "./ProviderLang";
 import { Toaster } from "react-hot-toast";
 import LayoutProvider from "./components/LayoutProvider";
+import ScrollToTopButton from "./components/ScrollToTopButton";
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
@@ -28,7 +29,8 @@ export default function RootLayout({ children }) {
       <html lang="en" suppressHydrationWarning={true}>
         <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
          <LayoutProvider>
-  <Toaster position="top-center" reverseOrder={false} />
+          <ScrollToTopButton/>
+         <Toaster position="top-center" reverseOrder={false} />
           {children}
          </LayoutProvider>
         </body>

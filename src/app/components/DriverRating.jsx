@@ -1,7 +1,9 @@
 "use client";
 import React, { useState } from "react";
 
-const DriverRating = ({ onClose, type }) => {
+const DriverRating = ({ onClose, type
+    
+ }) => {
     const [rating, setRating] = useState(0);
     const [message, setMessage] = useState("");
 
