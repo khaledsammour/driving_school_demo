@@ -11,7 +11,7 @@ import Loader from "./loader";
 import toast from "react-hot-toast";
 import Link from "next/link";
 
-export default function TableLessons() {
+export default function TableLessons({ type }) {
     const [lessons, setLessons] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -85,12 +85,12 @@ export default function TableLessons() {
                                     <IconButton
                                         color="primary"
                                     >
-                                        <Link href={`/user/lessons/edit/${lesson.id}`}><FaEdit /></Link>
+                                        <Link href={`/${type}/lessons/edit/${lesson.id}`}><FaEdit /></Link>
                                     </IconButton>
                                     <IconButton
                                         color="secondary"
                                     >
-                                        <Link href={`/user/lessons/view/${lesson.id}`}><LuView /></Link>
+                                        <Link href={`/${type}/lessons/view/${lesson.id}`}><LuView /></Link>
                                     </IconButton>
                                     <IconButton
                                         onClick={(e) => handleDelete(e, lesson.id)}

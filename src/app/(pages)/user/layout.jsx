@@ -21,9 +21,7 @@ export default function Layout({ children }) {
     const [ShowRate, setShowRate] = useState(false);
     const router = useRouter();
 
-    useEffect(() => {
-        setIsPopupOpen(true);
-    }, []);
+
 
     const toggleSidebar = () => {
         setIsSidebarOpen(!isSidebarOpen);

@@ -1,11 +1,18 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { addDoc, collection, doc, getDoc, serverTimestamp } from "firebase/firestore";
+import toast from "react-hot-toast";
+import { db } from "@/app/firebase";
 
-const DriverRating = ({ onClose, type
-    
- }) => {
+const DriverRating = ({ onClose }) => {
     const [rating, setRating] = useState(0);
     const [message, setMessage] = useState("");
+    const [userId, setUserId] = useState("");
+    const [users, setUsers] = useState({
+        first_name: "",
+        middle_name: "",
+        type: "",
+    });
 
     const handleRating = (rate) => {
         setRating(rate);
@@ -15,19 +22,76 @@ const DriverRating = ({ onClose, type
         setMessage(event.target.value);
     };
 
-    const handleSubmit = () => {
-        console.log("Rating:", rating);
-        console.log("Message:", message);
+    useEffect(() => {
+        // Get user ID from localStorage
+        const storedUserId = localStorage.getItem("user");
+        if (storedUserId) {
+            setUserId(storedUserId);
+        }
+    }, []);
 
-        onClose();
+    useEffect(() => {
+        // Fetch user data if userId is available
+        const fetchUser = async () => {
+            if (!userId) return; // If no userId, return early
+
+            try {
+                const docRef = doc(db, "users", userId);
+                const docSnap = await getDoc(docRef);
+
+                if (docSnap.exists()) {
+                    const userData = docSnap.data();
+                    setUsers({
+                        first_name: userData.first_name || "Unknown",
+                        middle_name: userData.middle_name || "Unknown",
+                        type: userData.type || "default", // Add a fallback value for type
+                    });
+                } else {
+                    console.log("No such document!");
+                    toast.error("User data not found.");
+                }
+            } catch (error) {
+                console.error("Error fetching user:", error);
+                toast.error("Error fetching user data.");
+            }
+        };
+
+        fetchUser();
+    }, [userId]); // Fetch data whenever the userId changes
+
+    const handleSubmit = async () => {
+        // Check if necessary fields are filled
+        if (!users.first_name || !users.middle_name || !users.type || rating === 0 || !message) {
+            toast.error("Please complete all fields before submitting your rating.");
+            return;
+        }
+
+        const userData = {
+            name: `${users.first_name} ${users.middle_name}`,
+            type: users.type,
+            rating: rating.toString(),
+            description: message,
+            gallery: "https://ibb.co/9bS9d6x", // Static gallery link (ensure it's correct)
+            createdAt: new Date().toISOString(),
+            id: userId,
+        };
+
+        try {
+            // Add data to Firestore collection
+            const docRef = await addDoc(collection(db, "ratings"), userData);
+            toast.success("Rating added successfully!");
+            console.log("Document written with ID: ", docRef.id);
+            onClose(); // Close the rating form after submission
+        } catch (e) {
+            console.error("Error adding document: ", e);
+            toast.error("An error occurred while submitting your rating.");
+        }
     };
 
     return (
-        <div className="fixed inset-0  top-0 right-[-24px] bg-black bg-opacity-50 py-6 flex flex-col justify-center sm:py-12 z-50">
+        <div className="fixed inset-0 top-0 right-[-24px] bg-black bg-opacity-50 py-6 flex flex-col justify-center sm:py-12 z-50">
             <div className="py-3 sm:max-w-lg md:max-w-xl sm:mx-auto w-full">
                 <div className="bg-white mx-5 lg:left-0 md:left-0 left-[58px] w-[300px] sm:min-w-[300px] md:min-w-[450px] flex flex-col rounded-xl shadow-lg relative">
-
-                    {/* Close Button */}
                     <button
                         onClick={onClose}
                         className="absolute top-4 right-4 text-gray-500 hover:text-gray-800 focus:outline-none"

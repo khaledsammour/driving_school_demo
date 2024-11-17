@@ -1,8 +1,7 @@
 import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore, enableIndexedDbPersistence } from "firebase/firestore";
-import { getFunctions } from "firebase/functions"; // Import Firebase Functions
-
+import {getStorage} from "firebase/storage";
 const firebaseConfig = {
   apiKey: "AIzaSyDlav-JbYFsrAW1iYLSEapo8m7P0UA_Ccc",
   authDomain: "formula-one-d1f9a.firebaseapp.com",
@@ -16,7 +15,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const db = getFirestore(app);
-export const functions = getFunctions(app); 
+export const storage = getStorage(app); 
 
 enableIndexedDbPersistence(db).catch((err) => {
   if (err.code === "failed-precondition") {

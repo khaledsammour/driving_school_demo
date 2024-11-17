@@ -14,7 +14,7 @@ export default function page() {
                 </div>
 
                 <div className="table w-full py-6">
-                    <TableLessons type="driver" />
+                    <TableLessons type="admin" />
                 </div>
             </div>
         </>

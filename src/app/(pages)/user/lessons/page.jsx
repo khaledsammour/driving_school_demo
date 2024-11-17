@@ -26,7 +26,7 @@ export default function page() {
                     </div>
                 </div>
                 <div className="table w-full py-6">
-                    <TableLessons />
+                    <TableLessons type="user" />
                 </div>
             </div>
         </>

@@ -2,6 +2,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import LottieHandler from './LottieHandler';
+import HeroAnimate from "@/app/assets/hero.json";
 import Link from 'next/link';
 
 export default function Hero() {
@@ -38,12 +39,12 @@ export default function Hero() {
                         </p>
                         <div className="mt-5 sm:mt-8 sm:flex sm:justify-center lg:justify-start">
                             <div className="rounded-md shadow">
-                                <a
-                                    href="#"
+                                <Link
+                                    href="/MapDriver"
                                     className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-gray-800 hover:bg-gray-600 md:py-4 md:text-lg md:px-10"
                                 >
                                     Get started
-                                </a>
+                                </Link>
                             </div>
                             <div className="mt-3 sm:mt-0 sm:ml-3">
                                 <Link
@@ -62,7 +63,7 @@ export default function Hero() {
                         variants={containerVariants}
                         transition={{ duration: 0.5 }}
                     >
-                        <LottieHandler />
+                        <LottieHandler animate={HeroAnimate} />
                     </motion.div>
                 </motion.div>
             </section>
