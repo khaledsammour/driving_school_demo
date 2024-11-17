@@ -33,7 +33,7 @@ export default function OurCore() {
                     </div>
                     <div className="container mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 px-4">
                         {features.map((feature, index) => (
-                            <div className="flex flex-col items-center text-center p-6 bg-white shadow-md rounded-lg">
+                            <div key={index} className="flex flex-col items-center text-center p-6 bg-white shadow-md rounded-lg">
                                 <div className="flex items-center justify-center w-14 h-14 bg-red-500 text-white rounded-full mb-4">
                                     {feature.icon}
                                 </div>
