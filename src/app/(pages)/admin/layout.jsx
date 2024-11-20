@@ -16,6 +16,7 @@ import toast from "react-hot-toast";
 import { useRouter } from 'next/navigation';
 import NavDrobdown from "@/app/components/NavDrobdown";
 import { MdOutlinePlayLesson } from "react-icons/md";
+import { VscPreview } from "react-icons/vsc";
 export default function Layout({ children }) {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const router = useRouter();
@@ -121,6 +122,12 @@ export default function Layout({ children }) {
                                 <Link href="/admin/lessons" className={`flex items-center p-3 ${!isSidebarOpen ? "justify-center" : "justify-start"}`}>
                                     <MdOutlinePlayLesson className="w-6 h-6" />
                                     <span className={`ml-3 text-base ${!isSidebarOpen && "hidden"} transition-all duration-300`}>Lessons</span>
+                                </Link>
+                            </li>
+                            <li className="text-black hover:text-blue-500 cursor-pointer">
+                                <Link href="/admin/testimonials" className={`flex items-center p-3 ${!isSidebarOpen ? "justify-center" : "justify-start"}`}>
+                                    <VscPreview className="w-6 h-6" />
+                                    <span className={`ml-3 text-base ${!isSidebarOpen && "hidden"} transition-all duration-300`}>Testimonials</span>
                                 </Link>
                             </li>
                         </ul>

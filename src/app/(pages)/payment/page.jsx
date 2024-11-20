@@ -1,133 +1,58 @@
 "use client";
-import React, { useState } from 'react';
+
+import React from "react";
+import { useSearchParams } from "next/navigation";
+import { Elements } from "@stripe/react-stripe-js";
+import { loadStripe } from "@stripe/stripe-js";
+import CheckoutPage from "@/app/components/CheckoutPage";
+
+if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) {
+    throw new Error("NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY is not defined");
+}
+
+const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
 export default function Page() {
-    const [paymentMethod, setPaymentMethod] = useState('creditCard');
+    const searchParams = useSearchParams();
+    const namePackage = searchParams.get("namePackage");
+    const pricePackage = parseFloat(searchParams.get("pricePackage") || 0);
 
     return (
-        <div className="font-[sans-serif] bg-white/20 p-4 py-10 ">
+        <div className="font-sans bg-white/20 p-4 py-10">
             <div className="md:max-w-5xl max-w-xl mx-auto">
                 <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <div className="lg:col-span-2 max-md:order-1">
+                    <div className="lg:col-span-2 order-1">
                         <h2 className="text-3xl font-extrabold text-gray-800">Make a Payment</h2>
                         <p className="text-gray-800 text-sm mt-4">
                             Complete your transaction swiftly and securely with our easy-to-use payment process.
                         </p>
-
-                        <form className="mt-8 max-w-lg">
-                            <div className="grid gap-4">
-                                {/* Personal Data */}
-                                <div>
-                                    <input
-                                        type="text"
-                                        placeholder="Full Name"
-                                        className="px-4 py-3.5 bg-gray-100 text-gray-800 w-full text-sm border rounded-md focus:border-purple-500 focus:bg-transparent outline-none"
-                                    />
-                                </div>
-                                <div>
-                                    <input
-                                        type="email"
-                                        placeholder="Email Address"
-                                        className="px-4 py-3.5 bg-gray-100 text-gray-800 w-full text-sm border rounded-md focus:border-purple-500 focus:bg-transparent outline-none"
-                                    />
-                                </div>
-                                <div>
-                                    <input
-                                        type="text"
-                                        placeholder="Country"
-                                        className="px-4 py-3.5 bg-gray-100 text-gray-800 w-full text-sm border rounded-md focus:border-purple-500 focus:bg-transparent outline-none"
-                                    />
-                                </div>
-                                <div>
-                                    <input
-                                        type="text"
-                                        placeholder="City"
-                                        className="px-4 py-3.5 bg-gray-100 text-gray-800 w-full text-sm border rounded-md focus:border-purple-500 focus:bg-transparent outline-none"
-                                    />
-                                </div>
-
-                                {/* Payment Method Selector */}
-                                <div className="mt-4">
-                                    <label className="block text-sm font-medium text-gray-800 mb-2">Payment Method</label>
-                                    <select
-                                        value={paymentMethod}
-                                        onChange={(e) => setPaymentMethod(e.target.value)}
-                                        className="px-4 py-3.5 bg-gray-100 text-gray-800 w-full text-sm border rounded-md focus:border-purple-500 focus:bg-transparent outline-none"
-                                    >
-                                        <option value="creditCard">Credit Card</option>
-                                        <option value="paypal">PayPal</option>
-                                        <option value="bankTransfer">Bank Transfer</option>
-                                    </select>
-                                </div>
-
-                                {/* Card Information */}
-                                {paymentMethod === 'creditCard' && (
-                                    <>
-                                        <div>
-                                            <input
-                                                type="text"
-                                                placeholder="Cardholder's Name"
-                                                className="px-4 py-3.5 bg-gray-100 text-gray-800 w-full text-sm border rounded-md focus:border-purple-500 focus:bg-transparent outline-none"
-                                            />
-                                        </div>
-                                        <div className="flex bg-gray-100 border rounded-md focus-within:border-purple-500 focus-within:bg-transparent overflow-hidden">
-                                            <svg xmlns="http://www.w3.org/2000/svg" className="w-6 ml-3" viewBox="0 0 32 20">
-                                                <circle cx="10" cy="10" r="10" fill="#f93232" />
-                                                <path
-                                                    fill="#fed049"
-                                                    d="M22 0c-2.246 0-4.312.75-5.98 2H16v.014c-.396.298-.76.634-1.107.986h2.214c.308.313.592.648.855 1H14.03a9.932 9.932 0 0 0-.667 1h5.264c.188.324.365.654.518 1h-6.291a9.833 9.833 0 0 0-.377 1h7.044c.104.326.186.661.258 1h-7.563c-.067.328-.123.66-.157 1h7.881c.039.328.06.661.06 1h-8c0 .339.027.67.06 1h7.882c-.038.339-.093.672-.162 1h-7.563c.069.341.158.673.261 1h7.044a9.833 9.833 0 0 1-.377 1h-6.291c.151.344.321.678.509 1h5.264a9.783 9.783 0 0 1-.669 1H14.03c.266.352.553.687.862 1h2.215a10.05 10.05 0 0 1-1.107.986A9.937 9.937 0 0 0 22 20c5.523 0 10-4.478 10-10S27.523 0 22 0z"
-                                                />
-                                            </svg>
-                                            <input
-                                                type="number"
-                                                placeholder="Card Number"
-                                                className="px-4 py-3.5 text-gray-800 w-full text-sm outline-none bg-transparent"
-                                            />
-                                        </div>
-                                        <div className="grid grid-cols-2 gap-4">
-                                            <div>
-                                                <input
-                                                    type="number"
-                                                    placeholder="EXP."
-                                                    className="px-4 py-3.5 bg-gray-100 text-gray-800 w-full text-sm border rounded-md focus:border-purple-500 focus:bg-transparent outline-none"
-                                                />
-                                            </div>
-                                            <div>
-                                                <input
-                                                    type="number"
-                                                    placeholder="CVV"
-                                                    className="px-4 py-3.5 bg-gray-100 text-gray-800 w-full text-sm border rounded-md focus:border-purple-500 focus:bg-transparent outline-none"
-                                                />
-                                            </div>
-                                        </div>
-                                    </>
-                                )}
-                            </div>
-
-                            <button
-                                type="button"
-                                className="mt-8 w-40 py-3.5 text-sm bg-purple-500 text-white rounded-md hover:bg-purple-600 tracking-wide"
+                        <div className="mt-8">
+                            <Elements
+                                stripe={stripePromise}
+                                options={{
+                                    mode: "payment",
+                                    amount: pricePackage,
+                                    currency: "usd",
+                                }}
                             >
-                                Pay
-                            </button>
-                        </form>
+                                <CheckoutPage amount={pricePackage} />
+                            </Elements>
+                        </div>
                     </div>
-
                     <div className="bg-gray-100 p-6 rounded-md">
                         <h2 className="text-3xl font-extrabold text-gray-800">Order Summary</h2>
-
                         <ul className="text-gray-800 mt-8 space-y-4">
                             <li className="flex flex-wrap gap-4 text-sm">
-                                Package Name <span className="ml-auto font-bold">Plus</span>
+                                Package Name <span className="ml-auto font-bold">{namePackage}</span>
                             </li>
                             <li className="flex flex-wrap gap-4 text-sm">
-                                Package Price  <span className="ml-auto font-bold">$90.00</span>
+                                Package Price <span className="ml-auto font-bold">${pricePackage.toFixed(2)}</span>
                             </li>
                             <li className="flex flex-wrap gap-4 text-sm">
-                                Tax <span className="ml-auto font-bold">$10.00</span>
+                                Tax <span className="ml-auto font-bold">$0.00</span>
                             </li>
                             <li className="flex flex-wrap gap-4 text-sm font-bold border-t-2 pt-4">
-                                Total <span className="ml-auto">$250.00</span>
+                                Total <span className="ml-auto">${pricePackage.toFixed(2)}</span>
                             </li>
                         </ul>
                     </div>
@@ -135,4 +60,4 @@ export default function Page() {
             </div>
         </div>
     );
-};
+}

@@ -42,7 +42,6 @@ export default function Pricing() {
                 {Packages.map((item) => (
                     <PricingCard
                         key={item.id}
-                        id={item.id}
                         Tittle={item.name}
                         price={item.price}
                         discount={item.discount}

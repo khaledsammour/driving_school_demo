@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useRef } from "react";
-import { profiles } from "@/app/utils/dataTestimonal";
+import React, { useRef, useEffect } from "react";
+// import { profiles } from "@/app/utils/dataTestimonal";
 import "swiper/css";
 import "swiper/css/pagination";
 import Image from "next/image";
@@ -12,11 +12,26 @@ import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 import { Pagination, Navigation, Autoplay } from 'swiper/modules';
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
+import { collection, deleteDoc, doc, getDocs } from "firebase/firestore";
+import { db } from "../firebase";
 
 export default function Testimonials() {
     const swiperRef = useRef(null);
+    const [AllTestimonials, setAllTestimonials] = React.useState([]);
 
-  
+    const fetchTestimonials = async () => {
+        try {
+            const querySnapshot = await getDocs(collection(db, "testimonials"));
+            const testimonials = querySnapshot.docs.map((doc) => doc.data());
+            setAllTestimonials(testimonials);
+        } catch (error) {
+            console.error("Error fetching testimonials:", error);
+        }
+    }
+
+    useEffect(() => {
+        fetchTestimonials();
+    }, []);
     return (
         <div className="Testimonials py-10 px-5">
             <div className="text">
@@ -57,12 +72,12 @@ export default function Testimonials() {
                         className="mySwiper"
                         data-aos="fade-up"
                     >
-                        {profiles.map((item) => (
-                            <SwiperSlide key={item.id}>
+                        {AllTestimonials.map((item, index) => (
+                            <SwiperSlide key={index}>
                                 <div className="bg-white shadow-xl rounded-lg p-6">
                                     <div className="flex justify-center mb-4">
                                         <Image
-                                            src={item.img}
+                                            src={item.img || "https://mdbcdn.b-cdn.net/img/Photos/Avatars/img%20(32).webp"}
                                             className="rounded-full"
                                             width={100}
                                             height={100}
@@ -73,7 +88,7 @@ export default function Testimonials() {
                                         {item.name}
                                     </h5>
                                     <h6 className="font-semibold text-center my-2">
-                                        {item.position}
+                                        {item.type}
                                     </h6>
                                     <div className="flex justify-center mb-4 text-blue-500">
                                         {[...Array(item.rate)].map((_, index) => (
