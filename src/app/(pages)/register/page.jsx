@@ -5,13 +5,18 @@ import Link from 'next/link';
 import ImgSignUp from '@/app/assets/signUp.jpg';
 import toast from 'react-hot-toast';
 import { Register } from '@/app/services/authService';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 export default function Page() {
     const [error, setError] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [type, setType] = useState('');
     const router = useRouter();
+    const searchParams = useSearchParams();
+
+
+
+    console.log(searchParams.has("namePackage"));
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -34,7 +39,7 @@ export default function Page() {
             return;
         }
 
-        const phonePattern = /^\d{11}$/;
+        const phonePattern = /^\d{21}$/;
         if (!phonePattern.test(phone)) {
             setError('Please enter a valid phone number (10 digits).');
             toast.error('Please enter a valid phone number (10 digits).');
@@ -58,7 +63,11 @@ export default function Page() {
             });
 
             toast.success("User registered successfully");
-            router.push('/');
+            if (searchParams.has("namePackage") && searchParams.has("pricePackage")) {
+                router.push(`/payment?namePackage=${searchParams.get("namePackage")}&pricePackage=${searchParams.get("pricePackage")}`);
+            } else {
+                router.push('/');
+            }
 
             if (typeof window !== "undefined") {
                 localStorage.setItem('typeUser', type || 'admin');
@@ -138,7 +147,7 @@ export default function Page() {
                                     </p>
                                     <p className="mt-8 text-md text-gray-600 text-center">
                                         Already have an account?
-                                        <Link href="/login" className="border-b border-gray-500 border-dotted"> Sign in </Link>
+                                        <Link href={`/login`} className="border-b border-gray-500 border-dotted"> Sign in </Link>
                                     </p>
                                 </form>
                             </div>

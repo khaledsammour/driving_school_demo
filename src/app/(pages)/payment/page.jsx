@@ -27,15 +27,8 @@ export default function Page() {
                             Complete your transaction swiftly and securely with our easy-to-use payment process.
                         </p>
                         <div className="mt-8">
-                            <Elements
-                                stripe={stripePromise}
-                                options={{
-                                    mode: "payment",
-                                    amount: pricePackage,
-                                    currency: "usd",
-                                }}
-                            >
-                                <CheckoutPage amount={pricePackage} />
+                            <Elements stripe={stripePromise}>
+                                <CheckoutPage amount={pricePackage} lessonPackageName={namePackage} />
                             </Elements>
                         </div>
                     </div>

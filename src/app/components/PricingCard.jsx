@@ -1,8 +1,14 @@
+"use client";
 import Link from 'next/link';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 
 export default function PricingCard({ id, Tittle, price, discount, features }) {
-    // console.log("features:", features);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+    useEffect(() => {
+        const IdUser = localStorage.getItem('IdUser');
+        setIsAuthenticated(!!IdUser);
+    }, []);
 
     return (
         <div className="m-4 flex flex-col justify-between p-5 bg-white border rounded shadow-sm" key={id}>
@@ -51,14 +57,13 @@ export default function PricingCard({ id, Tittle, price, discount, features }) {
             <div>
                 <Link
                     href={{
-                        pathname: '/payment',
+                        pathname: `${isAuthenticated ? '/payment' : '/login'}`,
                         query: { namePackage: Tittle, pricePackage: price },
                     }}
                     className="inline-flex items-center justify-center w-full h-12 px-6 mb-4 font-medium tracking-wide text-white transition duration-200 bg-gray-800 rounded shadow-md hover:bg-gray-900 focus:shadow-outline focus:outline-none"
                 >
                     Get started
                 </Link>
-
             </div>
         </div>
     );

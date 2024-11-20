@@ -2,6 +2,7 @@ import React from 'react';
 import ServicesImg from '../assets/services.jpg';
 import Image from 'next/image';
 import { FaCheckCircle } from "react-icons/fa";
+import Link from 'next/link';
 
 export default function Services() {
     return (
@@ -52,12 +53,12 @@ export default function Services() {
                         </li>
                     </ul>
                     <div className="mt-6">
-                        <a
-                            href="#"
+                        <Link
+                            href="/MapDriver"
                             className="w-full flex items-center justify-center px-8 py-3 border border-transparent text-base font-medium rounded-md text-white bg-gray-800 hover:bg-gray-600 transition duration-200 md:py-4 md:text-lg md:px-10"
                         >
                             Get started
-                        </a>
+                        </Link>
                     </div>
                 </div>
             </div>

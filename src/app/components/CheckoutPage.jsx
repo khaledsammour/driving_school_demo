@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useStripe, useElements, PaymentElement } from "@stripe/react-stripe-js";
 import toast from "react-hot-toast";
 
-export default function CheckoutPage({ amount }) {
+export default function CheckoutPage({ amount, lessonPackageName }) {
     const stripe = useStripe();
     const elements = useElements();
 
@@ -14,12 +14,12 @@ export default function CheckoutPage({ amount }) {
     useEffect(() => {
         async function initializePayment() {
             try {
-                const res = await fetch("/api/checkout", {
+                const res = await fetch("http://localhost:3000//api/checkout", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                     },
-                    body: JSON.stringify({ amount }),
+                    body: JSON.stringify({ amount, lessonPackageName }),
                 });
 
                 if (!res.ok) {
@@ -27,19 +27,21 @@ export default function CheckoutPage({ amount }) {
                 }
 
                 const data = await res.json();
-                setClientSecret(data.clientSecret);
+                setClientSecret(data.id);
             } catch (error) {
                 console.error("Error initializing payment:", error.message);
                 toast.error("Failed to initialize payment. Please try again.");
             }
         }
 
-        initializePayment();
-    }, [amount]);
+        if (amount && lessonPackageName) {
+            initializePayment();
+        }
+    }, [amount, lessonPackageName]);
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        if (!stripe || !elements) return;
+        if (!stripe || !elements || !clientSecret) return;
 
         setLoading(true);
 
@@ -47,7 +49,7 @@ export default function CheckoutPage({ amount }) {
             elements,
             clientSecret,
             confirmParams: {
-                return_url: `http://localhost:3000/payment-success?amount=${amount}`,
+                return_url: `http://localhost:3000/payment-success?amount=${amount}&lessonPackageName=${lessonPackageName}`,
             },
         });
 
@@ -72,6 +74,7 @@ export default function CheckoutPage({ amount }) {
 
     return (
         <div className="CheckoutPage">
+            <h2 className="text-center text-2xl mb-4">{`Pay for ${lessonPackageName}`}</h2>
             <form onSubmit={handleSubmit}>
                 <PaymentElement />
                 <button

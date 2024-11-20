@@ -6,13 +6,17 @@ import Link from 'next/link';
 import ImgLogin from '@/app/assets/login.jpg';
 import { Login } from '@/app/services/authService';
 import toast from 'react-hot-toast';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 export default function Page() {
     const [error, setError] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const searchParams = useSearchParams();
 
+
+
+    console.log(searchParams.has("namePackage") && searchParams.has("pricePackage"));
     const router = useRouter();
     const validateEmail = (email) => {
         const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -45,7 +49,11 @@ export default function Page() {
 
 
             toast.success('Successfully logged in!');
-            router.push('/');
+            if (searchParams.has("namePackage") && searchParams.has("pricePackage")) {
+                router.push(`/payment?namePackage=${searchParams.get("namePackage")}&pricePackage=${searchParams.get("pricePackage")}`);
+            } else {
+                router.push('/');
+            }
 
         } catch (error) {
 
