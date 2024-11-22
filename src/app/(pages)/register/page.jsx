@@ -40,12 +40,13 @@ export default function Page() {
             return;
         }
 
-        const phonePattern = /^\d{21}$/;
+        const phonePattern = /^\d+$/;
         if (!phonePattern.test(phone)) {
-            setError('Please enter a valid phone number (10 digits).');
-            toast.error('Please enter a valid phone number (10 digits).');
+            setError('Please enter a valid phone number (digits only).');
+            toast.error('Please enter a valid phone number (digits only).');
             return;
         }
+        
 
         try {
             await Register(email, password, {

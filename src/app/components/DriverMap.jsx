@@ -1,80 +1,80 @@
-"use client";
 import React, { useEffect, useState } from "react";
-import { MapContainer, TileLayer, Marker, Popup, Polyline } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
-import Loader from "./loader";
+import { FaCar } from "react-icons/fa"; // Import car icon from react-icons
+import { renderToString } from "react-dom/server"; // Render React components as strings
 
-// Fix for default marker icons
-delete L.Icon.Default.prototype._getIconUrl;
-L.Icon.Default.mergeOptions({
-    iconRetinaUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png",
-    iconUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon.png",
-    shadowUrl: "https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png",
-});
+const MapComponent = () => {
+  const [currentPosition, setCurrentPosition] = useState(null);
+  const [pins, setPins] = useState([]);
 
-export default function MapComponent() {
-    const [userLocation, setUserLocation] = useState([51.505, -0.09]);
-    const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    // Get user's current location
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const { latitude, longitude } = position.coords;
+        setCurrentPosition([latitude, longitude]);
 
-    const carLocations = [
-        { id: 1, name: "Car 1", coords: [51.515, -0.1] },
-        { id: 2, name: "Car 2", coords: [51.52, -0.12] },
-        { id: 3, name: "Car 3", coords: [51.53, -0.08] },
-    ];
-
-    useEffect(() => {
-        // Fetching the user's geolocation on component mount
-        if ("geolocation" in navigator) {
-            navigator.geolocation.getCurrentPosition(
-                (position) => {
-                    const { latitude, longitude } = position.coords;
-                    setUserLocation([latitude, longitude]);
-                    setLoading(false);
-                },
-                (error) => {
-                    console.error("Error fetching geolocation:", error);
-                    setLoading(false);
-                }
-            );
-        } else {
-            console.error("Geolocation is not supported by this browser.");
-            setLoading(false);
-        }
-    }, []);
-
-    if (loading) {
-        return (
-            <Loader />
-        );
-    }
-
-    return (
-        <div style={{ width: "100%", height: "100%" }}>
-            <MapContainer center={userLocation} zoom={13} style={{ width: "100%", height: "100%" }} whenCreated={(map) => { map.invalidateSize(); }}>
-                <TileLayer
-                    url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-                    attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-                />
-
-                <Marker position={userLocation}>
-                    <Popup>
-                        موقعك الحالي: [{userLocation[0]}, {userLocation[1]}]
-                    </Popup>
-                </Marker>
-
-                {carLocations.map((car) => (
-                    <React.Fragment key={car.id}>
-                        <Marker position={car.coords}>
-                            <Popup>
-                                {car.name}: [{car.coords[0]}, {car.coords[1]}]
-                            </Popup>
-                        </Marker>
-
-                        <Polyline positions={[userLocation, car.coords]} color="blue" />
-                    </React.Fragment>
-                ))}
-            </MapContainer>
-        </div>
+        // Add more distant nearby pins
+        const nearbyPins = [
+          [latitude + 0.05, longitude],      // Further north
+          [latitude, longitude + 0.05],      // Further east
+          [latitude - 0.05, longitude - 0.05], // Further south-west
+        ];
+        setPins(nearbyPins);
+      },
+      (error) => {
+        console.error("Error getting location: ", error);
+      }
     );
-}
+  }, []);
+
+  // Custom car icon as an SVG string using react-dom/server's renderToString
+  const carIconSVG = renderToString(<FaCar size={30} color="#ff0000" />); // Render icon to string
+
+  // Create a custom icon using L.DivIcon for the car
+  const carIcon = new L.DivIcon({
+    html: `<div style="width: 30px; height: 30px; display: flex; justify-content: center; align-items: center; font-size: 30px;">${carIconSVG}</div>`,
+    className: "leaflet-car-icon",
+    iconSize: [30, 30], // Icon size
+    iconAnchor: [50, 50], // Anchor position
+  });
+
+  // Default Leaflet icon for user's location
+  const userIcon = new L.Icon({
+    iconUrl: "https://unpkg.com/leaflet@1.7.1/dist/images/marker-icon.png",
+    iconSize: [25, 41],
+    iconAnchor: [12, 41],
+    popupAnchor: [1, -34],
+  });
+
+  return (
+    <div style={{ height: "100vh", width: "100%" }}>
+      {currentPosition && (
+        <MapContainer
+          center={currentPosition}
+          zoom={13}
+          style={{ height: "100%", width: "100%" }}
+        >
+          <TileLayer
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+          />
+          {/* User's Location Marker */}
+          <Marker position={currentPosition} icon={userIcon}>
+            <Popup>You are here!</Popup>
+          </Marker>
+       
+          {pins.map((pin, index) => (
+            <Marker key={index} position={pin} icon={carIcon}>
+              <Popup>Driver {index + 1}</Popup>
+            </Marker>
+          ))}
+        </MapContainer>
+      )}
+    </div>
+  );
+};
+
+export default MapComponent;
