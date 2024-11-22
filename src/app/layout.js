@@ -16,7 +16,10 @@ const geistMono = localFont({
 });
 
 export const metadata = {
-  title: "Formula One",
+  title: {
+    default: "Formula One ",
+    template: "%s | Formula One ",
+  },
   description: "Formula one driving school",
 };
 

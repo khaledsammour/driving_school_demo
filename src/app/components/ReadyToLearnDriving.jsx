@@ -1,3 +1,4 @@
+import Link from 'next/link'
 import React from 'react'
 
 export default function ReadyToLearnDriving() {
@@ -17,12 +18,11 @@ export default function ReadyToLearnDriving() {
                         </div>
 
                         <div className="mt-6 flex items-center justify-center gap-4">
-                            <a
-                                href="#"
+                            <Link href="/MapDriver"
                                 className="transform rounded-md bg-blue-600/95 px-5 py-3 font-medium text-white transition-colors hover:bg-blue-700"
                             >
                                 Ready to start your journey?
-                            </a>
+                            </Link>
                         </div>
                     </div>
                 </section>

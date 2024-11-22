@@ -5,6 +5,13 @@ import Pricing from '@/app/components/Priceing'
 import Services from '@/app/components/Services'
 import React from 'react'
 
+export const metadata = {
+    title: 'Services',
+    description: 'services page',
+    keywords: ['services', 'features', 'pricing', 'additional resources', 'how to use'],
+};
+
+
 export default function page() {
     return (
         <>

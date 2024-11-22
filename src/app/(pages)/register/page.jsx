@@ -6,7 +6,8 @@ import ImgSignUp from '@/app/assets/signUp.jpg';
 import toast from 'react-hot-toast';
 import { Register } from '@/app/services/authService';
 import { useRouter, useSearchParams } from 'next/navigation';
-
+import Head from "next/head";
+import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
 export default function Page() {
     const [error, setError] = useState('');
     const [showPassword, setShowPassword] = useState(false);
@@ -80,92 +81,115 @@ export default function Page() {
 
         setError('');
     }
-
+    const togglePasswordVisibility = () => {
+        setShowPassword((prevState) => !prevState);
+    };
     return (
-        <div className="min-h-screen bg-gray-100 text-gray-900 flex justify-center">
-            <div className="max-w-screen-xl m-0 sm:m-10 bg-white shadow sm:rounded-lg flex justify-center flex-1">
-                <div className="lg:w-1/2 xl:w-5/12 p-6 sm:p-12">
-                    <div className="flex flex-col items-center">
-                        <h1 className="text-2xl xl:text-3xl font-extrabold">Sign up</h1>
-                        <div className="w-full flex-1 mt-8">
-                            <div className="mx-auto max-w-xs">
-                                <form className='mt-12' onSubmit={handleSubmit}>
-                                    <input
-                                        className="w-full px-8 py-4 mb-3 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
-                                        type="text"
-                                        name="firstName"
-                                        placeholder="First Name"
-                                    />
-                                    <input
-                                        className="w-full px-8 py-4 mb-3 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
-                                        type="text"
-                                        name="lastName"
-                                        placeholder="Last Name"
-                                    />
-                                    <input
-                                        className="w-full px-8 py-4 mb-3 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
-                                        type="email"
-                                        name="email"
-                                        placeholder="Email"
-                                    />
-                                    <input
-                                        className="w-full px-8 py-4 mb-3 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
-                                        type="text"
-                                        name="phone"
-                                        placeholder="Phone Number"
-                                    />
-                                    <div className="flex items-center gap-2 mb-3 justify-between">
-                                        <span onClick={() => setType('user')} className={`w-full cursor-pointer bg-gray-200 text-gray-600  py-4 rounded-lg hover:bg-indigo-700 hover:text-white ${type === 'user' ? 'bg-indigo-700 text-white' : ''} transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none`}>User</span>
-                                        <span onClick={() => setType('driver')} className={`w-full cursor-pointer bg-gray-200 text-gray-600  py-4 rounded-lg hover:bg-indigo-700 hover:text-white ${type === 'driver' ? 'bg-indigo-700 text-white' : ''} transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none`}>Driver</span>
-                                    </div>
-                                    <input
-                                        className="w-full px-8 py-4 mb-3 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
-                                        type={showPassword ? 'text' : 'password'}
-                                        name="password"
-                                        placeholder="Password"
-                                    />
-                                    <button
-                                        type="button"
-                                        onClick={() => setShowPassword(!showPassword)}
-                                        className="text-sm text-gray-500 mt-1"
-                                    >
-                                        {showPassword ? 'Hide Password' : 'Show Password'}
-                                    </button>
-                                    <button className="mt-5 tracking-wide font-semibold bg-indigo-500 text-gray-100 w-full py-4 rounded-lg hover:bg-indigo-700 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none">
-                                        <svg className="w-6 h-6 -ml-2" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
-                                            <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
-                                            <circle cx="8.5" cy="7" r="4" />
-                                            <path d="M20 8v6M23 11h-6" />
-                                        </svg>
-                                        <span className="ml-3">Sign Up</span>
-                                    </button>
-                                    <p className="mt-6 text-xs text-gray-600 text-center">
-                                        I agree to abide by templatana's
-                                        <a href="#" className="border-b border-gray-500 border-dotted"> Terms of Service </a>
-                                        and its
-                                        <a href="#" className="border-b border-gray-500 border-dotted"> Privacy Policy </a>
-                                    </p>
-                                    <p className="mt-8 text-md text-gray-600 text-center">
-                                        Already have an account?
-                                        <Link href={`/login`} className="border-b border-gray-500 border-dotted"> Sign in </Link>
-                                    </p>
-                                </form>
+        <>
+            <Head>
+                <title>Sign Up</title>
+                <meta
+                    name="description"
+                    content="Sign up for our platform to access exclusive features and services."
+                />
+                <meta
+                    name="keywords"
+                    content="sign up, register, services, features, user registration"
+                />
+            </Head>
+            <div className="min-h-screen bg-gray-100 text-gray-900 flex justify-center">
+
+                <div className="max-w-screen-xl m-0 sm:m-10 bg-white shadow sm:rounded-lg flex justify-center flex-1">
+                    <div className="lg:w-1/2 xl:w-5/12 p-6 sm:p-12">
+                        <div className="flex flex-col items-center">
+                            <h1 className="text-2xl xl:text-3xl font-extrabold">Sign up</h1>
+                            <div className="w-full flex-1 mt-8">
+                                <div className="mx-auto max-w-xs">
+                                    <form className='mt-12' onSubmit={handleSubmit}>
+                                        <input
+                                            className="w-full px-8 py-4 mb-3 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
+                                            type="text"
+                                            name="firstName"
+                                            placeholder="First Name"
+                                        />
+                                        <input
+                                            className="w-full px-8 py-4 mb-3 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
+                                            type="text"
+                                            name="lastName"
+                                            placeholder="Last Name"
+                                        />
+                                        <input
+                                            className="w-full px-8 py-4 mb-3 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
+                                            type="email"
+                                            name="email"
+                                            placeholder="Email"
+                                        />
+                                        <input
+                                            className="w-full px-8 py-4 mb-3 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
+                                            type="text"
+                                            name="phone"
+                                            placeholder="Phone Number"
+                                        />
+                                        <div className="flex items-center gap-2 mb-3 justify-between">
+                                            <span onClick={() => setType('user')} className={`w-full cursor-pointer bg-gray-200 text-gray-600  py-4 rounded-lg hover:bg-indigo-700 hover:text-white ${type === 'user' ? 'bg-indigo-700 text-white' : ''} transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none`}>User</span>
+                                            <span onClick={() => setType('driver')} className={`w-full cursor-pointer bg-gray-200 text-gray-600  py-4 rounded-lg hover:bg-indigo-700 hover:text-white ${type === 'driver' ? 'bg-indigo-700 text-white' : ''} transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none`}>Driver</span>
+                                        </div>
+                                        <div className="relative w-full">
+                                            <input
+                                                className="w-full px-8 py-4 mb-3 rounded-lg font-medium bg-gray-100 border border-gray-200 placeholder-gray-500 text-sm focus:outline-none focus:border-gray-400 focus:bg-white"
+                                                type={showPassword ? 'text' : 'password'}
+                                                name="password"
+                                                placeholder="Password"
+                                            />
+                                            <span
+                                                className="absolute right-3 top-3 cursor-pointer text-gray-500"
+                                                onClick={togglePasswordVisibility}
+                                            >
+                                                {showPassword ? (
+                                                    <AiFillEyeInvisible size={24} />
+                                                ) : (
+                                                    <AiFillEye size={24} />
+                                                )}
+                                            </span>
+                                        </div>
+                                    
+                                        <button className="mt-5 tracking-wide font-semibold bg-indigo-500 text-gray-100 w-full py-4 rounded-lg hover:bg-indigo-700 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none">
+                                            <svg className="w-6 h-6 -ml-2" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                                <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
+                                                <circle cx="8.5" cy="7" r="4" />
+                                                <path d="M20 8v6M23 11h-6" />
+                                            </svg>
+                                            <span className="ml-3">Sign Up</span>
+                                        </button>
+                                        <p className="mt-6 text-xs text-gray-600 text-center">
+                                            I agree to abide by templatana's
+                                            <Link href="/PrivacyPolicy" className="border-b border-gray-500 border-dotted"> Terms of Service </Link>
+                                            and its
+                                            <Link href="/PrivacyPolicy" className="border-b border-gray-500 border-dotted"> Privacy Policy </Link>
+                                        </p>
+                                        <p className="mt-8 text-md text-gray-600 text-center">
+                                            Already have an account?
+                                            <Link href={`/login`} className="border-b border-gray-500 border-dotted"> Sign in </Link>
+                                        </p>
+                                    </form>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div className="flex-1 bg-indigo-100 text-center hidden lg:flex">
-                    <div className="flex items-center justify-center h-full w-full">
-                        <Image
-                            src={ImgSignUp}
-                            width={500}
-                            height={500}
-                            className="object-cover w-full h-full rounded-lg"
-                            alt="Background"
-                        />
+                    <div className="flex-1 bg-indigo-100 text-center hidden lg:flex">
+                        <div className="flex items-center justify-center h-full w-full">
+                            <Image
+                                src={ImgSignUp}
+                                width={500}
+                                height={500}
+                                className="object-cover w-full h-full rounded-lg"
+                                alt="Background"
+                            />
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
+        </>
+
     )
 }

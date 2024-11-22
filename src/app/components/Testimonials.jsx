@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useRef, useEffect } from "react";
-// import { profiles } from "@/app/utils/dataTestimonal";
 import "swiper/css";
 import "swiper/css/pagination";
 import Image from "next/image";
@@ -12,7 +11,7 @@ import 'swiper/css/pagination';
 import 'swiper/css/navigation';
 import { Pagination, Navigation, Autoplay } from 'swiper/modules';
 import { FaArrowLeft, FaArrowRight } from "react-icons/fa";
-import { collection, deleteDoc, doc, getDocs } from "firebase/firestore";
+import { collection, getDocs } from "firebase/firestore";
 import { db } from "../firebase";
 
 export default function Testimonials() {
@@ -91,10 +90,13 @@ export default function Testimonials() {
                                         {item.type}
                                     </h6>
                                     <div className="flex justify-center mb-4 text-blue-500">
-                                        {[...Array(item.rate)].map((_, index) => (
-                                            <MdStar key={index} />
+
+                                        {[...Array(5)].map((_, index) => (
+                                            <MdStar
+                                                key={index}
+                                                className={index < +(item.rate) ? "text-blue-500" : "text-gray-400"}
+                                            />
                                         ))}
-                                        <MdStar className="text-gray-400" />
                                     </div>
                                     <p className="mb-2 flex">
                                         <sup>

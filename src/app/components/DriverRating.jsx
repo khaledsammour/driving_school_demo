@@ -6,14 +6,14 @@ import { db } from "@/app/firebase";
 
 const DriverRating = ({ onClose }) => {
     const [rating, setRating] = useState(0);
-    const [IdUser, setIdUser] = useState(null);
     const [message, setMessage] = useState("");
     const [users, setUsers] = useState({
-        first_name: "user",
-        middle_name: "user",
-        type: "user",
+        first_name: "",
+        middle_name: "",
+        type: "",
         id: "",
     });
+    const [userId, setUserId] = useState(null);
 
     const handleRating = (rate) => {
         setRating(rate);
@@ -24,8 +24,11 @@ const DriverRating = ({ onClose }) => {
     };
 
     useEffect(() => {
-        const fetchUser = async () => {
-            if (!IdUser) return;
+        const fetchUser = async (IdUser) => {
+            if (!IdUser) {
+                console.error("No User ID found for fetching user data.");
+                return;
+            }
 
             try {
                 const docRef = doc(db, "users", IdUser);
@@ -38,29 +41,34 @@ const DriverRating = ({ onClose }) => {
                         ...userData,
                     }));
                 } else {
-                    console.error("No such document!");
+                    console.error(`User document with ID ${IdUser} does not exist.`);
                 }
             } catch (error) {
                 console.error("Error fetching user:", error);
             }
         };
 
-        fetchUser();
-    }, [IdUser]);
+        if (userId) fetchUser(userId);
+    }, [userId]);
 
     useEffect(() => {
-        const storedUserId = localStorage.getItem("user");
+        const storedUserId = localStorage.getItem("IdUser");
         if (storedUserId) {
-            setIdUser(storedUserId);
+            setUserId(storedUserId);
             setUsers((prevUsers) => ({ ...prevUsers, id: storedUserId }));
         } else {
-            console.error("User ID not found in localStorage");
+            console.error("No User ID found in localStorage.");
         }
     }, []);
 
     const handleSubmit = async () => {
+        if (!rating) {
+            toast.error("Please select a rating before submitting.");
+            return;
+        }
+
         const userData = {
-            name: `${users.first_name} ${users.middle_name}`,
+            name: `${users.first_name} ${users.middle_name}`.trim(),
             type: users.type,
             rating: rating.toString(),
             description: message,
@@ -70,16 +78,16 @@ const DriverRating = ({ onClose }) => {
         };
 
         try {
-            const docRef = await addDoc(collection(db, "ratings"), userData);
+            const docRef = await addDoc(collection(db, "testimonials"), userData);
             console.log("Document written with ID: ", docRef.id);
             toast.success("Rating added successfully!");
             onClose();
+            // console.log(userData);
         } catch (error) {
             console.error("Error adding document:", error);
             toast.error("An error occurred while submitting your rating.");
         }
-    };
-
+    }
     return (
         <div className="fixed inset-0 top-0 right-[-24px] bg-black bg-opacity-50 py-6 flex flex-col justify-center sm:py-12 z-50">
             <div className="py-3 sm:max-w-lg md:max-w-xl sm:mx-auto w-full">

@@ -21,7 +21,6 @@ export default function TableLessons({ type }) {
         const getLessons = async () => {
             try {
                 const allLessons = await fetchLessonsFromFirestore();
-                console.log(allLessons);
                 setLessons(allLessons);
             } catch (err) {
                 setError("Failed to fetch lessons.");
@@ -36,8 +35,6 @@ export default function TableLessons({ type }) {
     if (loading) return <Loader />;
     if (error) return toast.error(error);
 
-
-
     const handleDelete = async (event, id) => {
         if (event) event.preventDefault();
         try {
@@ -47,7 +44,13 @@ export default function TableLessons({ type }) {
             console.error("Failed to delete lesson:", err);
             toast.error("Failed to delete lesson. Please try again.");
         }
-        console.log("Delete lesson with ID:", id);
+    };
+
+    // Function to format Firestore timestamp to readable date string
+    const formatTimestamp = (timestamp) => {
+        if (!timestamp) return ""; // In case there's no timestamp
+        const date = new Date(timestamp.seconds * 1000); // Convert Firestore timestamp to Date object
+        return date.toLocaleString(); // Return formatted date string
     };
 
     return (
@@ -79,17 +82,13 @@ export default function TableLessons({ type }) {
                         .map((lesson) => (
                             <TableRow key={lesson.id}>
                                 <TableCell>{lesson.id}</TableCell>
-                                <TableCell>{lesson.date}</TableCell>
+                                <TableCell>{formatTimestamp(lesson.date)}</TableCell> {/* Format the date */}
                                 <TableCell>{lesson.time}</TableCell>
                                 <TableCell>
-                                    <IconButton
-                                        color="primary"
-                                    >
+                                    <IconButton color="primary">
                                         <Link href={`/${type}/lessons/edit/${lesson.id}`}><FaEdit /></Link>
                                     </IconButton>
-                                    <IconButton
-                                        color="secondary"
-                                    >
+                                    <IconButton color="secondary">
                                         <Link href={`/${type}/lessons/view/${lesson.id}`}><LuView /></Link>
                                     </IconButton>
                                     <IconButton

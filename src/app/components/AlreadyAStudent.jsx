@@ -1,6 +1,7 @@
 import React from 'react';
 import AlreadyAStudentImg from "../../app/assets/AlreadyAStudent.jpg";
 import Image from 'next/image';
+import Link from 'next/link';
 
 export default function AlreadyAStudent() {
     return (
@@ -15,9 +16,9 @@ export default function AlreadyAStudent() {
                     <p className="text-black text-base font-normal leading-relaxed">
                         If you are already a registered student, please click on one of the buttons to go to your portal or the online training website.
                     </p>
-                    <button className="px-6 py-3 text-gray-900 font-semibold border border-blue-600 rounded-lg hover:bg-blue-600 hover:text-white transition duration-300">
+                    <Link href="/MapDriver" className="px-6 py-3 text-gray-900 font-semibold border border-blue-600 rounded-lg hover:bg-blue-600 hover:text-white transition duration-300">
                         Student Portal
-                    </button>
+                    </Link>
                 </div>
 
                 {/* Right Image Content */}

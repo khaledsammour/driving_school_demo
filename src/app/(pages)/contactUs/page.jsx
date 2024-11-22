@@ -1,5 +1,12 @@
 import React from 'react';
 
+export const metadata = {
+    title: 'Contact Us',
+    description: 'contact page',
+    keywords: ['contact', 'contact us', 'contact us page'],
+};
+
+
 export default function ContactPage() {
     return (
         <div className="contactUS">

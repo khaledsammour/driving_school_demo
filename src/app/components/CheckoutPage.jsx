@@ -14,7 +14,7 @@ export default function CheckoutPage({ amount, lessonPackageName }) {
     useEffect(() => {
         async function initializePayment() {
             try {
-                const res = await fetch("http://localhost:3000//api/checkout", {
+                const res = await fetch("http://localhost:3000/api/checkout", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
