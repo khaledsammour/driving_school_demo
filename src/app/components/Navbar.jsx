@@ -1,7 +1,7 @@
 "use client";
 import React, { useEffect, useState, useRef, useContext } from "react";
 import Hamburger from 'hamburger-react';
-import logo from "@/app/assets/logo.png";
+import logo from "@/app/assets/formula-logo-1.png";
 import Link from "next/link";
 import Image from "next/image";
 import EnglandImg from '@/app/assets/english.png';
@@ -24,7 +24,28 @@ export default function Header() {
     const router = useRouter();
     const pathname = usePathname();
 
+    const [imageWidth, setImageWidth] = useState(200);
 
+    useEffect(() => {
+        const updateImageSize = () => {
+            // Check if viewport width is less than a specific size (e.g., 768px)
+            if (window.innerWidth <= 768) {
+                setImageWidth(100); // Mobile width
+            } else {
+                setImageWidth(200); // Web width
+            }
+        };
+
+        // Initial check
+        updateImageSize();
+
+        // Update on window resize
+        window.addEventListener("resize", updateImageSize);
+
+        return () => {
+            window.removeEventListener("resize", updateImageSize);
+        };
+    }, []);
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -59,7 +80,7 @@ export default function Header() {
             <nav className="bg-white border-gray-200 px-4 lg:px-6 py-2.5 dark:bg-gray-800">
                 <div className="flex flex-wrap justify-between items-center mx-auto max-w-screen-xl">
                     <Link href="/" className="flex items-center">
-                        <Image src={logo} alt="Logo" className="mx-2" width={60} height={60} />
+                        <Image src={logo} alt="Logo" className="mx-2" width={imageWidth} height={60} />
                     </Link>
                     <div className="flex items-center lg:order-2">
                         <div className="mx-2">
