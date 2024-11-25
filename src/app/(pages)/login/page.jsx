@@ -35,7 +35,7 @@ export default function Page() {
         }
 
 
-        if (password.length < 6) {
+        if (password.length >= 6) {
             setError('Password must be at least 6 characters long.');
             toast.error('Password must be at least 6 characters long.');
             return;

@@ -41,6 +41,7 @@ export default function Pricing() {
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mx-3 my-5">
                 {Packages.map((item) => (
                     <PricingCard
+                        id={item.id}
                         key={item.id}
                         Tittle={item.name}
                         price={item.price}

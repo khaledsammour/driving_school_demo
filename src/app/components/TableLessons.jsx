@@ -4,24 +4,56 @@ import React, { useEffect, useState } from "react";
 import {
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, IconButton
 } from '@mui/material';
-import { deleteLessonsFromFirestore, fetchLessonsFromFirestore } from "@/app/services/LessonsServices";
+import { deleteLessonsFromFirestore } from "@/app/services/LessonsServices";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import { LuView } from "react-icons/lu";
 import Loader from "./loader";
 import toast from "react-hot-toast";
 import Link from "next/link";
+import { query, collection, where, getDocs } from "firebase/firestore";
+import { db } from "@/app/firebase";
 
 export default function TableLessons({ type }) {
     const [lessons, setLessons] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [searchTerm, setSearchTerm] = useState("");
+    const [userId, setUserId] = useState(null);
+    const [userType, setUserType] = useState(type == "user" ? "user_id" : "driver_id");
+    // Fetch userId from localStorage
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            const storedUserId = localStorage.getItem("IdUser");
+            if (storedUserId) {
+                setUserId(storedUserId);
+            } else {
+                setError("User ID not found in localStorage.");
+            }
+        }
+
+
+    }, []);
+
 
     useEffect(() => {
         const getLessons = async () => {
+            if (!userId) return;
             try {
-                const allLessons = await fetchLessonsFromFirestore();
-                setLessons(allLessons);
+                setLoading(true);
+
+                const lessonsQuery = query(
+                    collection(db, "lessons"),
+                    where(userType, "==", userId)
+                );
+
+                const querySnapshot = await getDocs(lessonsQuery);
+
+                const filteredLessons = querySnapshot.docs.map((doc) => ({
+                    id: doc.id,
+                    ...doc.data(),
+                }));
+
+                setLessons(filteredLessons);
             } catch (err) {
                 setError("Failed to fetch lessons.");
                 console.error(err);
@@ -29,11 +61,17 @@ export default function TableLessons({ type }) {
                 setLoading(false);
             }
         };
+
         getLessons();
-    }, []);
+    }, [userId]);
+
+    useEffect(() => {
+        if (error) {
+            toast.error(error);
+        }
+    }, [error]);
 
     if (loading) return <Loader />;
-    if (error) return toast.error(error);
 
     const handleDelete = async (event, id) => {
         if (event) event.preventDefault();
@@ -46,12 +84,28 @@ export default function TableLessons({ type }) {
         }
     };
 
-    // Function to format Firestore timestamp to readable date string
     const formatTimestamp = (timestamp) => {
-        if (!timestamp) return ""; // In case there's no timestamp
-        const date = new Date(timestamp.seconds * 1000); // Convert Firestore timestamp to Date object
-        return date.toLocaleString(); // Return formatted date string
+        if (!timestamp || isNaN(Date.parse(timestamp))) return "Invalid Date";
+
+        const date = new Date(timestamp);
+
+        if (isNaN(date)) return "Invalid Date";
+
+        const options = {
+            weekday: 'long',
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+        };
+
+        const formattedDate = date.toLocaleString('en-US', options);
+
+        return formattedDate;
     };
+
 
     return (
         <TableContainer
@@ -82,8 +136,8 @@ export default function TableLessons({ type }) {
                         .map((lesson) => (
                             <TableRow key={lesson.id}>
                                 <TableCell>{lesson.id}</TableCell>
-                                <TableCell>{formatTimestamp(lesson.date)}</TableCell> {/* Format the date */}
-                                <TableCell>{lesson.time}</TableCell>
+                                <TableCell>{formatTimestamp(lesson.date)}</TableCell>
+                                <TableCell>{lesson.time || "N/A"}</TableCell>
                                 <TableCell>
                                     <IconButton color="primary">
                                         <Link href={`/${type}/lessons/edit/${lesson.id}`}><FaEdit /></Link>

@@ -53,11 +53,37 @@ export default function Page({ params }) {
         }));
     };
 
+    // Form validation function
+    const validateForm = () => {
+        const { date, from, to, driver_id } = formData;
+
+        if (!date || !from || !to || !driver_id) {
+            toast.error("Please fill in all required fields.");
+            return false;
+        }
+
+        // Check that the 'to' date is after the 'from' date
+        if (new Date(to) <= new Date(from)) {
+            toast.error("'To' date must be later than 'From' date.");
+            return false;
+        }
+
+        // Check that the 'date' is not in the past
+        if (new Date(date) < new Date()) {
+            toast.error("The 'Date' cannot be in the past.");
+            return false;
+        }
+
+        return true;
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
+        // Validate the form before submitting
+        if (!validateForm()) return;
+
         try {
-            // Update existing lesson data in Firestore
             const lessonDocRef = doc(db, "lessons", id);
 
             await setDoc(lessonDocRef, {
@@ -116,13 +142,12 @@ export default function Page({ params }) {
                                     From
                                 </label>
                                 <input
-                                    type="text"
+                                    type="date"
                                     name="from"
                                     id="from"
                                     value={formData.from}
                                     onChange={handleChange}
                                     className="bg-gray-100 border border-gray-200 rounded py-1 px-3 block focus:ring-blue-500 focus:border-blue-500 text-gray-700 w-full"
-                                    placeholder="Enter starting location"
                                 />
                             </div>
                             <div>
@@ -143,13 +168,12 @@ export default function Page({ params }) {
                                     To
                                 </label>
                                 <input
-                                    type="text"
+                                    type="date"
                                     name="to"
                                     id="to"
                                     value={formData.to}
                                     onChange={handleChange}
                                     className="bg-gray-100 border border-gray-200 rounded py-1 px-3 block focus:ring-blue-500 focus:border-blue-500 text-gray-700 w-full"
-                                    placeholder="Enter destination"
                                 />
                             </div>
                             <div>

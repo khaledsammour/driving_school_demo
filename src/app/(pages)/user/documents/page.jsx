@@ -11,7 +11,7 @@ export default function page() {
 
             <div className="table w-full py-6">
                 <p className='text text-xl font-bold ml-2 text-black'>please upload your Document </p>
-                <FileUpload />
+                <FileUpload UserType="user" TypeFile={"document"} />
             </div>
         </div>
     )

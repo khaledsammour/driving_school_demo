@@ -1,201 +1,146 @@
 "use client";
-import React, { useState } from 'react';
+import React, { useState } from "react";
+import { MdClose } from "react-icons/md";
+import { storage } from "@/app/firebase";
+import { ref, uploadBytesResumable, getDownloadURL } from "firebase/storage";
 
 const FileUpload = () => {
-    const [files, setFiles] = useState({});
-    const [dragging, setDragging] = useState(false);
+    const [file, setFile] = useState(null);
+    const [uploading, setUploading] = useState(false);
+    const [uploadProgress, setUploadProgress] = useState(0);
+    const [uploadedUrl, setUploadedUrl] = useState("");
 
-    const addFile = (file) => {
-        const objectURL = URL.createObjectURL(file);
-        setFiles((prevFiles) => ({
-            ...prevFiles,
-            [objectURL]: file,
-        }));
-    };
-
+    // Handle file selection
     const handleFileChange = (e) => {
-        for (const file of e.target.files) {
-            addFile(file);
+        const selectedFile = e.target.files[0];
+        if (selectedFile) {
+            setFile(selectedFile);
         }
     };
 
-    const handleDrop = (e) => {
-        e.preventDefault();
-        setDragging(false);
-        for (const file of e.dataTransfer.files) {
-            addFile(file);
+    // Remove the selected file
+    const removeFile = () => {
+        setFile(null);
+        setUploadedUrl("");
+        setUploadProgress(0);
+    };
+
+    // Async function to handle file upload
+    const uploadFile = async () => {
+        if (!file) return;
+
+        setUploading(true);
+        setUploadProgress(0);
+
+        try {
+            // Sanitize file name
+            const sanitizedFileName = file.name.replace(/[^a-zA-Z0-9.]/g, "_");
+            const storageRef = ref(storage, `uploads/${sanitizedFileName}`);
+
+            // Start the upload
+            const uploadTask = uploadBytesResumable(storageRef, file);
+
+            // Await upload progress in a Promise
+            await new Promise((resolve, reject) => {
+                uploadTask.on(
+                    "state_changed",
+                    (snapshot) => {
+                        const progress =
+                            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+                        setUploadProgress(progress); // Update progress
+                        console.log(`Upload is ${progress}% done`);
+                    },
+                    (error) => {
+                        console.error("Upload failed:", error.code, error.message);
+                        reject(error);
+                    },
+                    resolve
+                );
+            });
+
+            const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+            setUploadedUrl(downloadURL);
+            console.log("File uploaded successfully. File available at:", downloadURL);
+        } catch (error) {
+            console.error("Failed to upload file:", error.message);
+        } finally {
+            setUploading(false);
         }
-    };
-
-    const handleDragEnter = (e) => {
-        e.preventDefault();
-        setDragging(true);
-    };
-
-    const handleDragLeave = (e) => {
-        e.preventDefault();
-        setDragging(false);
-    };
-
-    const handleDelete = (fileUrl) => {
-        setFiles((prevFiles) => {
-            const updatedFiles = { ...prevFiles };
-            delete updatedFiles[fileUrl];
-            return updatedFiles;
-        });
-    };
-
-    const handleCancel = () => {
-        setFiles({});
-    };
-
-    const handleSubmit = () => {
-        alert(`Submitted Files: \n${JSON.stringify(files)}`);
-        console.log(files);
     };
 
     return (
-        <div className="h-screen w-full sm:px-8 md:px-16 sm:py-8">
-            <main className="container mx-auto max-w-screen-lg h-full">
-                <article
-                    className="relative h-full flex flex-col bg-white shadow-xl rounded-md"
-                    onDrop={handleDrop}
-                    onDragOver={handleDragEnter}
-                    onDragLeave={handleDragLeave}
-                    onDragEnter={handleDragEnter}
+        <div className="max-w-2xl my-10 mx-auto">
+            {!file ? (
+                <label
+                    htmlFor="uploadFile1"
+                    className="bg-white text-gray-500 font-semibold text-base rounded h-52 flex flex-col items-center justify-center cursor-pointer border-2 border-gray-300 border-dashed"
                 >
-                    {dragging && (
-                        <div
-                            className="w-full h-full absolute top-0 left-0 pointer-events-none z-50 flex flex-col items-center justify-center rounded-md bg-opacity-50 bg-black"
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="w-11 mb-2 fill-gray-500"
+                        viewBox="0 0 32 32"
+                    >
+                        <path d="M23.75 11.044a7.99 7.99 0 0 0-15.5-.009A8 8 0 0 0 9 27h3a1 1 0 0 0 0-2H9a6 6 0 0 1-.035-12 1.038 1.038 0 0 0 1.1-.854 5.991 5.991 0 0 1 11.862 0A1.08 1.08 0 0 0 23 13a6 6 0 0 1 0 12h-3a1 1 0 0 0 0 2h3a8 8 0 0 0 .75-15.956z" />
+                        <path d="M20.293 19.707a1 1 0 0 0 1.414-1.414l-5-5a1 1 0 0 0-1.414 0l-5 5a1 1 0 0 0 1.414 1.414L15 16.414V29a1 1 0 0 0 2 0V16.414z" />
+                    </svg>
+                    Upload file
+                    <input
+                        type="file"
+                        id="uploadFile1"
+                        className="hidden"
+                        onChange={handleFileChange}
+                        accept="image/png, image/jpg, image/jpeg, image/svg+xml, image/webp, image/gif, application/pdf, application/msword, application/vnd.openxmlformats-officedocument.wordprocessingml.document, application/vnd.ms-excel, application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+                    />
+                    <p className="text-xs font-medium text-gray-400 mt-2">
+                        PNG, JPG, PDF, DOC, DOCX, XLS, XLSX.
+                    </p>
+                </label>
+            ) : (
+                <div className="relative p-4 border border-gray-300 rounded bg-white">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <p className="text-sm font-medium text-gray-600">{file.name}</p>
+                            <p className="text-xs text-gray-400">{(file.size / 1024).toFixed(2)} KB</p>
+                        </div>
+                        <button
+                            className="text-red-500 hover:text-red-700"
+                            onClick={removeFile}
                         >
-                            <i>
-                                <svg
-                                    className="fill-current w-12 h-12 mb-3 text-blue-700"
-                                    xmlns="http://www.w3.org/2000/svg"
-                                    width="24"
-                                    height="24"
-                                    viewBox="0 0 24 24"
-                                >
-                                    <path d="M19.479 10.092c-.212-3.951-3.473-7.092-7.479-7.092-4.005 0-7.267 3.141-7.479 7.092-2.57.463-4.521 2.706-4.521 5.408 0 3.037 2.463 5.5 5.5 5.5h13c3.037 0 5.5-2.463 5.5-5.5 0-2.702-1.951-4.945-4.521-5.408zm-7.479-1.092l4 4h-3v4h-2v-4h-3l4-4z" />
-                                </svg>
-                            </i>
-                            <p className="text-lg text-blue-700">Drop files to upload</p>
+                            <MdClose size={20} />
+                        </button>
+                    </div>
+                    <button
+                        onClick={uploadFile}
+                        className="mt-3 px-4 py-2 bg-blue-500 text-white font-medium rounded hover:bg-blue-600 disabled:bg-gray-400"
+                        disabled={uploading}
+                    >
+                        {uploading ? "Uploading..." : "Upload"}
+                    </button>
+                    {uploading && (
+                        <div className="mt-3 w-full bg-gray-200 rounded-full">
+                            <div
+                                className="bg-blue-500 text-xs font-medium text-white text-center p-0.5 leading-none rounded-full"
+                                style={{ width: `${uploadProgress}%` }}
+                            >
+                                {uploadProgress.toFixed(0)}%
+                            </div>
                         </div>
                     )}
-
-                    <section className="h-full overflow-auto p-8 w-full  flex flex-col">
-                        <header className="border-dashed border-2 border-gray-400 py-12 flex flex-col justify-center items-center">
-                            <p className="mb-3 font-semibold text-gray-900 flex flex-wrap justify-center">
-                                <span>Drag and drop your</span>&nbsp;<span>files anywhere or</span>
-                            </p>
-                            <input
-                                id="hidden-input"
-                                type="file"
-                                multiple
-                                className="hidden"
-                                onChange={handleFileChange}
-                            />
-                            <button
-                                className="mt-2 rounded-sm px-3 py-1 bg-gray-200 hover:bg-gray-300 focus:shadow-outline focus:outline-none"
-                                onClick={() => document.getElementById('hidden-input').click()}
-                            >
-                                Upload a file
-                            </button>
-                        </header>
-
-                        <h1 className="pt-8 pb-3 font-semibold sm:text-lg text-gray-900">To Upload</h1>
-
-                        <ul id="gallery" className="flex flex-1 flex-wrap -m-1">
-                            {Object.keys(files).length === 0 ? (
-                                <li className="h-full w-full text-center flex flex-col items-center justify-center">
-                                    <img
-                                        className="mx-auto w-32"
-                                        src="https://user-images.githubusercontent.com/507615/54591670-ac0a0180-4a65-11e9-846c-e55ffce0fe7b.png"
-                                        alt="no data"
-                                    />
-                                    <span className="text-small text-gray-500">No files selected</span>
-                                </li>
-                            ) : (
-                                Object.keys(files).map((fileUrl) => {
-                                    const file = files[fileUrl];
-                                    return (
-                                        <li key={fileUrl} className="block p-1 w-1/2 sm:w-1/3 md:w-1/4 lg:w-1/6 xl:w-1/8 h-24">
-                                            <article className="group w-full h-full rounded-md focus:outline-none bg-gray-100 cursor-pointer relative shadow-sm">
-                                                {file.type.match('image.*') && (
-                                                    <img
-                                                        alt="upload preview"
-                                                        className="w-full h-full sticky object-cover rounded-md"
-                                                        src={fileUrl}
-                                                    />
-                                                )}
-                                                <section className="flex flex-col rounded-md text-xs break-words w-full h-full z-20 absolute top-0 py-2 px-3">
-                                                    <h1 className="flex-1">{file.name}</h1>
-                                                    <div className="flex">
-                                                        <span className="p-1 text-blue-800">
-                                                            <i>
-                                                                <svg
-                                                                    className="fill-current w-4 h-4 ml-auto pt-1"
-                                                                    xmlns="http://www.w3.org/2000/svg"
-                                                                    width="24"
-                                                                    height="24"
-                                                                    viewBox="0 0 24 24"
-                                                                >
-                                                                    <path d="M15 2v5h5v15h-16v-20h11zm1-2h-14v24h20v-18l-6-6z" />
-                                                                </svg>
-                                                            </i>
-                                                        </span>
-                                                        <p className="p-1 size text-xs text-gray-700">
-                                                            {file.size > 1024
-                                                                ? file.size > 1048576
-                                                                    ? Math.round(file.size / 1048576) + 'mb'
-                                                                    : Math.round(file.size / 1024) + 'kb'
-                                                                : file.size + 'b'}
-                                                        </p>
-                                                        <button
-                                                            className="delete ml-auto focus:outline-none hover:bg-gray-300 p-1 rounded-md text-gray-800"
-                                                            onClick={() => handleDelete(fileUrl)}
-                                                        >
-                                                            <svg
-                                                                className="pointer-events-none fill-current w-4 h-4 ml-auto"
-                                                                xmlns="http://www.w3.org/2000/svg"
-                                                                width="24"
-                                                                height="24"
-                                                                viewBox="0 0 24 24"
-                                                            >
-                                                                <path
-                                                                    className="pointer-events-none"
-                                                                    d="M3 6l3 18h12l3-18h-18zm19-4v2h-20v-2h5.711c.9 0 1.631-1.099 1.631-2h5.316c0 .901.73 2 1.631 2h5.711z"
-                                                                />
-                                                            </svg>
-                                                        </button>
-                                                    </div>
-                                                </section>
-                                            </article>
-                                        </li>
-                                    );
-                                })
-                            )}
-                        </ul>
-                    </section>
-
-                    <footer className="flex justify-end px-8 pb-8 pt-4">
-                        <button
-                            id="submit"
-                            className="rounded-sm px-3 py-1 bg-blue-700 hover:bg-blue-500 text-white focus:shadow-outline focus:outline-none"
-                            onClick={handleSubmit}
-                        >
-                            Upload now
-                        </button>
-                        <button
-                            id="cancel"
-                            className="ml-3 rounded-sm px-3 py-1 hover:bg-gray-300 focus:shadow-outline focus:outline-none"
-                            onClick={handleCancel}
-                        >
-                            Cancel
-                        </button>
-                    </footer>
-                </article>
-            </main>
+                </div>
+            )}
+            {uploadedUrl && (
+                <div className="mt-4 text-center">
+                    <p className="text-green-600">File uploaded successfully!</p>
+                    <a
+                        href={uploadedUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-blue-500 underline"
+                    >
+                        View File
+                    </a>
+                </div>
+            )}
         </div>
     );
 };

@@ -18,9 +18,9 @@ export default function Page() {
     });
     const [drivers, setDrivers] = useState([]);
 
-
+    // Fetch user ID from localStorage on component mount
     useEffect(() => {
-        const storedUserId = localStorage.getItem("user");
+        const storedUserId = localStorage.getItem("IdUser");
         if (storedUserId) {
             setFormData((prev) => ({
                 ...prev,
@@ -29,6 +29,7 @@ export default function Page() {
         }
     }, []);
 
+    // Fetch drivers from Firestore
     useEffect(() => {
         const fetchDrivers = async () => {
             try {
@@ -54,6 +55,12 @@ export default function Page() {
         fetchDrivers();
     }, []);
 
+    const formatTimestamp = (timestamp) => {
+        if (!timestamp) return "";
+        const date = new Date(timestamp.seconds * 1000);
+        return date.toISOString().split("T")[0];
+    };
+
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData((prev) => ({
@@ -62,8 +69,33 @@ export default function Page() {
         }));
     };
 
+    const validateForm = () => {
+        const { date, from, to, driver_id } = formData;
+
+        if (!date || !from || !to || !driver_id) {
+            toast.error("Please fill in all required fields.");
+            return false;
+        }
+
+        // Check that the 'to' date is after the 'from' date
+        if (new Date(to) <= new Date(from)) {
+            toast.error("'To' date must be later than 'From' date.");
+            return false;
+        }
+
+        // Check that the 'date' is not in the past
+        if (new Date(date) < new Date()) {
+            toast.error("The 'Date' cannot be in the past.");
+            return false;
+        }
+
+        return true;
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        if (!validateForm()) return;
 
         try {
             await addDoc(collection(db, "lessons"), {
@@ -136,13 +168,12 @@ export default function Page() {
                                     From
                                 </label>
                                 <input
-                                    type="text"
+                                    type="date"
                                     name="from"
                                     id="from"
                                     value={formData.from}
                                     onChange={handleChange}
                                     className="bg-gray-100 border border-gray-200 rounded py-1 px-3 block focus:ring-blue-500 focus:border-blue-500 text-gray-700 w-full"
-                                    placeholder="Enter starting location"
                                 />
                             </div>
                             <div>
@@ -169,13 +200,12 @@ export default function Page() {
                                     To
                                 </label>
                                 <input
-                                    type="text"
+                                    type="date"
                                     name="to"
                                     id="to"
                                     value={formData.to}
                                     onChange={handleChange}
                                     className="bg-gray-100 border border-gray-200 rounded py-1 px-3 block focus:ring-blue-500 focus:border-blue-500 text-gray-700 w-full"
-                                    placeholder="Enter destination"
                                 />
                             </div>
                             <div>

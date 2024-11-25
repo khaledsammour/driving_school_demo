@@ -4,6 +4,7 @@ import React, { useState, useEffect } from 'react';
 
 export default function PricingCard({ id, Tittle, price, discount, features }) {
     const [isAuthenticated, setIsAuthenticated] = useState(false);
+    console.log(id, "iiiiiiiiiiiiiiiii");
 
     useEffect(() => {
         const IdUser = localStorage.getItem('IdUser');
@@ -58,7 +59,7 @@ export default function PricingCard({ id, Tittle, price, discount, features }) {
                 <Link
                     href={{
                         pathname: `${isAuthenticated ? '/payment' : '/login'}`,
-                        query: { namePackage: Tittle, pricePackage: price },
+                        query: { PackageId: id },
                     }}
                     className="inline-flex items-center justify-center w-full h-12 px-6 mb-4 font-medium tracking-wide text-white transition duration-200 bg-gray-800 rounded shadow-md hover:bg-gray-900 focus:shadow-outline focus:outline-none"
                 >

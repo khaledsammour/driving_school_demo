@@ -116,7 +116,7 @@ export default function Page({ params }) {
                                     From
                                 </label>
                                 <input
-                                    type="text"
+                                    type="date"
                                     name="from"
                                     id="from"
                                     value={formData.from}
@@ -143,7 +143,7 @@ export default function Page({ params }) {
                                     To
                                 </label>
                                 <input
-                                    type="text"
+                                    type="date"
                                     name="to"
                                     id="to"
                                     value={formData.to}
