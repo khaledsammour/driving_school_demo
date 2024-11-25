@@ -34,20 +34,11 @@ export default function Page() {
             return;
         }
 
-
-        if (password.length >= 6) {
-            setError('Password must be at least 6 characters long.');
-            toast.error('Password must be at least 6 characters long.');
-            return;
-        }
-
         setError('');
 
         try {
 
-
             await Login(email, password);
-
 
             toast.success('Successfully logged in!');
             if (searchParams.has("namePackage") && searchParams.has("pricePackage")) {
@@ -90,6 +81,7 @@ export default function Page() {
                                             type={showPassword ? 'text' : 'password'}
                                             name="password"
                                             placeholder="Password"
+                                            onChange={(e) => setPassword(e.target.value)}
                                         />
                                         <span
                                             className="absolute right-3 top-3 cursor-pointer text-gray-500"
