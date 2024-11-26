@@ -1,4 +1,4 @@
-import FileUpload from '@/app/components/FileUpload';
+import FileUploadDocument from '@/app/components/FileUploadDocument';
 import React from 'react'
 import { TbLicense } from "react-icons/tb";
 export default function page() {
@@ -11,7 +11,7 @@ export default function page() {
 
             <div className="table w-full py-6">
                 <p className='text text-xl font-bold ml-2 text-black'>please upload your Document </p>
-                <FileUpload UserType="driver" TypeFile={"document"} />
+                <FileUploadDocument UserType="driver" TypeFile={"document"} />
             </div>
         </div>
     )

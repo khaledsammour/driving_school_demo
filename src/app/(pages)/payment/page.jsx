@@ -19,6 +19,9 @@ export default function Page() {
     const searchParams = useSearchParams();
     const [dataPackage, setDataPackage] = useState(null);
     const PackageId = searchParams.get("PackageId");
+    if (window !== undefined) {
+        localStorage.setItem("PackageId", PackageId);
+    }
     const router = useRouter();
     if (!PackageId) {
         router.push("/not-found");

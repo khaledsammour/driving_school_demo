@@ -37,8 +37,9 @@ class CheckoutForm extends React.Component {
             elements,
             clientSecret,
             confirmParams: {
-                return_url: 'https://example.com/order/123/complete',
+                return_url: 'http://localhost:3000/paymentSuccess',
             },
+
         });
 
         if (error) {
@@ -62,7 +63,7 @@ class CheckoutForm extends React.Component {
         );
     }
 }
-const InjectedCheckoutForm = ({amount}) => (
+const InjectedCheckoutForm = ({ amount }) => (
     <ElementsConsumer>
         {({ stripe, elements }) => (
             <CheckoutForm stripe={stripe} elements={elements} amount={amount} />

@@ -17,6 +17,9 @@ import { useRouter } from 'next/navigation';
 import NavDrobdown from "@/app/components/NavDrobdown";
 import { MdOutlinePlayLesson } from "react-icons/md";
 import { VscPreview } from "react-icons/vsc";
+import { IoDocumentsSharp } from "react-icons/io5";
+import { TbLicense } from "react-icons/tb";
+import { MdOutlinePayment } from "react-icons/md";
 export default function Layout({ children }) {
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
     const router = useRouter();
@@ -116,6 +119,24 @@ export default function Layout({ children }) {
                                     >
                                         Packages
                                     </span>
+                                </Link>
+                            </li>
+                            <li className="text-black hover:text-blue-500 cursor-pointer">
+                                <Link href="/admin/Payments" className={`flex items-center p-3 ${!isSidebarOpen ? "justify-center" : "justify-start"}`}>
+                                    <MdOutlinePayment className="w-6 h-6" />
+                                    <span className={`ml-3 text-base ${!isSidebarOpen && "hidden"} transition-all duration-300`}>Payments</span>
+                                </Link>
+                            </li>
+                            <li className="text-black hover:text-blue-500 cursor-pointer">
+                                <Link href="/admin/license" className={`flex items-center p-3 ${!isSidebarOpen ? "justify-center" : "justify-start"}`}>
+                                    <TbLicense className="w-6 h-6" />
+                                    <span className={`ml-3 text-base ${!isSidebarOpen && "hidden"} transition-all duration-300`}>License</span>
+                                </Link>
+                            </li>
+                            <li className="text-black hover:text-blue-500 cursor-pointer">
+                                <Link href="/admin/documents" className={`flex items-center p-3 ${!isSidebarOpen ? "justify-center" : "justify-start"}`}>
+                                    <IoDocumentsSharp className="w-6 h-6" />
+                                    <span className={`ml-3 text-base ${!isSidebarOpen && "hidden"} transition-all duration-300`}>Documents</span>
                                 </Link>
                             </li>
                             <li className="text-black hover:text-blue-500 cursor-pointer">

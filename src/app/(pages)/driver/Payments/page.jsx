@@ -1,13 +1,9 @@
-import TablePayment from '@/app/components/TablePayment';
+import TablePaymentDriver from '@/app/components/TablePaymentDriver';
 import { Tab } from '@mui/material';
 import React from 'react'
 import { MdOutlinePayment } from "react-icons/md";
 
-// Sample data for testing
-const samplePayments = [
-    { id: '12345', packageName: 'Basic', date: '2024-10-15', status: 'Completed' },
-    { id: '67890', packageName: 'Premium', date: '2024-10-20', status: 'Pending' },
-];
+
 export default function page() {
     return (
         <>
@@ -18,7 +14,7 @@ export default function page() {
                 </div>
 
                 <div className="table w-full py-6">
-                    <TablePayment payments={samplePayments} />
+                    <TablePaymentDriver />
                 </div>
             </div>
         </>
