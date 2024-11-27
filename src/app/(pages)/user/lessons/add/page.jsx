@@ -11,6 +11,7 @@ export default function Page() {
     const [formData, setFormData] = useState({
         date: "",
         driver_id: "",
+        status: "pending",
         from: "",
         time: "",
         to: "",
@@ -77,17 +78,12 @@ export default function Page() {
             return false;
         }
 
-        // Check that the 'to' date is after the 'from' date
-        if (new Date(to) <= new Date(from)) {
-            toast.error("'To' date must be later than 'From' date.");
+        if (to <= from) {
+            toast.error("'To' time must be later than 'From' time.");
             return false;
         }
 
-        // Check that the 'date' is not in the past
-        if (new Date(date) < new Date()) {
-            toast.error("The 'Date' cannot be in the past.");
-            return false;
-        }
+
 
         return true;
     };
@@ -101,6 +97,7 @@ export default function Page() {
             await addDoc(collection(db, "lessons"), {
                 date: formData.date,
                 driver_id: formData.driver_id,
+                status: formData.status,
                 from: formData.from,
                 time: formData.time,
                 to: formData.to,
@@ -168,7 +165,7 @@ export default function Page() {
                                     From
                                 </label>
                                 <input
-                                    type="date"
+                                    type="time"
                                     name="from"
                                     id="from"
                                     value={formData.from}
@@ -200,7 +197,7 @@ export default function Page() {
                                     To
                                 </label>
                                 <input
-                                    type="date"
+                                    type="time"
                                     name="to"
                                     id="to"
                                     value={formData.to}

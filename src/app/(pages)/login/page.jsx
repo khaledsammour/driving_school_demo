@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 import ImgLogin from '@/app/assets/login.jpg';
@@ -14,8 +14,14 @@ export default function Page() {
     const [password, setPassword] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const searchParams = useSearchParams();
+    const [type, setType] = useState('');
 
-
+    useEffect(() => {
+        const UserType = searchParams.get("typeUser");
+        if (UserType) {
+            setType(UserType);
+        }
+    }, []);
 
     console.log(searchParams.has("namePackage") && searchParams.has("pricePackage"));
     const router = useRouter();
@@ -45,6 +51,8 @@ export default function Page() {
                 router.push(`/payment?namePackage=${searchParams.get("namePackage")}&pricePackage=${searchParams.get("pricePackage")}`);
             } else {
                 router.push('/');
+
+
             }
 
         } catch (error) {

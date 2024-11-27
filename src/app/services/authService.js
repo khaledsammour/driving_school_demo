@@ -60,7 +60,8 @@ export const Login = async (email, password) => {
         // console.log("Login successful:", loginUser.user.uid);
         console.log("Login successful:  id", loginUser.user.uid);
         localStorage.setItem('IdUser', loginUser.user.uid);
-        toast.success("Login successful!");
+        localStorage.setItem('typeUser', loginUser.user.type);
+        // toast.success("Login successful!");
        
         return loginUser.user;
     } catch (error) {

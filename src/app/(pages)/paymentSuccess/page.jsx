@@ -96,7 +96,7 @@ export default function Page() {
 
 
     return (
-        <div className="bg-gradient-to-br from-green-50 to-green-200 min-h-screen flex items-center justify-center">
+        <div className="bg-gray-100 min-h-screen flex items-center justify-center">
             <div className="bg-white shadow-lg rounded-xl p-8 max-w-lg w-full">
                 <div className="text-center">
                     <div className="flex justify-center items-center bg-green-100 text-green-600 w-16 h-16 mx-auto rounded-full">
