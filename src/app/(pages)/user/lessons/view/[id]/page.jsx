@@ -1,7 +1,7 @@
 "use client";
 import Link from 'next/link';
 import React, { useState, useEffect } from 'react';
-import { doc, getDoc } from "firebase/firestore";
+import { doc, getDoc, Timestamp } from "firebase/firestore";
 import { db } from '@/app/firebase';
 
 export default function Page({ params }) {
@@ -22,13 +22,18 @@ export default function Page({ params }) {
                 const docRef = doc(db, "lessons", id);
                 const docSnap = await getDoc(docRef);
                 if (docSnap.exists()) {
-                    const lessonData = docSnap.data();
+                    const lessonData = docSnap.data();                                        
                     setFormData({
-                        date: lessonData.date || '',
+                        date: lessonData.date.toDate().toLocaleString('en-US', {
+                            weekday: 'long',
+                            year: 'numeric',
+                            month: 'long',
+                            day: 'numeric',
+                        }) || '',
                         driver_id: lessonData.driver_id || '',
-                        from: lessonData.from || '',
+                        from: `${String(lessonData.from.toDate().getHours()).padStart(2, '0')}:${String(lessonData.from.toDate().getMinutes()).padStart(2, '0')}` || '',
                         time: lessonData.time || '',
-                        to: lessonData.to || '',
+                        to: `${String(lessonData.to.toDate().getHours()).padStart(2, '0')}:${String(lessonData.to.toDate().getMinutes()).padStart(2, '0')}` || '',
                         user_id: lessonData.user_id || '',
                     });
                 } else {
@@ -53,7 +58,7 @@ export default function Page({ params }) {
                                 Date
                             </label>
                             <input
-                                type="date"
+                                type="text"
                                 value={formData.date}
                                 readOnly
                                 className="bg-gray-200 border border-gray-200 rounded py-1 px-3 block text-gray-500 w-full"
@@ -86,7 +91,7 @@ export default function Page({ params }) {
                                 Time
                             </label>
                             <input
-                                type="time"
+                                type="text"
                                 value={formData.time}
                                 readOnly
                                 className="bg-gray-200 border border-gray-200 rounded py-1 px-3 block text-gray-500 w-full"

@@ -1,7 +1,7 @@
 "use client";
 import Link from "next/link";
 import React, { useState, useEffect } from "react";
-import { addDoc, collection, getDocs, query, where, serverTimestamp } from "firebase/firestore";
+import { doc, addDoc, collection, getDocs, query, where, Timestamp, getDoc, setDoc } from "firebase/firestore";
 import { db } from "@/app/firebase";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
@@ -11,7 +11,7 @@ export default function Page() {
     const [formData, setFormData] = useState({
         date: "",
         driver_id: "",
-        status: "pending",
+        status: "soon",
         from: "",
         time: "",
         to: "",
@@ -88,22 +88,80 @@ export default function Page() {
         return true;
     };
 
+
+    function convertTimeToTimestamp(timeString) {
+        // Split the time string into hours and minutes
+        const [hours, minutes] = timeString.split(':').map(Number);
+    
+        // Get the current date
+        const now = new Date();
+    
+        // Set the time on the current date
+        now.setHours(hours, minutes, 0, 0);
+    
+        // Return the timestamp (milliseconds since epoch)
+        return now.getTime();
+    }
+
+    function getTimeDifference(timestamp1, timestamp2) {
+        // Calculate the difference in milliseconds
+        const differenceMs = Math.abs(timestamp1 - timestamp2);
+    
+        // Convert to different units
+        const seconds = Math.floor(differenceMs / 1000);
+        const minutes = Math.floor(differenceMs / (1000 * 60));
+        const hours = Math.floor(differenceMs / (1000 * 60 * 60));
+    
+        return { differenceMs, seconds, minutes, hours };
+    }
+
+    function timeDifference(startTime, endTime) {
+        // Convert time strings to hours and minutes
+        const [startHours, startMinutes] = startTime.split(':').map(Number);
+        const [endHours, endMinutes] = endTime.split(':').map(Number);
+    
+        // Convert to total minutes from midnight
+        const startTotalMinutes = startHours * 60 + startMinutes;
+        const endTotalMinutes = endHours * 60 + endMinutes;
+    
+        // Calculate the difference, accounting for crossing midnight
+        let differenceMinutes;
+        if (endTotalMinutes >= startTotalMinutes) {
+            differenceMinutes = endTotalMinutes - startTotalMinutes;
+        } else {
+            // Crossing midnight case
+            differenceMinutes = 1440 - startTotalMinutes + endTotalMinutes;
+        }
+    
+        // Convert back to hours and minutes
+        const hours = Math.floor(differenceMinutes / 60);
+        const minutes = differenceMinutes % 60;
+    
+        // Format result as HH:mm
+        return `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}`;
+    }
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
         if (!validateForm()) return;
 
         try {
+            const { differenceMs, seconds, minutes, hours } = getTimeDifference(convertTimeToTimestamp(formData.to), convertTimeToTimestamp(formData.from));
             await addDoc(collection(db, "lessons"), {
-                date: formData.date,
+                date: new Date(formData.date),
                 driver_id: formData.driver_id,
                 status: formData.status,
-                from: formData.from,
-                time: formData.time,
-                to: formData.to,
-                user_id: formData.user_id,
-                created_at: serverTimestamp(),
+                from: Timestamp.fromMillis(convertTimeToTimestamp(formData.from)),
+                time: `${String(hours).padStart(2, '0')}:${String(minutes % 60).padStart(2, '0')}`,
+                to: Timestamp.fromMillis(convertTimeToTimestamp(formData.to)),
+                user_id: formData.user_id
             });
+            const userDocRef = doc(db, "users", formData.user_id);
+            const docSnap = await getDoc(userDocRef);
+            await setDoc(userDocRef, {
+                driving_hours: timeDifference(`${String(hours).padStart(2, '0')}:${String(minutes % 60).padStart(2, '0')}`, docSnap.data().driving_hours)
+            }, { merge: true });
 
             router.push("/user/lessons");
             toast.success("Lesson created successfully");
@@ -173,7 +231,7 @@ export default function Page() {
                                     className="bg-gray-100 border border-gray-200 rounded py-1 px-3 block focus:ring-blue-500 focus:border-blue-500 text-gray-700 w-full"
                                 />
                             </div>
-                            <div>
+                            {/* <div>
                                 <label
                                     htmlFor="time"
                                     className="text-sm text-gray-700 block mb-1 font-medium"
@@ -188,7 +246,7 @@ export default function Page() {
                                     onChange={handleChange}
                                     className="bg-gray-100 border border-gray-200 rounded py-1 px-3 block focus:ring-blue-500 focus:border-blue-500 text-gray-700 w-full"
                                 />
-                            </div>
+                            </div> */}
                             <div>
                                 <label
                                     htmlFor="to"

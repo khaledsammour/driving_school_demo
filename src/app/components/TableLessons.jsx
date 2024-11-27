@@ -11,7 +11,7 @@ import { LuView } from "react-icons/lu";
 import Loader from "./loader";
 import toast from "react-hot-toast";
 import Link from "next/link";
-import { query, collection, where, getDocs, doc, updateDoc } from "firebase/firestore";
+import { query, collection, where, getDocs, doc, updateDoc, getDoc, setDoc } from "firebase/firestore";
 import { db } from "@/app/firebase";
 import { IoCloseCircle } from "react-icons/io5";
 import { FaCheckCircle } from "react-icons/fa";
@@ -74,11 +74,35 @@ export default function TableLessons({ type }) {
 
     if (loading) return <Loader />;
 
-    const handleDelete = async (event, id) => {
+    function addTimes(time1, time2) {
+        // Convert both times to hours and minutes
+        const [hours1, minutes1] = time1.split(':').map(Number);
+        const [hours2, minutes2] = time2.split(':').map(Number);
+    
+        // Calculate total hours and minutes
+        let totalMinutes = minutes1 + minutes2;
+        let totalHours = hours1 + hours2 + Math.floor(totalMinutes / 60);
+    
+        // Adjust minutes and handle overflow
+        totalMinutes = totalMinutes % 60;
+        totalHours = totalHours % 24; // Wrap around if total hours >= 24
+    
+        // Format result as HH:mm
+        const formattedHours = String(totalHours).padStart(2, '0');
+        const formattedMinutes = String(totalMinutes).padStart(2, '0');
+        return `${formattedHours}:${formattedMinutes}`;
+    }
+
+    const handleDelete = async (event, selectedLesson) => {
         if (event) event.preventDefault();
         try {
-            await deleteLessonsFromFirestore(id);
-            setLessons((prevLessons) => prevLessons.filter((lesson) => lesson.id !== id));
+            const userDocRef = doc(db, "users", userId);
+            const docSnap = await getDoc(userDocRef);
+            await setDoc(userDocRef, {
+                driving_hours: addTimes(docSnap.data().driving_hours, selectedLesson.time)
+            }, { merge: true });
+            await deleteLessonsFromFirestore(selectedLesson.id);
+            setLessons((prevLessons) => prevLessons.filter((lesson) => lesson.id !== selectedLesson.id));
         } catch (err) {
             console.error("Failed to delete lesson:", err);
             toast.error("Failed to delete lesson. Please try again.");
@@ -93,9 +117,6 @@ export default function TableLessons({ type }) {
             year: 'numeric',
             month: 'long',
             day: 'numeric',
-            hour: '2-digit',
-            minute: '2-digit',
-            second: '2-digit',
         };
         return date.toLocaleString('en-US', options);
     };
@@ -177,7 +198,7 @@ export default function TableLessons({ type }) {
                                     <Link href={`/${type}/lessons/view/${lesson.id}`}><LuView /></Link>
                                 </IconButton>
                                 <IconButton
-                                    onClick={(e) => handleDelete(e, lesson.id)}
+                                    onClick={(e) => handleDelete(e, lesson)}
                                     color="error"
                                 >
                                     <FaTrash />

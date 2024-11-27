@@ -37,7 +37,7 @@ class CheckoutForm extends React.Component {
             elements,
             clientSecret,
             confirmParams: {
-                return_url: 'http://localhost:3000/paymentSuccess',
+                return_url: 'https://master-lake.vercel.app/paymentSuccess',
             },
 
         });

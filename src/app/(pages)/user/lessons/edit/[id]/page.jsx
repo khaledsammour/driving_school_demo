@@ -1,7 +1,7 @@
 "use client";
 import Link from 'next/link';
 import React, { useState, useEffect } from 'react';
-import { doc, getDoc, setDoc, serverTimestamp } from "firebase/firestore";
+import { doc, getDoc, setDoc, serverTimestamp, Timestamp } from "firebase/firestore";
 import { db } from '@/app/firebase';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
@@ -77,6 +77,32 @@ export default function Page({ params }) {
         return true;
     };
 
+    function convertTimeToTimestamp(timeString) {
+        // Split the time string into hours and minutes
+        const [hours, minutes] = timeString.split(':').map(Number);
+    
+        // Get the current date
+        const now = new Date();
+    
+        // Set the time on the current date
+        now.setHours(hours, minutes, 0, 0);
+    
+        // Return the timestamp (milliseconds since epoch)
+        return now.getTime();
+    }
+
+    function getTimeDifference(timestamp1, timestamp2) {
+        // Calculate the difference in milliseconds
+        const differenceMs = Math.abs(timestamp1 - timestamp2);
+    
+        // Convert to different units
+        const seconds = Math.floor(differenceMs / 1000);
+        const minutes = Math.floor(differenceMs / (1000 * 60));
+        const hours = Math.floor(differenceMs / (1000 * 60 * 60));
+    
+        return { differenceMs, seconds, minutes, hours };
+    }
+
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -85,13 +111,14 @@ export default function Page({ params }) {
 
         try {
             const lessonDocRef = doc(db, "lessons", id);
+            const { differenceMs, seconds, minutes, hours } = getTimeDifference(convertTimeToTimestamp(formData.to), convertTimeToTimestamp(formData.from));
 
             await setDoc(lessonDocRef, {
-                date: formData.date,
+                date: new Date(formData.date),
                 driver_id: formData.driver_id,
-                from: formData.from,
-                time: formData.time,
-                to: formData.to,
+                from: Timestamp.fromMillis(convertTimeToTimestamp(formData.from)),
+                time: `${String(hours).padStart(2, '0')}:${String(minutes % 60).padStart(2, '0')}`,
+                to: Timestamp.fromMillis(convertTimeToTimestamp(formData.to)),
                 user_id: formData.user_id,
                 updated_at: serverTimestamp(),
             }, { merge: true });
@@ -142,7 +169,7 @@ export default function Page({ params }) {
                                     From
                                 </label>
                                 <input
-                                    type="date"
+                                    type="time"
                                     name="from"
                                     id="from"
                                     value={formData.from}
@@ -150,7 +177,7 @@ export default function Page({ params }) {
                                     className="bg-gray-100 border border-gray-200 rounded py-1 px-3 block focus:ring-blue-500 focus:border-blue-500 text-gray-700 w-full"
                                 />
                             </div>
-                            <div>
+                            {/* <div>
                                 <label htmlFor="time" className="text-sm text-gray-700 block mb-1 font-medium">
                                     Time
                                 </label>
@@ -162,13 +189,13 @@ export default function Page({ params }) {
                                     onChange={handleChange}
                                     className="bg-gray-100 border border-gray-200 rounded py-1 px-3 block focus:ring-blue-500 focus:border-blue-500 text-gray-700 w-full"
                                 />
-                            </div>
+                            </div> */}
                             <div>
                                 <label htmlFor="to" className="text-sm text-gray-700 block mb-1 font-medium">
                                     To
                                 </label>
                                 <input
-                                    type="date"
+                                    type="time"
                                     name="to"
                                     id="to"
                                     value={formData.to}
