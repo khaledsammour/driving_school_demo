@@ -74,19 +74,26 @@ export default function ContactPage() {
                                         info@formulaonedriving.com
                                     </div>
                                 </div>
-
+                                {/* Working Hours Section */}
+                                <div className="mt-8 text-gray-800 dark:text-white">
+                                    <h2 className="text-2xl font-bold">Working Hours</h2>
+                                    <p className="mt-2 text-lg">Monday to Friday: 7am - 7pm</p>
+                                    <p className="mt-2 text-lg">Weekend: 10am - 5pm</p>
+                                </div>
                                 {/* Google Maps Iframe */}
                                 <div className="mt-6">
-                                    <iframe
-                                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2886.637767888967!2d-79.64411998450099!3d43.58904587912464!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x882b3c1bc4a8fd49%3A0x715e7af722d1e143!2sMississauga%2C%20ON!5e0!3m2!1sen!2sca!4v1635436789672!5m2!1sen!2sca"
-                                        width="100%"
-                                        height="300"
-                                        style={{ border: 0 }}
-                                        allowFullScreen=""
-                                        loading="lazy"
-                                        title="Mississauga Location"
-                                    ></iframe>
+                                <iframe
+  src="https://www.google.com/maps/embed?pb=!4v1733180050865!6m8!1m7!1s4V9MqmEcAh9AhEa-SU1PaA!2m2!1d43.6018122772962!2d-79.64656143489171!3f317.21382763789336!4f-5.409709110383048!5f0.7820865974627469"
+  width="100%"
+  height="300"
+  style={{ border: '0' }}
+  allowFullScreen=""
+  loading="lazy"
+  referrerPolicy="no-referrer-when-downgrade"
+/>
+
                                 </div>
+
                             </div>
 
                             {/* Form Section */}
