@@ -38,7 +38,7 @@ export default function Footer() {
                     </a>
                 </div>
 
-                <p className="text-center text-gray-700 font-medium">&copy; 2024 FormulaOne Driving School. All Rights Reserved.</p>
+                <p className="text-center text-gray-700 font-medium">&copy; 2025 FormulaOne Driving School. All Rights Reserved.</p>
             </footer>
         </>
     )

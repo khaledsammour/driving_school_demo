@@ -14,8 +14,22 @@ export default function Pricing() {
             try {
                 const AllPackages = await fetchPackagesFromFirestore();
                 console.log("Fetched Packages:", AllPackages);
+                const priorityOrder = {
+                    "PREMIUM PACKAGE": 1,
+                    "BASIC PACKAGE": 2,
+                    "INDIVIDUAL LESSON": 3,
+                    "CAR FOR TEST": 4,
+                    "ONLINE TRAINING": 5,
+                    "10 IN-CAR LESSON": 6,
+                };
 
-                setPackages(AllPackages);
+                // Sort the packages based on the priorityOrder
+                const sortedPackages = AllPackages.sort((a, b) => {
+                    const priorityA = priorityOrder[a.type] || Infinity; // Default to Infinity if type is not in the order
+                    const priorityB = priorityOrder[b.type] || Infinity;
+                    return priorityA - priorityB; // Sort by ascending priority
+                });
+                setPackages(sortedPackages);
             } catch (err) {
                 setError("Failed to fetch users.");
                 console.error(err);

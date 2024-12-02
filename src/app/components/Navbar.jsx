@@ -14,11 +14,16 @@ import { useRouter, usePathname } from 'next/navigation';
 import NavDrobdown from './NavDrobdown';
 import imgUser from '@/app/assets/userImg.jpg';
 import imgAdmin from '@/app/assets/admin.png';
+import { db } from '@/app/firebase'; // Import your Firebase config
+import { doc, getDoc } from 'firebase/firestore';
+import { Logout } from "../services/authService";
+
 export default function Header() {
     const [isOpen, setOpen] = useState(false);
     const [openLang, setOpenLang] = useState(false);
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [lang, setLang] = useState('en');
+    const [user, setUser] = useState(null);
     const closeSearch = useRef(null);
     const { switchLanguage } = useContext(LanguageContext);
     const router = useRouter();
@@ -66,13 +71,37 @@ export default function Header() {
     }, []);
 
     useEffect(() => {
-        checkUserLoggedIn((loggedIn) => {
-            setIsLoggedIn(loggedIn);
+        checkUserLoggedIn(async (loggedIn, callbackUser) => {          
+            const userRef = doc(db, "users", callbackUser?.uid);
+            const userSnapshot = await getDoc(userRef);
+            if (userSnapshot.exists()) {
+                const fetchedUser = userSnapshot.data();
+                setUser(fetchedUser);  
+                setIsLoggedIn(loggedIn);
+                console.log(fetchedUser);
+            } else {
+                console.log("No such user document!");
+            }
         });
     }, []);
 
     const toggleLangMenu = () => {
         setOpenLang((prevState) => !prevState);
+    };
+
+    const handleLogOut = async () => {
+        try {
+            await Logout();
+            toast.success("Successfully logged out!");
+            router.push("/login");
+            if (typeof window !== "undefined") {
+                localStorage.removeItem("typeUser");
+                localStorage.removeItem("IdUser");
+            }
+        } catch (error) {
+            console.error("Logout failed:", error);
+            toast.error("Logout failed. Please try again.");
+        }
     };
 
     return (
@@ -83,7 +112,7 @@ export default function Header() {
                         <Image src={logo} alt="Logo" className="mx-2" width={imageWidth} height={60} />
                     </Link>
                     <div className="flex items-center lg:order-2">
-                        <div className="mx-2">
+                        {/* <div className="mx-2">
                             <div className="lang-menu relative text-right font-bold w-24" ref={closeSearch}>
                                 <div className="selected-lang flex items-center justify-end cursor-pointer" onClick={toggleLangMenu}>
                                     <Image src={lang === "en" ? EnglandImg : ArabicImg} alt="Language" className="w-9 h-9 mx-2" width={42} height={42} />
@@ -103,12 +132,24 @@ export default function Header() {
                                     </li>
                                 </ul>
                             </div>
-                        </div>
+                        </div> */}
                         {
                             isLoggedIn ? (
-                                <div className="mt-1">
-                                    <NavDrobdown imgSrc={imgUser.src} isAdmin={false} />
+                                <div className="lg:flex hidden justify-between items-center">
+                                    {user.online_training_hours && <div className="mx-2">
+                                        <a
+                                            href="https://formulaonedrivingschool.trubicars.ca/auth/mfa/login.php"
+                                            className="text-blue-700 border border-blue-800 hover:bg-blue-800 hover:text-white focus:ring-none font-medium rounded-lg text-sm px-4 lg:px-7 py-2 lg:py-2.5 mr-2 "
+                                        >
+                                            Online Training Portal
+                                        </a>
+                                    </div>}
+                                    <div className="mt-1">
+
+                                        <NavDrobdown imgSrc={imgUser.src} isAdmin={false} />
+                                    </div>
                                 </div>
+
                             ) : (
                                 <div className="mx-2 lg:block hidden">
                                     <Link
@@ -117,12 +158,6 @@ export default function Header() {
                                     >
                                         Members Portal
                                     </Link>
-                                    <a
-                                        href="https://formulaonedrivingschool.trubicars.ca/auth/mfa/login.php"
-                                        className="text-blue-700 border border-blue-800 hover:bg-blue-800 hover:text-white focus:ring-none font-medium rounded-lg text-sm px-4 lg:px-7 py-2 lg:py-2.5 mr-2 "
-                                    >
-                                        Online Training Portal
-                                    </a>
                                 </div>
                             )
                         }
@@ -134,6 +169,12 @@ export default function Header() {
 
                     <div className={`${isOpen ? 'block' : 'hidden'} justify-between items-center w-full lg:flex lg:w-auto lg:order-1`} id="mobile-menu-2">
                         <ul className="flex flex-col mt-4 font-medium lg:flex-row lg:space-x-8 lg:mt-0">
+                            {isLoggedIn && <li className="lg:hidden block">
+                                <Link href={user.type === "user" ? "/user" : user.type === "driver" ? "/driver" : "/admin" } className={`block py-2 pr-4 pl-3 rounded ${pathname === "/user" ? "text-blue-700" : "text-gray-700"
+                                        } lg:p-0`}>
+                                    Dashboard
+                                </Link>
+                            </li>}
                             <li>
                                 <Link
                                     href="/"
@@ -179,22 +220,36 @@ export default function Header() {
                                     <FormattedMessage id="contact_us" />
                                 </Link>
                             </li>
-                            <li>
-                                <div className="mx-2 lg:hidden block my-3">
-                                    <Link
-                                        href="/login"
-                                        className="text-white bg-blue-700 hover:bg-blue-800 focus:ring-none font-medium rounded-lg text-sm px-4 lg:px-7 py-2 lg:py-2.5 mr-2 "
-                                    >
-                                        Members Portal
-                                    </Link>
-                                    <a
-                                        href="https://formulaonedrivingschool.trubicars.ca/auth/mfa/login.php"
-                                        className="text-blue-700 border border-blue-800 hover:bg-blue-800 hover:text-white focus:ring-none font-medium rounded-lg text-sm px-4 lg:px-7 py-2 lg:py-2.5 mr-2 "
-                                    >
-                                        Online Training Portal
-                                    </a>
-                                </div>
-                            </li>
+                            {isLoggedIn && user.online_training_hours && <li className="lg:hidden block">
+                                <Link
+                                    href="https://formulaonedrivingschool.trubicars.ca/auth/mfa/login.php"
+                                    className={`block py-2 pr-4 pl-3 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-blue-700 lg:p-0 ${pathname === "/contactUs" ? "text-blue-700" : "text-gray-700"
+                                        }`}
+                                >
+                                    Online Training Portal
+                                </Link>
+                            </li>}
+                            {isLoggedIn ? <li className="lg:hidden block">
+                                <Link
+                                    href="#"
+                                    onClick={(e)=>{
+                                        e.preventDefault()
+                                        handleLogOut()
+                                    }}
+                                    className={`block py-2 pr-4 pl-3 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-blue-700 lg:p-0 ${pathname === "/contactUs" ? "text-blue-700" : "text-gray-700"
+                                        }`}
+                                >
+                                    Sign out
+                                </Link>
+                            </li> : <li>
+                                <Link
+                                    href="/login"
+                                    className={`block py-2 pr-4 pl-3 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-blue-700 lg:p-0 ${pathname === "/contactUs" ? "text-blue-700" : "text-gray-700"
+                                        }`}
+                                >
+                                    Members Portal
+                                </Link>
+                            </li>}
                         </ul>
                     </div>
                 </div>

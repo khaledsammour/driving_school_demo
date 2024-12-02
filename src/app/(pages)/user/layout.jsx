@@ -125,14 +125,7 @@ export default function Layout({ children }) {
 
             <section className={`flex-1 min-h-screen z-40 transition-all duration-75 bg-white ${isSidebarOpen ? "pl-64" : "pl-16"}`}>
                 <div className={`fixed top-0 z-[inherit] flex items-center justify-between ${isSidebarOpen ? "left-64" : "left-16"} right-0 shadow-sm bg-white py-3 px-4 text-black transition-all duration-300`}>
-                    <div className="relative w-full max-w-md">
-                        <BiSearch className="absolute left-3 top-2 text-gray-400" size={20} />
-                        <input
-                            type="text"
-                            placeholder="Search here..."
-                            className="w-full pl-10 pr-4 py-2 rounded bg-gray-200 text-black focus:outline-none"
-                        />
-                    </div>
+                    <div className="relative w-full max-w-md"></div>
                     <div className="">
                         <NavDrobdown imgSrc={userImg.src} isAdmin={false} />
                     </div>
