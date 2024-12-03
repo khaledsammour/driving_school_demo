@@ -10,7 +10,6 @@ export default function page() {
             </div>
 
             <div className="table w-full py-6">
-                <p className='text text-xl font-bold ml-2 text-black'>please upload your Document </p>
                 <FileUploadDocument UserType="driver" TypeFile={"document"} />
             </div>
         </div>

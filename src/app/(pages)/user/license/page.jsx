@@ -9,8 +9,7 @@ export default function page() {
                 <span className="text text-xl font-bold ml-2 text-blue-600">License </span>
             </div>
 
-            <div className="table w-full py-6">
-                <p className='text text-xl font-bold ml-2 text-black'>please upload your license </p>
+            <div className="table w-full py-1">
                 <FileUploadLicense UserType="user" TypeFile={"license"} />
             </div>
         </div>
