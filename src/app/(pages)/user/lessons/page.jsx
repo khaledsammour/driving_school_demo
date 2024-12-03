@@ -1,15 +1,66 @@
+'use client'; 
 import TableLessons from '@/app/components/TableLessons';
 import Link from 'next/link';
-
-import React from 'react'
+import React, { useEffect, useState } from "react";
 import { MdOutlinePlayLesson } from "react-icons/md";
+import { query, collection, where, getDocs } from "firebase/firestore";
+import toast from "react-hot-toast";
 
+import { db } from "@/app/firebase";
 
-export default function page() {
+export default function Page() {
+    const [userId, setUserId] = useState(null);
+    const [userHasAcceptedLicense, setUserHasAcceptedLicense] = useState(false); // State for license status
+
+    useEffect(() => {
+        if (typeof window !== "undefined") {
+            const storedUserId = localStorage.getItem("IdUser");
+            if (storedUserId) {
+                setUserId(storedUserId);
+            } 
+        }
+    }, []);
+
+    useEffect(() => {
+        const getLessonsWithUsers = async () => {
+            if (!userId) return;
+
+            try {
+                // Step 1: Query uploads where user_id matches userId and status is 'Accepted'
+                const approvedQuery = query(
+                    collection(db, "uploads"),
+                    where('userId', "==", userId),
+                    where('status', "==", 'Accepted'),
+                    where('fileType', "==", 'license')
+                );
+
+                const querySnapshot = await getDocs(approvedQuery);
+console.log(querySnapshot);
+console.log("@###");
+                // Check if the user has accepted the license
+                if (querySnapshot.empty) {
+                    setUserHasAcceptedLicense(false);
+                } else {
+                    setUserHasAcceptedLicense(true);
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        };
+
+        getLessonsWithUsers();
+    }, [userId]);  // The effect will re-run when userId changes
+
+    const handleAddLessonClick = (e) => {
+        if (!userHasAcceptedLicense) {
+            e.preventDefault(); // Prevent navigation if license not accepted
+            toast.error("Your license must be accepted to add a new lesson.");
+        }
+    };
+
     return (
         <>
             <div className="lessons">
-
                 <div className="title flex items-center justify-between mb-12">
                     <div className="flex items-center justify-between">
                         <MdOutlinePlayLesson className='h-9 w-9 bg-primary rounded-lg text-blue-600 flex items-center justify-center text-md' />
@@ -18,11 +69,11 @@ export default function page() {
                     <div className="flex">
                         <Link
                             href="/user/lessons/add"
-                            className="text-green-600 text-base font-normal border border-green-600 py-1 px-2 rounded cursor-pointer hover:bg-green-50"
+                            onClick={handleAddLessonClick}
+                            className={`text-green-600 text-base font-normal border border-green-600 py-1 px-2 rounded cursor-pointer hover:bg-green-50 ${!userHasAcceptedLicense ? 'cursor-not-allowed opacity-50' : ''}`}
                         >
                             Add New Lesson
                         </Link>
-
                     </div>
                 </div>
                 <div className="table w-full py-6">
@@ -30,5 +81,5 @@ export default function page() {
                 </div>
             </div>
         </>
-    )
+    );
 }

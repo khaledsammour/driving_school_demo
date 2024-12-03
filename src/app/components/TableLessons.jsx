@@ -35,13 +35,13 @@ export default function TableLessons({ type }) {
             }
         }
     }, []);
-
     useEffect(() => {
-        const getLessons = async () => {
+        const getLessonsWithUsers = async () => {
             if (!userId) return;
             try {
                 setLoading(true);
 
+                // Step 1: Query lessons where driver_id matches userId
                 const lessonsQuery = query(
                     collection(db, "lessons"),
                     where(userType, "==", userId)
@@ -49,21 +49,50 @@ export default function TableLessons({ type }) {
 
                 const querySnapshot = await getDocs(lessonsQuery);
 
-                const filteredLessons = querySnapshot.docs.map((doc) => ({
+                const lessonsData = querySnapshot.docs.map((doc) => ({
                     id: doc.id,
                     ...doc.data(),
                 }));
 
-                setLessons(filteredLessons);
+                // Step 2: Fetch related users based on driver_id
+                const userPromises = lessonsData.map((lesson) => {
+                    return getDocs(
+                        query(
+                            collection(db, "users"),
+                            where("uid", "==", lesson.driver_id)
+                        )
+                    ).then((userSnapshot) => ({
+                        ...lesson,
+                        driver: userSnapshot.docs[0]?.data() || null, // Add user data or null
+                    }));
+                });
+
+                // Wait for all user fetches to complete
+                const lessonsWithUsers = await Promise.all(userPromises);
+                const sortedLessons = lessonsWithUsers.sort((a, b) => {
+                    // Parse the date strings in "DD/MM/YYYY" format
+                    const parseDate = (dateStr) => {
+                        const [day, month, year] = dateStr.split('/'); // Split into day, month, year
+                        return new Date(`${month}/${day}/${year}`); // Create a Date object
+                    };
+                
+                    const dateA = a?.date ? parseDate(a.date) : new Date(0); // default to epoch if no date
+                    const dateB = b?.date ? parseDate(b.date) : new Date(0); // default to epoch if no date
+                
+                    return dateB - dateA; // descending order
+                });
+                
+                // Step 3: Combine data
+                setLessons(sortedLessons);
             } catch (err) {
-                setError("Failed to fetch lessons.");
+                setError("Failed to fetch lessons with user data.");
                 console.error(err);
             } finally {
                 setLoading(false);
             }
         };
 
-        getLessons();
+        getLessonsWithUsers();
     }, [userId, userType]);
 
     useEffect(() => {
@@ -110,16 +139,38 @@ export default function TableLessons({ type }) {
     };
 
     const formatTimestamp = (timestamp) => {
-        if (!timestamp) return "Invalid Date";
-        const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+        if (!timestamp) {
+            return "Invalid Date"; // Handle null or undefined
+        }
+    
+        // If timestamp is in string format 'DD/MM/YYYY', convert it to 'YYYY/MM/DD'
+        let date = timestamp;
+    
+        // Check if the date is in the format 'DD/MM/YYYY'
+        if (typeof timestamp === 'string' && timestamp.match(/^\d{2}\/\d{2}\/\d{4}$/)) {
+            const [day, month, year] = timestamp.split('/');
+            date = `${year}-${month}-${day}`; // Convert to 'YYYY-MM-DD'
+        }
+    
+        // Convert to a JavaScript Date object
+        date = new Date(date);
+    
+        // Check if the date is valid
+        if (isNaN(date.getTime())) {
+           
+            return "Invalid Date"; // Handle invalid date
+        }
+    
         const options = {
             weekday: 'long',
             year: 'numeric',
             month: 'long',
             day: 'numeric',
         };
+    
         return date.toLocaleString('en-US', options);
     };
+    
 
     const handleApproval = async (docId, status) => {
         if (!["Accepted", "Rejected"].includes(status)) {
@@ -162,18 +213,22 @@ export default function TableLessons({ type }) {
             <Table sx={{ minWidth: 650 }} aria-label="lessons table">
                 <TableHead>
                     <TableRow>
-                        <TableCell><strong>User ID</strong></TableCell>
+                        <TableCell><strong>#</strong></TableCell>
                         <TableCell><strong>Date</strong></TableCell>
+                        <TableCell><strong>Driver</strong></TableCell>
+
                         <TableCell><strong>Time</strong></TableCell>
                         <TableCell><strong>Status</strong></TableCell>
                         <TableCell><strong>Actions</strong></TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {filteredLessons.map((lesson) => (
+                    {filteredLessons.map((lesson,index) => (
                         <TableRow key={lesson.id}>
-                            <TableCell>{lesson.id}</TableCell>
+                            <TableCell>{index + 1}</TableCell>
                             <TableCell>{formatTimestamp(lesson.date)}</TableCell>
+                            <TableCell>{lesson?.driver?.first_name ?? '-'}</TableCell>
+
                             <TableCell>{lesson.time || "N/A"}</TableCell>
                             <TableCell>
                                 <Chip
