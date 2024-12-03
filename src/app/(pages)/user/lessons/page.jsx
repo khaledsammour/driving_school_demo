@@ -1,4 +1,4 @@
-'use client'; 
+'use client';
 import TableLessons from '@/app/components/TableLessons';
 import Link from 'next/link';
 import React, { useEffect, useState } from "react";
@@ -17,7 +17,7 @@ export default function Page() {
             const storedUserId = localStorage.getItem("IdUser");
             if (storedUserId) {
                 setUserId(storedUserId);
-            } 
+            }
         }
     }, []);
 
@@ -35,8 +35,7 @@ export default function Page() {
                 );
 
                 const querySnapshot = await getDocs(approvedQuery);
-console.log(querySnapshot);
-console.log("@###");
+
                 // Check if the user has accepted the license
                 if (querySnapshot.empty) {
                     setUserHasAcceptedLicense(false);
