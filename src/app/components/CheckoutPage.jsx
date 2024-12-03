@@ -79,6 +79,7 @@ export default function CheckoutPage({ amount, lessonPackageName }) {
         mode: 'payment',
         amount: amount,
         currency: 'usd',
+        payment_method_types : ['card'],
         appearance: {},
     };
 

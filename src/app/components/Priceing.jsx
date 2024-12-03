@@ -25,10 +25,10 @@ export default function Pricing() {
 
                 // Sort the packages based on the priorityOrder
                 const sortedPackages = AllPackages.sort((a, b) => {
-                    const priorityA = priorityOrder[a.type] || Infinity; // Default to Infinity if type is not in the order
-                    const priorityB = priorityOrder[b.type] || Infinity;
+                    const priorityA = priorityOrder[a.name] || Infinity; // Default to Infinity if type is not in the order
+                    const priorityB = priorityOrder[b.name] || Infinity;
                     return priorityA - priorityB; // Sort by ascending priority
-                });
+                });                
                 setPackages(sortedPackages);
             } catch (err) {
                 setError("Failed to fetch users.");

@@ -82,16 +82,7 @@ export default function ContactPage() {
                                 </div>
                                 {/* Google Maps Iframe */}
                                 <div className="mt-6">
-                                <iframe
-  src="https://www.google.com/maps/embed?pb=!4v1733180050865!6m8!1m7!1s4V9MqmEcAh9AhEa-SU1PaA!2m2!1d43.6018122772962!2d-79.64656143489171!3f317.21382763789336!4f-5.409709110383048!5f0.7820865974627469"
-  width="100%"
-  height="300"
-  style={{ border: '0' }}
-  allowFullScreen=""
-  loading="lazy"
-  referrerPolicy="no-referrer-when-downgrade"
-/>
-
+                                    <iframe width="100%" height="300" src="https://maps.google.com/maps?width=100%&amp;height=600&amp;hl=en&amp;coord=43.6192866,-79.7189483,12z&amp;q=Mississauga,+ON,+Canada&amp;ie=UTF8&amp;t=&amp;z=12&amp;iwloc=B&amp;output=embed" frameborder="0" scrolling="no" marginheight="0" marginwidth="0"></iframe><br />
                                 </div>
 
                             </div>
@@ -121,12 +112,12 @@ export default function ContactPage() {
                                 </div>
 
                                 <div className="flex flex-col mt-2">
-                                    <label htmlFor="tel" className="hidden">Telephone Number</label>
+                                    <label htmlFor="tel" className="hidden">Phone</label>
                                     <input
                                         type="tel"
                                         name="tel"
                                         id="tel"
-                                        placeholder="Telephone Number"
+                                        placeholder="Phone"
                                         className="w-full mt-2 py-3 px-3 rounded-lg bg-white dark:bg-gray-800 border border-gray-400 dark:border-gray-700 text-gray-800 font-semibold focus:border-indigo-500 focus:outline-none"
                                     />
                                 </div>

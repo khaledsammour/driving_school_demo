@@ -11,9 +11,9 @@ export default function WhyChooseUs() {
                     <div className="mx-auto grid max-w-2xl grid-cols-1 gap-16 lg:gap-20 sm:gap-y-20 lg:mx-0 lg:max-w-none lg:grid-cols-2">
                         <div className="lg:pr-8 lg:pt-4">
                             <div className="lg:max-w-lg">
-                                <h2 className="text-2xl font-bold leading-7 text-indigo-600">Why Choose Formulaone Driving</h2>
+                                <h2 className="text-2xl font-bold leading-7 text-indigo-600">Why Choosing Formula One Driving School</h2>
                                 <p className="mt-6 text-lg leading-8 text-gray-600">
-                                    Choosing the right driving school is an important decision. Here’s why Formulaon Driving stands out
+                                    Choosing the right driving school is an important decision. Here’s why Formula One Driving stands out
                                 </p>
                                 <dl className="mt-10 max-w-xl space-y-4 text-base leading-7 text-gray-600 lg:max-w-none">
                                     <div className="relative pl-9">
@@ -48,7 +48,7 @@ export default function WhyChooseUs() {
                                     </div>
                                 </dl>
                                 <p className="mt-10">
-                                    Our team of experienced instructors and dedicated staff are the heart of Formulaone Driving
+                                    Our team of experienced instructors and dedicated staff are the heart of Formula One Driving
                                     School. With a diverse range of backgrounds and expertise, each member brings something unique
                                     to our school. Get to know the people who make your learning experience exceptional.
                                 </p>

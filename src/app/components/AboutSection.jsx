@@ -26,10 +26,10 @@ const AboutSection = () => {
                         <div className="w-full flex-col justify-center items-start gap-8 flex">
                             <div className="w-full flex-col justify-start lg:items-start items-center gap-3 flex">
                                 <h2 className="text-blue-600 text-4xl font-bold font-manrope leading-normal lg:text-start text-center">
-                                    About Formulaone
+                                    About Formula One
                                 </h2>
                                 <p className="text-gray-600 text-base font-normal leading-relaxed lg:text-start text-center">
-                                    At Formulaone Driving, we believe that driving is a life skill that opens up a world of opportunities.
+                                    At Formula One Driving, we believe that driving is a life skill that opens up a world of opportunities.
                                     Our mission is to empower individuals with the confidence and knowledge they need to navigate
                                     the road safely and independently.
                                     <span className='mt-2'>
@@ -43,15 +43,15 @@ const AboutSection = () => {
 
                             <div className="w-full lg:justify-start justify-center items-center sm:gap-10 gap-5 inline-flex">
                                 <div className="flex-col justify-start items-start inline-flex">
-                                    <h3 className="text-gray-900 text-4xl font-bold font-manrope leading-normal">20+</h3>
+                                    <h3 className="text-gray-900 text-4xl font-bold font-manrope leading-normal">2+</h3>
                                     <h6 className="text-gray-500 text-base font-normal leading-relaxed">Years of Experience</h6>
                                 </div>
                                 <div className="flex-col justify-start items-start inline-flex">
-                                    <h4 className="text-gray-900 text-4xl font-bold font-manrope leading-normal">80+</h4>
+                                    <h4 className="text-gray-900 text-4xl font-bold font-manrope leading-normal">10+</h4>
                                     <h6 className="text-gray-500 text-base font-normal leading-relaxed">Driving instructors</h6>
                                 </div>
                                 <div className="flex-col justify-start items-start inline-flex">
-                                    <h4 className="text-gray-900 text-4xl font-bold font-manrope leading-normal">252+</h4>
+                                    <h4 className="text-gray-900 text-4xl font-bold font-manrope leading-normal">100+</h4>
                                     <h6 className="text-gray-500 text-base font-normal leading-relaxed">Happy Clients</h6>
                                 </div>
                             </div>

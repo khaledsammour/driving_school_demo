@@ -70,7 +70,7 @@ const PrivacyPolicy = () => {
                                 {section === 'Safety Protocols' && (
                                     <div className='container mx-auto px-4 py-8'>
                                         <h2 className="text-2xl font-bold mb-2">Safety Protocols</h2>
-                                        <p>At FormulaOne Driving School, the safety of our students, instructors, and the community is our top priority. We have implemented the following safety protocols to ensure a secure and supportive learning environment.</p>
+                                        <p>At Formula One Driving School, the safety of our students, instructors, and the community is our top priority. We have implemented the following safety protocols to ensure a secure and supportive learning environment.</p>
 
                                         <h3 className="text-lg font-bold mt-4">1. Vehicle Safety Checks</h3>
                                         <ul className="list-disc list-inside mb-4">
@@ -131,7 +131,7 @@ const PrivacyPolicy = () => {
                                     <div className="container mx-auto px-4 py-8">
                                         <h1 className="text-3xl font-bold mb-4">Privacy Policy</h1>
                                         <p className="mb-4">
-                                            At FormulaOne Driving School, we respect your privacy and are committed to protecting the personal information you share with us.
+                                            At Formula One Driving School, we respect your privacy and are committed to protecting the personal information you share with us.
                                         </p>
                                         <h2 className="text-2xl font-bold mb-2">1. Information We Collect</h2>
                                         <ul className="list-disc list-inside mb-4">
