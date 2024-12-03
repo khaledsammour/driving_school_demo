@@ -71,17 +71,19 @@ export default function Header() {
     }, []);
 
     useEffect(() => {
-        checkUserLoggedIn(async (loggedIn, callbackUser) => {          
-            const userRef = doc(db, "users", callbackUser?.uid);
-            const userSnapshot = await getDoc(userRef);
-            if (userSnapshot.exists()) {
-                const fetchedUser = userSnapshot.data();
-                setUser(fetchedUser);  
-                setIsLoggedIn(loggedIn);
-                console.log(fetchedUser);
-            } else {
-                console.log("No such user document!");
-            }
+        checkUserLoggedIn(async (loggedIn, callbackUser) => {   
+            if (callbackUser?.uid){   
+                const userRef = doc(db, "users", callbackUser?.uid);
+                const userSnapshot = await getDoc(userRef);
+                if (userSnapshot.exists()) {
+                    const fetchedUser = userSnapshot.data();
+                    setUser(fetchedUser);  
+                    setIsLoggedIn(loggedIn);
+                    console.log(fetchedUser);
+                } else {
+                    console.log("No such user document!");
+                }
+            }    
         });
     }, []);
 

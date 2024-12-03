@@ -1,13 +1,72 @@
-import React from 'react';
+"use client"
 
-export const metadata = {
-    title: 'Contact Us',
-    description: 'contact page',
-    keywords: ['contact', 'contact us', 'contact us page'],
-};
-
+import Link from 'next/link';
+import React, { useState } from 'react';
+import {
+    addDoc,
+    collection,
+    serverTimestamp,
+} from "firebase/firestore";
+import { auth, db, storage } from '@/app/firebase';
+import toast from 'react-hot-toast';
+import { useRouter } from 'next/navigation';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { FaRegEye } from "react-icons/fa6";
+import { FaRegEyeSlash } from "react-icons/fa";
 
 export default function ContactPage() {
+    const [formData, setFormData] = useState({
+        full_name: '',
+        email: '',
+        phone: '',
+        message: '',
+    });
+
+    const handleChange = (e) => {
+        const { name, value } = e.target;
+        setFormData((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
+
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        const full_name = e.target.full_name.value;
+        const email = e.target.email.value;
+        const phone = e.target.phone.value;
+        const message = e.target.message.value;
+
+        if (!full_name || !email || !phone || !message) {
+            toast.error('All fields are required.');
+            return;
+        }
+
+        const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailPattern.test(email)) {
+            toast.error('Please enter a valid email address.');
+            return;
+        }
+
+        const phonePattern = /^\d+$/;
+        if (!phonePattern.test(phone)) {
+            toast.error('Please enter a valid phone number (digits only).');
+            return;
+        }
+        
+
+        try {
+            await addDoc(collection(db, "contactUs"), {
+                full_name: full_name,
+                email: email,
+                phone: phone,
+                message: message
+            });
+            toast.success("Message sent successfully!");
+        } catch (error) {
+            toast.error("Something went wrong");
+        }
+    }
     return (
         <div className="contactUS">
             <div className="relative flex items-top justify-center min-h-screen bg-white dark:bg-gray-900 sm:items-center sm:pt-0">
@@ -88,14 +147,17 @@ export default function ContactPage() {
                             </div>
 
                             {/* Form Section */}
-                            <form className="p-6 flex flex-col justify-center">
+                            <form className="p-6 flex flex-col justify-center" onSubmit={handleSubmit}>
                                 <div className="flex flex-col">
                                     <label htmlFor="name" className="hidden">Full Name</label>
                                     <input
                                         type="text"
-                                        name="name"
-                                        id="name"
+                                        name="full_name"
+                                        id="full_name"
                                         placeholder="Full Name"
+                                        value={formData.full_name}
+                                        onChange={handleChange}
+                                        required
                                         className="w-full mt-2 py-3 px-3 rounded-lg bg-white dark:bg-gray-800 border border-gray-400 dark:border-gray-700 text-gray-800 font-semibold focus:border-indigo-500 focus:outline-none"
                                     />
                                 </div>
@@ -107,6 +169,9 @@ export default function ContactPage() {
                                         name="email"
                                         id="email"
                                         placeholder="Email"
+                                        value={formData.email}
+                                        onChange={handleChange}
+                                        required
                                         className="w-full mt-2 py-3 px-3 rounded-lg bg-white dark:bg-gray-800 border border-gray-400 dark:border-gray-700 text-gray-800 font-semibold focus:border-indigo-500 focus:outline-none"
                                     />
                                 </div>
@@ -115,9 +180,12 @@ export default function ContactPage() {
                                     <label htmlFor="tel" className="hidden">Phone</label>
                                     <input
                                         type="tel"
-                                        name="tel"
-                                        id="tel"
+                                        name="phone"
+                                        id="phone"
                                         placeholder="Phone"
+                                        value={formData.phone}
+                                        onChange={handleChange}
+                                        required
                                         className="w-full mt-2 py-3 px-3 rounded-lg bg-white dark:bg-gray-800 border border-gray-400 dark:border-gray-700 text-gray-800 font-semibold focus:border-indigo-500 focus:outline-none"
                                     />
                                 </div>
@@ -127,6 +195,8 @@ export default function ContactPage() {
                                         name="message"
                                         id="message"
                                         placeholder="Message"
+                                        value={formData.message}
+                                        onChange={handleChange}
                                         rows="4"
                                         className="w-full mt-2 py-3 px-3 rounded-lg bg-white dark:bg-gray-800 border border-gray-400 dark:border-gray-700 text-gray-800 font-semibold focus:border-indigo-500 focus:outline-none"
                                     />

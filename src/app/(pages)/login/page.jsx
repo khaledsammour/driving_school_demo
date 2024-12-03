@@ -5,9 +5,9 @@ import Image from 'next/image';
 import Link from 'next/link';
 import ImgLogin from '@/app/assets/login.jpg';
 import { Login } from '@/app/services/authService';
-import toast from 'react-hot-toast';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
+
 export default function Page() {
     const [error, setError] = useState('');
     const [email, setEmail] = useState('');
@@ -36,29 +36,20 @@ export default function Page() {
 
         if (!validateEmail(email)) {
             setError('Please enter a valid email address.');
-            toast.error('Please enter a valid email address.');
             return;
         }
 
         setError('');
 
         try {
-
             await Login(email, password);
-
-            toast.success('Successfully logged in!');
             if (searchParams.has("namePackage") && searchParams.has("pricePackage")) {
                 router.push(`/payment?namePackage=${searchParams.get("namePackage")}&pricePackage=${searchParams.get("pricePackage")}`);
             } else {
                 router.push('/');
-
-
             }
-
         } catch (error) {
-
             setError(error.message);
-            toast.error(error.message);
         }
     };
     const togglePasswordVisibility = () => {

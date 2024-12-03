@@ -8,16 +8,13 @@ import { Register } from '@/app/services/authService';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Head from "next/head";
 import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
+
 export default function Page() {
     const [error, setError] = useState('');
     const [showPassword, setShowPassword] = useState(false);
     const [type, setType] = useState('');
     const router = useRouter();
     const searchParams = useSearchParams();
-
-
-
-    console.log(searchParams.has("namePackage"));
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -29,21 +26,18 @@ export default function Page() {
 
         if (!firstName || !lastName || !email || !password || !phone || !type) {
             setError('All fields are required.');
-            toast.error('All fields are required.');
             return;
         }
 
         const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailPattern.test(email)) {
             setError('Please enter a valid email address.');
-            toast.error('Please enter a valid email address.');
             return;
         }
 
         const phonePattern = /^\d+$/;
         if (!phonePattern.test(phone)) {
             setError('Please enter a valid phone number (digits only).');
-            toast.error('Please enter a valid phone number (digits only).');
             return;
         }
         
@@ -76,8 +70,7 @@ export default function Page() {
             }
 
         } catch (error) {
-            console.error("Error adding user:", error);
-            toast.error(error.message);
+            setError(error);
         }
 
         setError('');
@@ -153,7 +146,7 @@ export default function Page() {
                                                 )}
                                             </span>
                                         </div>
-                                    
+                                        {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
                                         <button className="mt-5 tracking-wide font-semibold bg-indigo-500 text-gray-100 w-full py-4 rounded-lg hover:bg-indigo-700 transition-all duration-300 ease-in-out flex items-center justify-center focus:shadow-outline focus:outline-none">
                                             <svg className="w-6 h-6 -ml-2" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                                 <path d="M16 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" />
