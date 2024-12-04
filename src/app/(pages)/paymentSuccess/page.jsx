@@ -84,6 +84,8 @@ export default function Page() {
                 amount: packageInfo.price,
                 status: "Completed",
                 user_id: userInfo.uid,
+                email: userInfo.email,
+                user_type: userInfo.type,
                 created_at: serverTimestamp(),
             });
 

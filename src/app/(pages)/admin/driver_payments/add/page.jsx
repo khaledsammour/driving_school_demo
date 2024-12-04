@@ -82,10 +82,15 @@ export default function Page() {
         if (!validateForm()) return;
 
         try {
+            let driver = drivers.find(driver=>driver.id == formData.driver_id);
+            let email = driver.email
+            let user_type = driver.type
             await addDoc(collection(db, "payments"), {
                 amount: formData.amount,
                 status: "Completed",
                 user_id: formData.driver_id,
+                email: email,
+                user_type: user_type,
                 created_at: serverTimestamp(),
             });
 

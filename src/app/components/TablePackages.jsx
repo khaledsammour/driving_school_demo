@@ -28,8 +28,22 @@ export default function TablePackages() {
         const getPackages = async () => {
             try {
                 const allPackages = await fetchPackagesFromFirestore();
-                console.log(allPackages);
-                setPackages(allPackages);
+                const priorityOrder = {
+                    "PREMIUM PACKAGE": 1,
+                    "BASIC PACKAGE": 2,
+                    "INDIVIDUAL LESSON": 3,
+                    "CAR FOR TEST": 4,
+                    "ONLINE TRAINING": 5,
+                    "10 IN-CAR LESSON": 6,
+                };
+
+                // Sort the packages based on the priorityOrder
+                const sortedPackages = allPackages.sort((a, b) => {
+                    const priorityA = priorityOrder[a.name] || Infinity; // Default to Infinity if type is not in the order
+                    const priorityB = priorityOrder[b.name] || Infinity;
+                    return priorityA - priorityB; // Sort by ascending priority
+                });                
+                setPackages(sortedPackages);
             } catch (err) {
                 setError("Failed to fetch packages.");
                 console.error(err);
@@ -80,7 +94,6 @@ export default function TablePackages() {
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell>ID</TableCell>
                             <TableCell>Name</TableCell>
                             <TableCell>Price</TableCell>
                             <TableCell>Discount</TableCell>
@@ -90,7 +103,6 @@ export default function TablePackages() {
                     <TableBody>
                         {filteredPackages.map((pkg) => (
                             <TableRow key={pkg.id}>
-                                <TableCell>{pkg.id}</TableCell>
                                 <TableCell>{pkg.name}</TableCell>
                                 <TableCell>{pkg.price}</TableCell>
                                 <TableCell>{pkg.discount}</TableCell>

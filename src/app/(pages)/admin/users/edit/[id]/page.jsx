@@ -256,7 +256,7 @@ export default function Page({ params }) {
                                     />
                                 </div>
                             </div>
-                            <div className="lg:col-span-2 grid grid-cols-3 gap-4">
+                            <div className="lg:col-span-2 grid grid-cols-2 gap-4">
                                 <div>
                                     <label htmlFor="gender" className="text-sm text-gray-700 block mb-1 font-medium">
                                         Gender
@@ -270,21 +270,6 @@ export default function Page({ params }) {
                                     >
                                         <option value="male">Male</option>
                                         <option value="female">Female</option>
-                                    </select>
-                                </div>
-                                <div>
-                                    <label htmlFor="type" className="text-sm text-gray-700 block mb-1 font-medium">
-                                        Type
-                                    </label>
-                                    <select
-                                        name="type"
-                                        id="type"
-                                        value={formData.type}
-                                        onChange={handleChange}
-                                        className="bg-gray-100 border border-gray-200 rounded py-1 px-3 block focus:ring-blue-500 focus:border-blue-500 text-gray-700 w-full"
-                                    >
-                                        <option value="user">User</option>
-                                        <option value="driver">Driver</option>
                                     </select>
                                 </div>
                                 <div>

@@ -25,7 +25,7 @@ export default function Page() {
         last_name: '',
         email: '',
         address: '',
-        type: 'user',
+        type: 'driver',
         password: '',
         gender: '',
         language: '',
@@ -70,7 +70,7 @@ export default function Page() {
 
             console.log("Document written with ID: ", docRef.id);
             toast.success("User added successfully");
-            route.push("/admin/users");
+            route.push("/admin/drivers");
 
         } catch (error) {
             console.log(error);
@@ -84,7 +84,7 @@ export default function Page() {
         <>
             <div className="addUser">
                 <div className="p-8 rounded border border-gray-200">
-                    <h1 className="font-medium text-3xl">Add User</h1>
+                    <h1 className="font-medium text-3xl">Add Driver</h1>
                     <form onSubmit={handleSubmit}>
                         <div className="mt-8 grid lg:grid-cols-2 gap-4">
                             <div>
@@ -277,7 +277,7 @@ export default function Page() {
                                 type="submit"
                                 className="py-2 px-4 bg-blue-500 text-white rounded hover:bg-blue-600 active:bg-blue-700 disabled:opacity-50"
                             >
-                                Add User
+                                Add Driver
                             </button>
                             <Link href="/admin/users">
                                 <button

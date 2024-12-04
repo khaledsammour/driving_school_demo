@@ -12,14 +12,14 @@ import {
     IconButton,
     Paper,
 } from "@mui/material";
-import { collection, getDocs, deleteDoc, doc } from "firebase/firestore";
+import { collection, getDocs, deleteDoc, doc, query, where } from "firebase/firestore";
 import { db } from "@/app/firebase";
 import { FaEdit, FaTrash } from "react-icons/fa";
 import Loader from "./loader";
 import toast from "react-hot-toast";
 import Link from "next/link";
 
-export default function TablePaymentAdmin() {
+export default function TableUsersPaymentAdmin() {
     const [payments, setPayments] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -29,8 +29,10 @@ export default function TablePaymentAdmin() {
     useEffect(() => {
         const fetchPayments = async () => {
             try {
-                const querySnapshot = await getDocs(collection(db, "payments"));
-                const paymentsData = querySnapshot.docs.map((doc) => ({
+                const paymentCollection = collection(db, "payments");
+                const driverQuery = query(paymentCollection, where("user_type", "==", "user"));
+                const paymentsSnapshot = await getDocs(driverQuery);
+                const paymentsData = paymentsSnapshot.docs.map((doc) => ({
                     id: doc.id,
                     ...doc.data(),
                 }));
@@ -87,7 +89,7 @@ export default function TablePaymentAdmin() {
                 <Table>
                     <TableHead>
                         <TableRow>
-                            <TableCell>Driver ID</TableCell>
+                            <TableCell>Email</TableCell>
                             <TableCell>Amount</TableCell>
                             <TableCell>Status</TableCell>
                             <TableCell>Date</TableCell>
@@ -97,7 +99,7 @@ export default function TablePaymentAdmin() {
                     <TableBody>
                         {filteredPayments.map((payment) => (
                             <TableRow key={payment.id}>
-                                <TableCell>{payment.user_id}</TableCell>
+                                <TableCell>{payment.email}</TableCell>
                                 <TableCell>{payment.amount}</TableCell>
                                 <TableCell>{payment.status}</TableCell>
                                 <TableCell>

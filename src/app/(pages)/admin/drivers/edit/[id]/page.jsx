@@ -1,21 +1,17 @@
 "use client";
 import Link from 'next/link';
-import React, { useState } from 'react';
-import {
-    addDoc,
-    collection,
-    serverTimestamp,
-} from "firebase/firestore";
-import { auth, db, storage } from '@/app/firebase';
+import React, { useState, useEffect } from 'react';
+import { collection, serverTimestamp, doc, getDoc, setDoc } from "firebase/firestore";
+import { auth, db } from '@/app/firebase';
+import { updateProfile, updateEmail, updatePassword, sendEmailVerification } from "firebase/auth";
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
-import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { FaRegEye } from "react-icons/fa6";
 import { FaRegEyeSlash } from "react-icons/fa";
 
-export default function Page() {
-
-    const route = useRouter();
+export default function Page({ params }) {
+    const { id } = params;
+    const router = useRouter();
     const [showPassword, setShowPassword] = useState(false);
     const [formData, setFormData] = useState({
         first_name: '',
@@ -25,13 +21,46 @@ export default function Page() {
         last_name: '',
         email: '',
         address: '',
-        type: 'user',
         password: '',
+        type: 'driver',
         gender: '',
         language: '',
         phone: '',
         licenseInfo: '',
     });
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const docRef = doc(db, "users", id);
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists()) {
+                    const userData = docSnap.data();
+                    setFormData({
+                        first_name: userData.first_name || '',
+                        middle_name: userData.middle_name || '',
+                        third_name: userData.third_name || '',
+                        date: userData.date || '',
+                        last_name: userData.last_name || '',
+                        password: userData.password || '',
+                        email: userData.email || '',
+                        type: userData.type || '',
+                        address: userData.address || '',
+                        gender: userData.gender || '',
+                        language: userData.language || '',
+                        phone: userData.phone || '',
+                        licenseInfo: userData.licenseInfo || '',
+                    });
+                } else {
+                    console.log("No such document!");
+                }
+            } catch (error) {
+                console.error("Error fetching user:", error);
+            }
+        };
+
+        fetchUser();
+    }, [id]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -39,52 +68,70 @@ export default function Page() {
             ...prev,
             [name]: value,
         }));
-
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(formData);
+
         try {
+            const user = auth.currentUser;
 
-            const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
-            const user = userCredential.user;
+            if (user) {
+                // إذا كان البريد الإلكتروني قد تغير
+                let emailUpdated = false;
 
-            const docRef = await addDoc(collection(db, "users"), {
-                uid: user.uid,
-                first_name: formData.first_name,
-                middle_name: formData.middle_name,
-                third_name: formData.third_name,
-                date: formData.date,
-                last_name: formData.last_name,
-                email: formData.email,
-                address: formData.address,
-                gender: formData.gender,
-                language: formData.language,
-                type: formData.type,
-                password: formData.password,
-                phone: formData.phone,
-                licenseInfo: formData.licenseInfo,
-                createdAt: serverTimestamp(),
-            });
+                // تحقق من تغيير البريد الإلكتروني
+                if (formData.email !== user.email) {
+                    // تحديث البريد الإلكتروني في Firebase Authentication
+                    await updateEmail(user, formData.email);
+                    emailUpdated = true;
+                }
 
-            console.log("Document written with ID: ", docRef.id);
-            toast.success("User added successfully");
-            route.push("/admin/users");
+                // إذا كانت كلمة المرور قد تم تغييرها
+                if (formData.password) {
+                    await updatePassword(user, formData.password);
+                }
 
+                // تحديث اسم المستخدم في Firebase Authentication (اختياري)
+                await updateProfile(user, {
+                    displayName: `${formData.first_name} ${formData.last_name}`,
+                });
+
+                // تحديث البيانات الأخرى في Firestore
+                const userDocRef = doc(db, "users", id);
+
+                await setDoc(userDocRef, {
+                    first_name: formData.first_name,
+                    middle_name: formData.middle_name,
+                    third_name: formData.third_name,
+                    date: formData.date,
+                    last_name: formData.last_name,
+                    email: formData.email,
+                    address: formData.address,
+                    gender: formData.gender,
+                    password: formData.password,
+                    language: formData.language,
+                    type: formData.type,
+                    phone: formData.phone,
+                    licenseInfo: formData.licenseInfo,
+                    updatedAt: serverTimestamp(),
+                }, { merge: true });
+
+                toast.success('User updated successfully');
+                router.push('/admin/drivers');
+            }
         } catch (error) {
-            console.log(error);
-            toast.error(error.message);
+            console.error('Error updating user:', error);
+            toast.error(`Error: ${error.message}`);
         }
     };
 
 
-
     return (
         <>
-            <div className="addUser">
+            <div className="update">
                 <div className="p-8 rounded border border-gray-200">
-                    <h1 className="font-medium text-3xl">Add User</h1>
+                    <h1 className="font-medium text-3xl">Edit Driver</h1>
                     <form onSubmit={handleSubmit}>
                         <div className="mt-8 grid lg:grid-cols-2 gap-4">
                             <div>
@@ -208,7 +255,7 @@ export default function Page() {
                                         className="bg-gray-100 border border-gray-200 rounded py-1 px-3 block focus:ring-blue-500 focus:border-blue-500 text-gray-700 w-full"
                                     />
                                 </div>
-                          </div>
+                            </div>
                             <div className="lg:col-span-2 grid grid-cols-2 gap-4">
                                 <div>
                                     <label htmlFor="gender" className="text-sm text-gray-700 block mb-1 font-medium">
@@ -270,14 +317,14 @@ export default function Page() {
                                     placeholder="Enter license information"
                                 />
                             </div>
-                       
+
                         </div>
                         <div className="space-x-4 mt-8">
                             <button
                                 type="submit"
                                 className="py-2 px-4 bg-blue-500 text-white rounded hover:bg-blue-600 active:bg-blue-700 disabled:opacity-50"
                             >
-                                Add User
+                                Update Driver
                             </button>
                             <Link href="/admin/users">
                                 <button
@@ -289,7 +336,6 @@ export default function Page() {
                             </Link>
                         </div>
                     </form>
-
                 </div>
             </div>
         </>

@@ -7,6 +7,7 @@ import {
     BiMenu,
     BiPackage,
     BiSearch,
+    BiCar,
 } from "react-icons/bi";
 import logo from "@/app/assets/logo.png";
 import adminImg from "@/app/assets/admin.png";
@@ -15,7 +16,7 @@ import { Logout } from "@/app/services/authService";
 import toast from "react-hot-toast";
 import { useRouter } from 'next/navigation';
 import NavDrobdown from "@/app/components/NavDrobdown";
-import { MdOutlinePlayLesson } from "react-icons/md";
+import { MdOutlinePlayLesson, MdPayment, MdPayments } from "react-icons/md";
 import { VscPreview } from "react-icons/vsc";
 import { IoDocumentsSharp } from "react-icons/io5";
 import { TbLicense } from "react-icons/tb";
@@ -89,6 +90,23 @@ export default function Layout({ children }) {
                             </li>
                             <li className="text-black hover:text-blue-500 cursor-pointer">
                                 <Link
+                                    href="/admin/drivers"
+                                    className={`flex items-center p-3 ${!isSidebarOpen
+                                        ? "justify-center"
+                                        : "justify-start"
+                                        }`}
+                                >
+                                    <BiCar className="w-6 h-6" />
+                                    <span
+                                        className={`ml-3 text-base ${!isSidebarOpen && "hidden"
+                                            } transition-all duration-300`}
+                                    >
+                                        Drivers
+                                    </span>
+                                </Link>
+                            </li>
+                            <li className="text-black hover:text-blue-500 cursor-pointer">
+                                <Link
                                     href="/admin/users"
                                     className={`flex items-center p-3 ${!isSidebarOpen
                                         ? "justify-center"
@@ -122,9 +140,15 @@ export default function Layout({ children }) {
                                 </Link>
                             </li>
                             <li className="text-black hover:text-blue-500 cursor-pointer">
-                                <Link href="/admin/Payments" className={`flex items-center p-3 ${!isSidebarOpen ? "justify-center" : "justify-start"}`}>
+                                <Link href="/admin/user_payments" className={`flex items-center p-3 ${!isSidebarOpen ? "justify-center" : "justify-start"}`}>
+                                    <MdPayments className="w-6 h-6" />
+                                    <span className={`ml-3 text-base ${!isSidebarOpen && "hidden"} transition-all duration-300`}>User Payments</span>
+                                </Link>
+                            </li>
+                            <li className="text-black hover:text-blue-500 cursor-pointer">
+                                <Link href="/admin/driver_payments" className={`flex items-center p-3 ${!isSidebarOpen ? "justify-center" : "justify-start"}`}>
                                     <MdOutlinePayment className="w-6 h-6" />
-                                    <span className={`ml-3 text-base ${!isSidebarOpen && "hidden"} transition-all duration-300`}>Payments</span>
+                                    <span className={`ml-3 text-base ${!isSidebarOpen && "hidden"} transition-all duration-300`}>Driver Payments</span>
                                 </Link>
                             </li>
                             <li className="text-black hover:text-blue-500 cursor-pointer">
