@@ -74,6 +74,7 @@ export default function Page() {
             const userRef = doc(db, "users", userId);
 
             await updateDoc(userRef, {
+                total_driving_hours: packageInfo?.driving_hours,
                 driving_hours: packageInfo?.driving_hours,
                 online_training_hours: packageInfo?.online_training_hours,
                 packageId: packageId,
