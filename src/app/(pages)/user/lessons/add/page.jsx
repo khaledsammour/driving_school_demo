@@ -116,7 +116,7 @@ export default function Page() {
     }
 
     function timeDifference(startTime, endTime) {
-        // Convert time strings to hours and minutes
+        // Convert time strings to hours and minutes        
         const [startHours, startMinutes] = startTime.split(':').map(Number);
         const [endHours, endMinutes] = endTime.split(':').map(Number);
     
@@ -261,22 +261,6 @@ export default function Page() {
                                     value={formData.to}
                                     onChange={handleChange}
                                     className="bg-gray-100 border border-gray-200 rounded py-1 px-3 block focus:ring-blue-500 focus:border-blue-500 text-gray-700 w-full"
-                                />
-                            </div>
-                            <div>
-                                <label
-                                    htmlFor="user_id"
-                                    className="text-sm text-gray-700 block mb-1 font-medium"
-                                >
-                                    User ID
-                                </label>
-                                <input
-                                    type="text"
-                                    name="user_id"
-                                    id="user_id"
-                                    value={formData.user_id}
-                                    readOnly
-                                    className="bg-gray-200 border border-gray-200 rounded py-1 px-3 block text-gray-500 w-full"
                                 />
                             </div>
                         </div>

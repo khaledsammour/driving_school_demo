@@ -40,7 +40,12 @@ export default function Page() {
             setError('Please enter a valid phone number (digits only).');
             return;
         }
-        
+
+        const passwordPattern = /^(?=.*[A-Z]).{6,}$/;
+        if (!passwordPattern.test(password)) {
+            setError('Password must be at least 6 characters long and contain at least one capital letter.');
+            return;
+        }
 
         try {
             await Register(email, password, {
@@ -56,6 +61,10 @@ export default function Page() {
                 phone: phone || '',
                 license_info: '',
                 type: type || '',
+                driving_hours: '00:00',
+                online_training_hours: '00:00',
+                packageId: '',
+                car_test: false,
             });
 
             toast.success("User registered successfully");
@@ -69,11 +78,10 @@ export default function Page() {
                 localStorage.setItem('typeUser', type || 'admin');
             }
 
+            setError('');
         } catch (error) {
-            setError(error);
+            setError(error.message);
         }
-
-        setError('');
     }
     const togglePasswordVisibility = () => {
         setShowPassword((prevState) => !prevState);

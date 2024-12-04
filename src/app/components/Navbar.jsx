@@ -243,7 +243,7 @@ export default function Header() {
                                 >
                                     Sign out
                                 </Link>
-                            </li> : <li>
+                            </li> : <li className="lg:hidden block">
                                 <Link
                                     href="/login"
                                     className={`block py-2 pr-4 pl-3 border-b border-gray-100 hover:bg-gray-50 lg:hover:bg-transparent lg:border-0 lg:hover:text-blue-700 lg:p-0 ${pathname === "/contactUs" ? "text-blue-700" : "text-gray-700"

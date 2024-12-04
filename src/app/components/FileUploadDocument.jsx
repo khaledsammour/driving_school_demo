@@ -122,6 +122,7 @@ const FileUploadDocument = ({ UserType, TypeFile }) => {
             const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
             const docRef = await addDoc(collection(db, "uploads"), {
                 userId,
+                email: formUser.email,
                 fileName: sanitizedFileName,
                 fileType: TypeFile,
                 fileUrl: downloadURL,

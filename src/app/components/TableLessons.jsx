@@ -11,7 +11,7 @@ import { LuView } from "react-icons/lu";
 import Loader from "./loader";
 import toast from "react-hot-toast";
 import Link from "next/link";
-import { query, collection, where, getDocs, doc, updateDoc, getDoc, setDoc } from "firebase/firestore";
+import { query, collection, where, orderBy, getDocs, doc, updateDoc, getDoc, setDoc, Timestamp } from "firebase/firestore";
 import { db } from "@/app/firebase";
 import { IoCloseCircle } from "react-icons/io5";
 import { FaCheckCircle } from "react-icons/fa";
@@ -44,7 +44,8 @@ export default function TableLessons({ type }) {
                 // Step 1: Query lessons where driver_id matches userId
                 const lessonsQuery = query(
                     collection(db, "lessons"),
-                    where(userType, "==", userId)
+                    where(userType, "==", userId),
+                    orderBy("date", "desc")
                 );
 
                 const querySnapshot = await getDocs(lessonsQuery);
@@ -68,22 +69,10 @@ export default function TableLessons({ type }) {
                 });
 
                 // Wait for all user fetches to complete
-                const lessonsWithUsers = await Promise.all(userPromises);
-                const sortedLessons = lessonsWithUsers.sort((a, b) => {
-                    // Parse the date strings in "DD/MM/YYYY" format
-                    const parseDate = (dateStr) => {
-                        const [day, month, year] = dateStr.split('/'); // Split into day, month, year
-                        return new Date(`${month}/${day}/${year}`); // Create a Date object
-                    };
-                
-                    const dateA = a?.date ? parseDate(a.date) : new Date(0); // default to epoch if no date
-                    const dateB = b?.date ? parseDate(b.date) : new Date(0); // default to epoch if no date
-                
-                    return dateB - dateA; // descending order
-                });
+                const lessonsWithUsers = await Promise.all(userPromises);                
                 
                 // Step 3: Combine data
-                setLessons(sortedLessons);
+                setLessons(lessonsWithUsers);
             } catch (err) {
                 setError("Failed to fetch lessons with user data.");
                 console.error(err);
@@ -138,37 +127,13 @@ export default function TableLessons({ type }) {
         }
     };
 
-    const formatTimestamp = (timestamp) => {
+    const formatTimestamp = (timestamp) => {        
         if (!timestamp) {
             return "Invalid Date"; // Handle null or undefined
         }
-    
-        // If timestamp is in string format 'DD/MM/YYYY', convert it to 'YYYY/MM/DD'
-        let date = timestamp;
-    
-        // Check if the date is in the format 'DD/MM/YYYY'
-        if (typeof timestamp === 'string' && timestamp.match(/^\d{2}\/\d{2}\/\d{4}$/)) {
-            const [day, month, year] = timestamp.split('/');
-            date = `${year}-${month}-${day}`; // Convert to 'YYYY-MM-DD'
-        }
-    
-        // Convert to a JavaScript Date object
-        date = new Date(date);
-    
-        // Check if the date is valid
-        if (isNaN(date.getTime())) {
-           
-            return "Invalid Date"; // Handle invalid date
-        }
-    
-        const options = {
-            weekday: 'long',
-            year: 'numeric',
-            month: 'long',
-            day: 'numeric',
-        };
-    
-        return date.toLocaleString('en-US', options);
+        const exampleTimestamp = new Timestamp(timestamp.seconds, 0); 
+        const date = exampleTimestamp.toDate();
+        return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`;
     };
     
 

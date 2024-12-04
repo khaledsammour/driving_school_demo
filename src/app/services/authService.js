@@ -34,9 +34,9 @@ export const Register = async (email, password, additionalData = {}) => {
         if (error.code === 'auth/email-already-in-use') {
             throw new Error("This email is already registered. Please try logging in.");
         } else if (error.code === 'auth/weak-password') {
-            throw new Error("This email is already registered. Please try logging in.");
+            throw new Error("Weak Password");
         } else {
-            throw new Error(error.message);
+            throw new Error("Something went wrong. Please try again.");
         }
     }
 };

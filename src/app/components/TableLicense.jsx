@@ -10,28 +10,26 @@ import toast from "react-hot-toast";
 export default function TableLicense() {
     const [documents, setDocuments] = useState([]);
     const [loading, setLoading] = useState(true);
+    const fetchDocuments = async () => {
+        setLoading(true);
+        try {
+            const q = query(collection(db, "uploads"), where("fileType", "==", "license"));
+            const querySnapshot = await getDocs(q);
 
+            const docs = querySnapshot.docs.map((doc) => ({
+                id: doc.id,
+                ...doc.data(),
+            }));
+
+            setDocuments(docs);
+
+        } catch (error) {
+            console.error("Error fetching documents:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
     useEffect(() => {
-        const fetchDocuments = async () => {
-            setLoading(true);
-            try {
-                const q = query(collection(db, "uploads"), where("fileType", "==", "license"));
-                const querySnapshot = await getDocs(q);
-
-                const docs = querySnapshot.docs.map((doc) => ({
-                    id: doc.id,
-                    ...doc.data(),
-                }));
-
-                setDocuments(docs);
-
-            } catch (error) {
-                console.error("Error fetching documents:", error);
-            } finally {
-                setLoading(false);
-            }
-        };
-
         fetchDocuments();
     }, []);
 
@@ -41,7 +39,7 @@ export default function TableLicense() {
             await updateDoc(docRef, { status });
 
             await sendMessageToUser(userId, status);
-
+            await fetchDocuments();
             toast.success(`${status} successfully!`);
         } catch (error) {
             console.error("Error updating document status:", error);
@@ -79,7 +77,7 @@ export default function TableLicense() {
             <Table sx={{ minWidth: 650 }} aria-label="payment table">
                 <TableHead>
                     <TableRow>
-                        <TableCell><strong>ID</strong></TableCell>
+                        <TableCell><strong>User</strong></TableCell>
                         <TableCell><strong>File Type</strong></TableCell>
                         <TableCell><strong>User Type</strong></TableCell>
                         <TableCell><strong>Actions</strong></TableCell>
@@ -88,7 +86,7 @@ export default function TableLicense() {
                 <TableBody>
                     {documents.map((doc) => (
                         <TableRow key={doc.userId}>
-                            <TableCell>{doc.userId}</TableCell>
+                            <TableCell>{doc.email}</TableCell>
                             <TableCell>{doc.fileType}</TableCell>
                             <TableCell>{doc.userType}</TableCell>
                             <TableCell>
