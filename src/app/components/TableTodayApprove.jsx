@@ -111,13 +111,13 @@ export default function TableTodayApprove() {
                                             <>
                                                 <button
                                                     onClick={() => handleApproval(doc.id, "Accepted", doc.userId)}
-                                                    className="px-4 py-2 bg-green-500 text-white rounded mr-2"
+                                                    className="px-2 py-2 bg-green-500 text-white rounded mr-2"
                                                 >
                                                     Accept
                                                 </button>
                                                 <button
                                                     onClick={() => handleApproval(doc.id, "Rejected", doc.userId)}
-                                                    className="px-4 py-2 bg-red-500 text-white rounded"
+                                                    className="px-2 py-2 bg-red-500 text-white rounded"
                                                 >
                                                     Reject
                                                 </button>
