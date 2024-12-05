@@ -40,6 +40,7 @@ export default function TablePaymentUSer() {
                     id: uuidv4(),
                     ...doc.data(),
                 }));
+                console.log("🚀 ~ paymentsData ~ paymentsData:", paymentsData)
 
                 setPayments(paymentsData);
             } catch (err) {
@@ -59,6 +60,7 @@ export default function TablePaymentUSer() {
         toast.error(error);
         return <p>{error}</p>;
     }
+
     return (
         <TableContainer
             component={Paper}
@@ -74,29 +76,35 @@ export default function TablePaymentUSer() {
             <Table sx={{ minWidth: 650 }} aria-label="payment table">
                 <TableHead>
                     <TableRow>
-                        <TableCell><strong>Payment ID</strong></TableCell>
+                        <TableCell><strong>Package ID</strong></TableCell>
                         <TableCell><strong>Package Name</strong></TableCell>
                         <TableCell><strong>Date</strong></TableCell>
+                        <TableCell><strong>Time</strong></TableCell>
                         <TableCell><strong>Status</strong></TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
-                    {payments.map((payment) => (
-                        <TableRow key={payment.id}>
-                            <TableCell>{payment.id}</TableCell>
-                            <TableCell>{payment.amount}</TableCell>
-                            <TableCell>
-                                {payment.created_at.toDate().toLocaleString()}
-                            </TableCell>
-                            <TableCell>
-                                <Chip
-                                    label={payment.status}
-                                    color={payment.status === "Completed" ? "success" : "warning"}
-                                    variant="outlined"
-                                />
-                            </TableCell>
-                        </TableRow>
-                    ))}
+                    {payments.map((payment) => {
+                        const createdAt = payment.created_at.toDate();
+                        const date = createdAt.toLocaleDateString();
+                        const time = createdAt.toLocaleTimeString();
+
+                        return (
+                            <TableRow key={payment.id}>
+                                <TableCell>{payment.package_id}</TableCell>
+                                <TableCell>{payment.package_name}</TableCell>
+                                <TableCell>{date}</TableCell>
+                                <TableCell>{time}</TableCell>
+                                <TableCell>
+                                    <Chip
+                                        label={payment.status}
+                                        color={payment.status === "Completed" ? "success" : "warning"}
+                                        variant="outlined"
+                                    />
+                                </TableCell>
+                            </TableRow>
+                        );
+                    })}
                 </TableBody>
             </Table>
         </TableContainer>

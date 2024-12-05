@@ -1,13 +1,106 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Bar, Line } from "react-chartjs-2";
-import { Chart as ChartJS, BarElement, LineElement, CategoryScale, LinearScale, Tooltip, Legend, PointElement } from "chart.js";
-
-ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, Tooltip, Legend, PointElement);
+import { db } from '@/app/firebase';
+import { collection, query, where, getDocs, Timestamp } from 'firebase/firestore';
+import { Chart as ChartJS, BarElement, LineElement, CategoryScale, LinearScale, Title, Tooltip, Legend, PointElement } from "chart.js";
+ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, Tooltip, Legend, Title, PointElement);
 
 export default function ChartUser() {
-    const totalLessons = 20;
-    const completedLessons = 12;
+
+    const [userId, setUserId] = useState(null);
+    const [lessons, setLessons] = useState([]);
+    const [chartData, setChartData] = useState(null);
+
+    useEffect(() => {
+        if (typeof window !== 'undefined') {
+            const storedUserId = localStorage.getItem("IdUser");
+            if (storedUserId) {
+                setUserId(storedUserId);
+            }
+        }
+    }, []);
+
+
+    const fetchUserLessons = async () => {
+        try {
+            const lessonsRef = collection(db, "lessons");
+            const q = query(
+                lessonsRef,
+                where("user_id", "==", userId),
+            );
+            const querySnapshot = await getDocs(q);
+            if (!querySnapshot.empty) {
+                const lessonsData = querySnapshot.docs.map(doc => doc.data());
+                setLessons(lessonsData)
+                return lessonsData;
+            } else {
+                console.log("No lessons found for this user within the specified date range.");
+                return [];
+            }
+        } catch (error) {
+            console.error("Error fetching user lessons:", error);
+        }
+    };
+
+    const getTotalHoursPerDay = (lessons) => {
+        const hoursPerDay = {};
+
+        lessons.forEach((lesson) => {
+            const lessonDate = new Date(lesson.date.seconds * 1000);
+            const dayKey = lessonDate.toLocaleDateString();
+
+            const lessonHours = lesson.time ? parseInt(lesson.time.split(":")[0], 10) : 0;
+
+            if (!hoursPerDay[dayKey]) {
+                hoursPerDay[dayKey] = 0;
+            }
+            hoursPerDay[dayKey] += lessonHours;
+        });
+
+        return hoursPerDay;
+    };
+    useEffect(() => {
+        const fetchData = async () => {
+            const lessonsData = await fetchUserLessons(userId);
+            const hoursPerDay = getTotalHoursPerDay(lessonsData);
+            const chartData = getChartData(hoursPerDay);
+            setChartData(chartData);
+        };
+
+        fetchData();
+    }, [userId]);
+
+    const getChartData = (hoursPerDay) => {
+        const labels = [];
+        const data = [];
+        const today = new Date();
+        for (let i = 0; i < 7; i++) {
+            const date = new Date(today);
+            date.setDate(today.getDate() + i);
+            const formattedDate = date.toLocaleDateString(); 
+
+            labels.push(formattedDate);
+            data.push(hoursPerDay[formattedDate] || 0)
+        }
+
+        return {
+            labels,
+            datasets: [
+                {
+                    label: 'Hours Completed',
+                    data,
+                    borderColor: 'rgba(75, 192, 192, 1)',
+                    backgroundColor: 'rgba(75, 192, 192, 0.2)',
+                    fill: true,
+                },
+            ],
+        };
+    };
+
+
+    const totalLessons = lessons.length;
+    const completedLessons = lessons.filter((lesson) => lesson.status != 'completed').length;
 
     const barData = {
         labels: ["Completed", "Remaining"],
@@ -20,26 +113,14 @@ export default function ChartUser() {
         ],
     };
 
-    const skillLevelData = {
-        labels: Array.from({ length: totalLessons }, (_, i) => `Lesson ${i + 1}`),
-        datasets: [
-            {
-                label: "Skill Level",
-                data: Array.from({ length: totalLessons }, (_, i) => (i < completedLessons ? (i + 1) * 5 : null)),
-                borderColor: "#36A2EB",
-                backgroundColor: "rgba(54, 162, 235, 0.2)",
-                tension: 0.3,
-                pointBackgroundColor: "#36A2EB",
-                fill: true,
-            },
-        ],
-    };
-
     const barOptions = {
         responsive: true,
         plugins: {
             legend: {
                 display: false,
+            },
+            title: {
+                display: true, text: 'Driving Lesson Progress'
             },
             tooltip: {
                 callbacks: {
@@ -65,55 +146,47 @@ export default function ChartUser() {
             legend: {
                 position: "bottom",
             },
+            title: {
+                display: true, text: 'Lesson Hours Over the Next 7 Days'
+            },
             tooltip: {
                 callbacks: {
-                    label: (context) => `Skill Level: ${context.raw}%`,
+                    label: (context) => `Hours Completed": ${context.raw} Hrs`,
                 },
             },
         },
         scales: {
             y: {
                 beginAtZero: true,
-                max: 100,
                 title: {
                     display: true,
-                    text: "Skill Level (%)",
+                    text: "Hours Completed",
                 },
-            },
-            x: {
-                title: {
-                    display: true,
-                    text: "Lessons",
-                },
-            },
-        },
-    };
+            }
+        }
+    }
+
+
 
     return (
         <div className="ChartUser w-full overflow-hidden">
-            <div className="p-2 flex flex-col gap-3 md:flex-row items-center justify-center">
-                <div className="w-full md:w-1/2 p-4 bg-white shadow-lg rounded-lg overflow-hidden">
-                    <h2 className="text-2xl font-bold mb-4 text-center text-gray-800">Driving Lesson Progress</h2>
-                    <div className="w-full h-[300px] md:h-[400px]">
-                        <Bar data={barData} options={barOptions} />
-                    </div>
-                    <div className="mt-4 text-center text-gray-700">
-                        <p>
-                            Completed {completedLessons} out of {totalLessons} lessons ({((completedLessons / totalLessons) * 100).toFixed(2)}%)
-                        </p>
-                    </div>
+            <div className="grid grid-cols-12 gap-6 mb-4">
+                <div className="lg:col-span-6 col-span-12 bg-white shadow-md rounded-lg overflow-hidden">
+                    <Bar data={barData} options={barOptions} />
+                    {/* <div className="mt-4 text-center text-gray-700">
+                        Completed {completedLessons} out of {totalLessons} lessons ({((completedLessons / totalLessons) * 100).toFixed(2)}%)
+                    </div> */}
                 </div>
 
-                <div className="w-full md:w-1/2 p-4 bg-white shadow-lg rounded-lg overflow-hidden">
-                    <h2 className="text-2xl font-bold mb-4 text-center text-gray-800">Skill Level Progress</h2>
-                    <div className="w-full h-[300px] md:h-[400px]">
-                        <Line data={skillLevelData} options={lineOptions} />
-                    </div>
-                    <div className="mt-4 text-center text-gray-700">
-                        <p>
-                            This graph shows the improvement in skill level based on completed lessons.
-                        </p>
-                    </div>
+                <div className="lg:col-span-6 col-span-12 bg-white shadow-md rounded-lg overflow-hidden">
+                    {chartData ? (
+                        <Line data={chartData} options={lineOptions} />
+                    ) : (
+                        <p>Loading data...</p>
+                    )}
+                    {/* <div className="my-4 text-center text-gray-700">
+                        This graph shows the improvement in skill level based on completed lessons.
+                    </div> */}
                 </div>
             </div>
         </div>
