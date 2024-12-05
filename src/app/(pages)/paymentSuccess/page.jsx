@@ -77,7 +77,8 @@ export default function Page() {
                 total_driving_hours: packageInfo?.driving_hours,
                 driving_hours: packageInfo?.driving_hours,
                 online_training_hours: packageInfo?.online_training_hours,
-                packageId: packageId,
+                package_name:packageInfo?.name,
+                package_id: packageId,
                 car_test: packageInfo?.car_test,
             });
 

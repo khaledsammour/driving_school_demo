@@ -28,7 +28,7 @@ export const Register = async (email, password, additionalData = {}) => {
             total_driving_hours: additionalData.total_driving_hours || "",
             driving_hours: additionalData.driving_hours || "",
             online_training_hours: additionalData.online_training_hours || "",
-            packageId: additionalData.packageId || "",
+            package_id: additionalData.package_id || "",
             car_test: additionalData.car_test || "",
             is_profile_complete: false,
             is_verify: false,

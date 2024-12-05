@@ -64,7 +64,7 @@ export default function Page() {
                 total_driving_hours: '00:00',
                 driving_hours: '00:00',
                 online_training_hours: '00:00',
-                packageId: '',
+                package_id: '',
                 car_test: false,
             });
             toast.success("Verification Email has been sent to your email address.");
