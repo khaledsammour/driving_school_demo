@@ -6,7 +6,7 @@ import { collection, query, where, getDocs, Timestamp } from 'firebase/firestore
 import { Chart as ChartJS, BarElement, LineElement, CategoryScale, LinearScale, Title, Tooltip, Legend, PointElement } from "chart.js";
 ChartJS.register(CategoryScale, LinearScale, BarElement, LineElement, Tooltip, Legend, Title, PointElement);
 
-export default function ChartUser() {
+export default function ChartUser({userType= 'user'}) {
 
     const [userId, setUserId] = useState(null);
     const [lessons, setLessons] = useState([]);
@@ -27,7 +27,7 @@ export default function ChartUser() {
             const lessonsRef = collection(db, "lessons");
             const q = query(
                 lessonsRef,
-                where("user_id", "==", userId),
+                where(userType == "user" ? "user_id" : "driver_id", "==", userId),
             );
             const querySnapshot = await getDocs(q);
             if (!querySnapshot.empty) {

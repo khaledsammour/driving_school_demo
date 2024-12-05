@@ -79,6 +79,9 @@ export default function ProfilePage() {
         e.preventDefault();
 
         try {
+            if(!formData.first_name || !formData.middle_name || !formData.third_name || !formData.date || !formData.last_name || !formData.email || !formData.address || !formData.gender || !formData.language || !formData.phone || !formData.licenseInfo){
+                toast.error(`All fields are required`);
+            }
             const user = auth.currentUser;
 
             if (user) {
@@ -93,6 +96,7 @@ export default function ProfilePage() {
                 userDocRef,
                 {
                     ...formData,
+                    is_profile_complete: true,
                     updatedAt: serverTimestamp(),
                 },
                 { merge: true }
