@@ -4,7 +4,9 @@ import { TbPackage } from "react-icons/tb";
 import { FaRegUser } from "react-icons/fa";
 import { GiTwoCoins } from "react-icons/gi";
 import { AiFillDashboard } from "react-icons/ai";
-import TableUsers from '@/app/components/TableUsers';
+import TableTodayUser from '@/app/components/TableTodayUser';
+import TableTodayApprove from '@/app/components/TableTodayApprove';
+
 import { BiHome } from 'react-icons/bi';
 
 export default function AdminPage() {
@@ -67,11 +69,18 @@ export default function AdminPage() {
                         <AiFillDashboard className='h-9 w-9 bg-primary rounded-lg text-blue-600 flex items-center justify-center text-xl' />
                         <span className="text text-2xl font-medium ml-2 text-blue-600">Recent Activity</span>
                     </div>
-                    <div className="p-10 ">
-                        <div className="overflow-x-auto">
-                            <TableUsers />
-                        </div>
-                    </div>
+                    
+                    <div class="flex flex-wrap">
+    <div class="w-1/2 p-2">
+        <div class="bg-gray-200 p-4">
+            <TableTodayUser />
+        </div>
+    </div>
+    <div class="w-1/2 p-2">
+        <div class="bg-gray-200 p-4"> <TableTodayApprove /></div>
+    </div>
+</div>
+
                 </div>
             </div>
         </div>

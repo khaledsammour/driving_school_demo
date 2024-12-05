@@ -76,6 +76,8 @@ export const Login = async (email, password) => {
     if (loginUser && loginUser.user.emailVerified){
         localStorage.setItem('IdUser', loginUser.user.uid);
         localStorage.setItem('typeUser', loginUser.user.type);
+        localStorage.setItem('email', email ?? null);
+
         await setDoc(
             doc(db, "users", loginUser.user.uid),
             {

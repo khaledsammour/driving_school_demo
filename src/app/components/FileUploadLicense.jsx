@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import { MdClose } from "react-icons/md";
 import { storage, db } from "@/app/firebase";
 import { ref, uploadBytesResumable, getDownloadURL, deleteObject } from "firebase/storage";
-import { collection, addDoc, doc, getDoc, getDocs, query, where, deleteDoc } from "firebase/firestore";
+import { collection, addDoc, doc, getDoc, getDocs, query, where, deleteDoc,serverTimestamp } from "firebase/firestore";
 import toast from "react-hot-toast";
 
 const FileUploadLicense = ({ UserType, TypeFile }) => {
@@ -13,6 +13,8 @@ const FileUploadLicense = ({ UserType, TypeFile }) => {
     const [uploadedUrl, setUploadedUrl] = useState("");
     const [uploadDocId, setUploadDocId] = useState(null);
     const [userId, setUserId] = useState("");
+    const [userEmail, setUserEmail] = useState(null);
+
     const [formUser, setFormUser] = useState({});
     const [useValid, setUseValid] = useState(true);
     const [documents, setDocuments] = useState([]);
@@ -20,6 +22,10 @@ const FileUploadLicense = ({ UserType, TypeFile }) => {
 
     useEffect(() => {
         const storedUserId = localStorage.getItem("IdUser");
+        const storedEmail = localStorage.getItem("email");
+if(storedEmail){
+    setUserEmail(storedEmail)
+}
         if (storedUserId) {
             setUserId(storedUserId);
         }
@@ -103,6 +109,9 @@ const FileUploadLicense = ({ UserType, TypeFile }) => {
                 userType: UserType,
                 status: "Pending",
                 uploadDate: new Date(),
+                createdAt: serverTimestamp(),
+                email:userEmail ?? '-'
+
             });
 
             setUploadedUrl(downloadURL);
