@@ -8,7 +8,6 @@ export default function Page({ params }) {
     const { id } = params;
     const [formData, setFormData] = useState({
         date: '',
-        driver_id: '',
         from: '',
         time: '',
         to: '',
@@ -23,13 +22,14 @@ export default function Page({ params }) {
                 const docSnap = await getDoc(docRef);
                 if (docSnap.exists()) {
                     const lessonData = docSnap.data();
+                    const userDocRef = doc(db, "users", lessonData.user_id);
+                    const userSnap = await getDoc(userDocRef);
                     setFormData({
                         date: lessonData.date || '',
-                        driver_id: lessonData.driver_id || '',
                         from: lessonData.from || '',
                         time: lessonData.time || '',
                         to: lessonData.to || '',
-                        user_id: lessonData.user_id || '',
+                        user_id: (userSnap?.data()?.first_name + ' ' + userSnap?.data()?.last_name) || '',
                     });
                 } else {
                     console.log("No such document!");
@@ -55,17 +55,6 @@ export default function Page({ params }) {
                             <input
                                 type="date"
                                 value={formData.date}
-                                readOnly
-                                className="bg-gray-200 border border-gray-200 rounded py-1 px-3 block text-gray-500 w-full"
-                            />
-                        </div>
-                        <div>
-                            <label className="text-sm text-gray-700 block mb-1 font-medium">
-                                Driver ID
-                            </label>
-                            <input
-                                type="text"
-                                value={formData.driver_id}
                                 readOnly
                                 className="bg-gray-200 border border-gray-200 rounded py-1 px-3 block text-gray-500 w-full"
                             />
@@ -105,7 +94,7 @@ export default function Page({ params }) {
                         </div>
                         <div>
                             <label className="text-sm text-gray-700 block mb-1 font-medium">
-                                User ID
+                                User
                             </label>
                             <input
                                 type="text"
@@ -116,7 +105,7 @@ export default function Page({ params }) {
                         </div>
                     </div>
                     <div className="space-x-4 mt-8">
-                        <Link href="/user/lessons">
+                        <Link href="/driver/lessons">
                             <button
                                 type="button"
                                 className="py-2 px-4 bg-blue-500 text-white rounded hover:bg-blue-600 active:bg-blue-700 disabled:opacity-50"

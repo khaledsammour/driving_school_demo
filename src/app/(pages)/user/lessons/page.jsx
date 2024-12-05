@@ -11,6 +11,7 @@ import { db } from "@/app/firebase";
 export default function Page() {
     const [userId, setUserId] = useState(null);
     const [userHasAcceptedLicense, setUserHasAcceptedLicense] = useState(false); // State for license status
+    const [user, setUser] = useState(null);
 
     useEffect(() => {
         if (typeof window !== "undefined") {
@@ -20,6 +21,29 @@ export default function Page() {
             }
         }
     }, []);
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            if (!userId) return;
+
+            try {
+                const docRef = doc(db, "users", userId);
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists()) {
+                    const userData = docSnap.data();
+                    setUser(userData);
+                } else {
+                    console.log("No such document!");
+                }
+            } catch (error) {
+                console.error("Error fetching user:", error);
+            }
+        };
+
+        if (userId) {
+            fetchUser();
+        }
+    }, [userId]);
 
     useEffect(() => {
         const getLessonsWithUsers = async () => {
@@ -54,6 +78,9 @@ export default function Page() {
         if (!userHasAcceptedLicense) {
             e.preventDefault(); // Prevent navigation if license not accepted
             toast.error("Your license must be accepted to add a new lesson.");
+        }
+        if (!user.is_verify){
+            toast.error("You should complete your profile")
         }
     };
 

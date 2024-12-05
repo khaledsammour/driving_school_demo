@@ -75,20 +75,18 @@ export default function TablePaymentDriver() {
             <Table sx={{ minWidth: 650 }} aria-label="payment table">
                 <TableHead>
                     <TableRow>
-                        <TableCell><strong>Payment ID</strong></TableCell>
-                        <TableCell><strong>Price</strong></TableCell>
                         <TableCell><strong>Date</strong></TableCell>
+                        <TableCell><strong>Price</strong></TableCell>
                         <TableCell><strong>Status</strong></TableCell>
                     </TableRow>
                 </TableHead>
                 <TableBody>
                     {payments.map((payment) => (
                         <TableRow key={payment.id}>
-                            <TableCell>{payment.id}</TableCell>
-                            <TableCell>{payment.amount}</TableCell>
                             <TableCell>
                                 {payment.created_at.toDate().toLocaleString()}
                             </TableCell>
+                            <TableCell>{payment.amount}</TableCell>
                             <TableCell>
                                 <Chip
                                     label={payment.status}

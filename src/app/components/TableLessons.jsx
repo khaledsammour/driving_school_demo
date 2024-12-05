@@ -60,11 +60,14 @@ export default function TableLessons({ type }) {
                     return getDocs(
                         query(
                             collection(db, "users"),
-                            where("uid", "==", lesson.driver_id)
+                            where("uid", "==", userType == "user_id" ? lesson.driver_id : lesson.user_id)
                         )
-                    ).then((userSnapshot) => ({
+                    ).then((userSnapshot) => (userType == "user_id" ?{
                         ...lesson,
                         driver: userSnapshot.docs[0]?.data() || null, // Add user data or null
+                    } : {
+                        ...lesson,
+                        user: userSnapshot.docs[0]?.data() || null, // Add user data or null
                     }));
                 });
 
@@ -114,7 +117,9 @@ export default function TableLessons({ type }) {
     const handleDelete = async (event, selectedLesson) => {
         if (event) event.preventDefault();
         try {
-            const userDocRef = doc(db, "users", userId);
+            console.log(selectedLesson);
+            
+            const userDocRef = doc(db, "users", userType != "user_id" ? selectedLesson.user.uid : userId);
             const docSnap = await getDoc(userDocRef);
             await setDoc(userDocRef, {
                 driving_hours: addTimes(docSnap.data().driving_hours, selectedLesson.time)
@@ -180,7 +185,7 @@ export default function TableLessons({ type }) {
                     <TableRow>
                         <TableCell><strong>#</strong></TableCell>
                         <TableCell><strong>Date</strong></TableCell>
-                        <TableCell><strong>Driver</strong></TableCell>
+                        <TableCell><strong>{userType == "user_id" ? 'Driver' : 'User'}</strong></TableCell>
 
                         <TableCell><strong>Time</strong></TableCell>
                         <TableCell><strong>Status</strong></TableCell>
@@ -192,7 +197,7 @@ export default function TableLessons({ type }) {
                         <TableRow key={lesson.id}>
                             <TableCell>{index + 1}</TableCell>
                             <TableCell>{formatTimestamp(lesson.date)}</TableCell>
-                            <TableCell>{lesson?.driver?.first_name ?? '-'}</TableCell>
+                            <TableCell>{userType == "user_id" ? ((lesson?.driver?.first_name ?? '') + ' ' + (lesson?.driver?.last_name ?? '')) : ((lesson?.user?.first_name ?? '') + ' ' + (lesson?.user?.last_name ?? ''))}</TableCell>
 
                             <TableCell>{lesson.time || "N/A"}</TableCell>
                             <TableCell>

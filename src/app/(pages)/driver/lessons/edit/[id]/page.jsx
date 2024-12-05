@@ -11,11 +11,9 @@ export default function Page({ params }) {
     const router = useRouter();
     const [formData, setFormData] = useState({
         date: '',
-        driver_id: '',
         from: '',
         time: '',
         to: '',
-        user_id: '',
     });
 
     // Fetch lesson data when component mounts
@@ -28,11 +26,9 @@ export default function Page({ params }) {
                     const lessonData = docSnap.data();
                     setFormData({
                         date: lessonData.date || '',
-                        driver_id: lessonData.driver_id || '',
                         from: lessonData.from || '',
                         time: lessonData.time || '',
                         to: lessonData.to || '',
-                        user_id: lessonData.user_id || '',
                     });
                 } else {
                     console.log("No such document!");
@@ -62,15 +58,13 @@ export default function Page({ params }) {
 
             await setDoc(lessonDocRef, {
                 date: formData.date,
-                driver_id: formData.driver_id,
                 from: formData.from,
                 time: formData.time,
                 to: formData.to,
-                user_id: formData.user_id,
                 updated_at: serverTimestamp(),
             }, { merge: true });
 
-            router.push("/user/lessons");
+            router.push("/driver/lessons");
             toast.success("Lesson updated successfully");
         } catch (error) {
             console.error('Error updating lesson:', error);
@@ -96,19 +90,6 @@ export default function Page({ params }) {
                                     value={formData.date}
                                     onChange={handleChange}
                                     className="bg-gray-100 border border-gray-200 rounded py-1 px-3 block focus:ring-blue-500 focus:border-blue-500 text-gray-700 w-full"
-                                />
-                            </div>
-                            <div>
-                                <label htmlFor="driver_id" className="text-sm text-gray-700 block mb-1 font-medium">
-                                    Driver ID
-                                </label>
-                                <input
-                                    type="text"
-                                    name="driver_id"
-                                    id="driver_id"
-                                    value={formData.driver_id}
-                                    readOnly
-                                    className="bg-gray-200 border border-gray-200 rounded py-1 px-3 block text-gray-500 w-full"
                                 />
                             </div>
                             <div>
@@ -152,20 +133,6 @@ export default function Page({ params }) {
                                     placeholder="Enter destination"
                                 />
                             </div>
-                            <div>
-                                <label htmlFor="user_id" className="text-sm text-gray-700 block mb-1 font-medium">
-                                    User ID
-                                </label>
-                                <input
-                                    type="text"
-                                    name="user_id"
-                                    id="user_id"
-                                    value={formData.user_id}
-                                    onChange={handleChange}
-                                    className="bg-gray-100 border border-gray-200 rounded py-1 px-3 block focus:ring-blue-500 focus:border-blue-500 text-gray-700 w-full"
-                                    placeholder="Enter user ID"
-                                />
-                            </div>
                         </div>
                         <div className="space-x-4 mt-8">
                             <button
@@ -174,7 +141,7 @@ export default function Page({ params }) {
                             >
                                 Update Lesson
                             </button>
-                            <Link href="/user/lessons">
+                            <Link href="/driver/lessons">
                                 <button
                                     type="button"
                                     className="py-2 px-4 bg-white border border-gray-200 text-gray-600 rounded hover:bg-gray-100 active:bg-gray-200 disabled:opacity-50"

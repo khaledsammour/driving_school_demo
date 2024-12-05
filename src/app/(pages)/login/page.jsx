@@ -49,6 +49,8 @@ export default function Page() {
                 router.push('/');
             }
         } catch (error) {
+            console.log(error);
+            
             setError(error.message);
         }
     };

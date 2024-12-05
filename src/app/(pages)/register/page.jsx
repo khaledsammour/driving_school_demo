@@ -61,23 +61,14 @@ export default function Page() {
                 phone: phone || '',
                 license_info: '',
                 type: type || '',
+                total_driving_hours: '00:00',
                 driving_hours: '00:00',
                 online_training_hours: '00:00',
                 packageId: '',
                 car_test: false,
             });
-
-            toast.success("User registered successfully");
-            if (searchParams.has("namePackage") && searchParams.has("pricePackage")) {
-                router.push(`/payment?namePackage=${searchParams.get("namePackage")}&pricePackage=${searchParams.get("pricePackage")}`);
-            } else {
-                router.push('/');
-            }
-
-            if (typeof window !== "undefined") {
-                localStorage.setItem('typeUser', type || 'admin');
-            }
-
+            toast.success("Verification Email has been sent to your email address.");
+            router.push('/login');
             setError('');
         } catch (error) {
             setError(error.message);

@@ -1,5 +1,5 @@
 
-import { createUserWithEmailAndPassword , signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword , signInWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
 import { auth , db } from "../firebase";
 import { doc, setDoc , serverTimestamp } from "firebase/firestore";
 import { onAuthStateChanged , signOut } from 'firebase/auth';
@@ -9,8 +9,7 @@ export const Register = async (email, password, additionalData = {}) => {
     try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
-  
-        localStorage.setItem('IdUser', user.uid);
+
         await setDoc(doc(db, "users", user.uid), {
             email: user.email,
             uid: user.uid,
@@ -26,8 +25,16 @@ export const Register = async (email, password, additionalData = {}) => {
             third_name: additionalData.third_name || "",
             type: additionalData.type || "",
             date: additionalData.date || "",
+            total_driving_hours: additionalData.total_driving_hours || "",
+            driving_hours: additionalData.driving_hours || "",
+            online_training_hours: additionalData.online_training_hours || "",
+            packageId: additionalData.packageId || "",
+            car_test: additionalData.car_test || "",
+            is_profile_complete: false,
+            is_verify: false,
             createdAt: serverTimestamp(),
         });
+        await sendEmailVerification(user);
 
         return user;
     } catch (error) {
@@ -50,14 +57,10 @@ export const Login = async (email, password) => {
     if (!email || !password) {
         throw new Error("Email and password must be provided.");
     }
-
+    let loginUser = null
     try {
-        const loginUser = await signInWithEmailAndPassword(auth, email, password);
-        localStorage.setItem('IdUser', loginUser.user.uid);
-        localStorage.setItem('typeUser', loginUser.user.type);
-       
-        return loginUser.user;
-    } catch (error) {
+        loginUser = await signInWithEmailAndPassword(auth, email, password);
+    } catch (error) {        
         if (error.code === 'auth/user-not-found') {
             throw new Error("No user found with this email. Please register first.");
         } else if (error.code === 'auth/wrong-password') {
@@ -69,6 +72,20 @@ export const Login = async (email, password) => {
         } else {
             throw new Error("Login failed. Please try again later.");
         }
+    }
+    if (loginUser && loginUser.user.emailVerified){
+        localStorage.setItem('IdUser', loginUser.user.uid);
+        localStorage.setItem('typeUser', loginUser.user.type);
+        await setDoc(
+            doc(db, "users", loginUser.user.uid),
+            {
+                is_verify: true
+            },
+            { merge: true }
+        );
+        return loginUser.user;
+    } else if(loginUser){
+        throw new Error("You should verify your email first");
     }
 };
 

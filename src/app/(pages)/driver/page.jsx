@@ -2,8 +2,8 @@
 import React, { useEffect, useState } from "react";
 import { AiFillDashboard } from "react-icons/ai";
 import { BiHome } from "react-icons/bi";
-import { MdOutlinePlayLesson } from "react-icons/md";
-import { FaHistory } from "react-icons/fa";
+import { MdDirectionsCar, MdLocalShipping, MdOutlinePlayLesson } from "react-icons/md";
+import { FaClock, FaDollarSign, FaFile, FaFileAlt, FaGraduationCap, FaHistory, FaStar } from "react-icons/fa";
 import { LuPackageCheck } from "react-icons/lu";
 import ChartUser from "@/app/components/ChartUser";
 import { collection, getDocs, query, where } from "firebase/firestore";
@@ -87,32 +87,85 @@ export default function UserPage() {
                 </div>
 
                 {/* Summary Boxes */}
-                <div className="boxes grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3">
-                    <div className="box bg-[#4da3ff] rounded-lg flex flex-col items-center p-4 transition-all duration-150 hover:shadow-lg">
-                        <MdOutlinePlayLesson className="text-text-color text-4xl" />
-                        <span className="text text-lg font-medium text-black">
-                            Total Lesson
-                        </span>
-                        <span className="number text-4xl font-medium text-black">0</span>
-                    </div>
-
-                    <div className="box bg-[#ffe6ac] rounded-lg flex flex-col items-center p-4 transition-all duration-150 hover:shadow-lg">
-                        <FaHistory className="text-text-color text-4xl" />
-                        <span className="text text-lg font-medium text-black">
-                            History Lesson
-                        </span>
-                        <span className="number text-4xl font-medium text-black">0</span>
-                    </div>
-
-                    <div className="box bg-[#e7d1fc] rounded-lg flex flex-col items-center p-4 transition-all duration-150 hover:shadow-lg">
-                        <LuPackageCheck className="text-text-color text-4xl" />
-                        <span className="text text-lg font-medium text-black">
-                            Total Payment
-                        </span>
-                        <span className="number text-4xl font-medium text-black">
-                            $ {totalPrice.toFixed(2)}
-                        </span>
-                    </div>
+                
+                <div className="boxes grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+                    {[
+                        {
+                            color: "bg-gradient-to-r from-blue-400 to-blue-600",
+                            icon: <FaClock className="text-white text-4xl" />,
+                            label: "Hours Completed",
+                            value: '0'
+                        },
+                        {
+                            color: "bg-gradient-to-r from-yellow-300 to-yellow-500",
+                            icon: <MdDirectionsCar className="text-white text-4xl" />,
+                            label: "Hours Scheduled",
+                            value: '0'
+                        },
+                        {
+                            color: "bg-gradient-to-r from-purple-300 to-purple-500",
+                            icon: <MdLocalShipping className="text-white text-4xl" />,
+                            label: "Today open hours",
+                            value: '0'
+                        },
+                        {
+                            color: "bg-gradient-to-r from-teal-400 to-teal-600",
+                            icon: <FaClock className="text-white text-4xl" />,
+                            label: "Car Test completed",
+                            value: '0'
+                        },
+                        {
+                            color: "bg-gradient-to-r from-pink-400 to-pink-600",
+                            icon: <FaGraduationCap className="text-white text-4xl" />,
+                            label: "Car Test Scheduled",
+                            value: '0'
+                        },
+                        {
+                            color: "bg-gradient-to-r from-green-400 to-green-600",
+                            icon: <FaDollarSign className="text-white text-4xl" />,
+                            label: "Money Earned",
+                            value: '0'
+                        },
+                        {
+                            color: "bg-gradient-to-r from-red-400 to-red-600",
+                            icon: <FaDollarSign className="text-white text-4xl" />,
+                            label: "Money Transferred",
+                            value: '0'
+                        },
+                        {
+                            color: "bg-gradient-to-r from-green-400 to-green-600",
+                            icon: <FaDollarSign className="text-white text-4xl" />,
+                            label: "Remaining Money",
+                            value: '0'
+                        },
+                        {
+                            color: "bg-gradient-to-r from-green-400 to-green-600",
+                            icon: <FaStar className="text-white text-4xl" />,
+                            label: "Rating",
+                            value: '0'
+                        },
+                        {
+                            color: "bg-gradient-to-r from-green-400 to-green-600",
+                            icon: <FaFile className="text-white text-4xl" />,
+                            label: "Documents Required",
+                            value: '0'
+                        },
+                        {
+                            color: "bg-gradient-to-r from-green-400 to-green-600",
+                            icon: <FaFileAlt className="text-white text-4xl" />,
+                            label: "Document To expire (2 month to expiry)",
+                            value: '0'
+                        }
+                    ].map((box, index) => (
+                        <div
+                            key={index}
+                            className={`${box.color} rounded-lg flex flex-col items-center p-6 transition-all duration-200 hover:scale-105 hover:shadow-2xl`}
+                        >
+                            {box.icon}
+                            <span className="text-lg font-semibold text-white mt-2">{box.label}</span>
+                            <span className="text-3xl font-bold text-white mt-2">{box.value}</span>
+                        </div>
+                    ))}
                 </div>
 
                 {/* User Activity Section */}
