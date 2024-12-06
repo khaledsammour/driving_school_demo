@@ -79,7 +79,8 @@ export default function Page() {
             e.preventDefault(); // Prevent navigation if license not accepted
             toast.error("Your license must be accepted to add a new lesson.");
         }
-        if (!user.is_verify){
+        if (!user?.is_verify){
+            e.preventDefault(); // Prevent navigation if license not accepted
             toast.error("You should complete your profile")
         }
     };

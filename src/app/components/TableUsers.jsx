@@ -131,6 +131,7 @@ export default function TableUsers() {
                             <TableCell>Gender</TableCell>
                             <TableCell>Phone</TableCell>
                             <TableCell>Language</TableCell>
+                            <TableCell>Status</TableCell>
                             <TableCell>Actions</TableCell>
                         </TableRow>
                     </TableHead>
@@ -142,6 +143,7 @@ export default function TableUsers() {
                                 <TableCell>{user.gender}</TableCell>
                                 <TableCell>{user.phone}</TableCell>
                                 <TableCell>{user.language}</TableCell>
+                                <TableCell>{!user.is_verify ? 'need verifications' : !user.is_profile_complete ? 'Profiles not completed' : !user.package ? 'didn’t purchase' : 'Active'}</TableCell>
                                 <TableCell>
                                     <IconButton
                                         onClick={() => handleEdit(user.id)}

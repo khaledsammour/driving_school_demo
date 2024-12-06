@@ -44,7 +44,7 @@ export default function TableLessons({ type }) {
                 // Step 1: Query lessons where driver_id matches userId
                 const lessonsQuery = query(
                     collection(db, "lessons"),
-                    where(userType, "==", userId),
+                    type == 'admin' ? null : where(userType, "==", userId),
                     orderBy("date", "desc")
                 );
 
