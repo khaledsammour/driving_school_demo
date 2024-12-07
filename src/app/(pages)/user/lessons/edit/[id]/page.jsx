@@ -5,6 +5,7 @@ import { doc, getDoc, setDoc, serverTimestamp, Timestamp } from "firebase/firest
 import { db } from '@/app/firebase';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
+import MapComponent from "@/app/components/DriverMap";
 
 export default function Page({ params }) {
     const { id } = params;
@@ -16,8 +17,24 @@ export default function Page({ params }) {
         time: '',
         to: '',
         user_id: '',
+        pick_up_address_lat: "",
+        pick_up_address_lng: "",
+        drop_off_address_lat: "",
+        drop_off_address_lng: "",
     });
-
+    function timestampToTimeString(timestamp) {
+        const date = timestamp.toDate(); // Convert Timestamp to JavaScript Date object
+        const hours = date.getHours().toString().padStart(2, '0'); // Ensure 2 digits
+        const minutes = date.getMinutes().toString().padStart(2, '0'); // Ensure 2 digits        
+        return `${hours}:${minutes}`;
+    }
+    function timestampToDateString(timestamp) {
+        const date = timestamp.toDate(); // Convert Firestore Timestamp to JavaScript Date object
+        const year = date.getFullYear();
+        const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Month is 0-indexed
+        const day = date.getDate().toString().padStart(2, '0');
+        return `${year}-${month}-${day}`; // Format as "YYYY-MM-DD"
+    }
     // Fetch lesson data when component mounts
     useEffect(() => {
         const fetchLesson = async () => {
@@ -26,12 +43,15 @@ export default function Page({ params }) {
                 const docSnap = await getDoc(docRef);
                 if (docSnap.exists()) {
                     const lessonData = docSnap.data();
+                    const userDocRef = doc(db, "users", lessonData.driver_id);
+                    const userDocSnap = await getDoc(userDocRef);
                     setFormData({
-                        date: lessonData.date || '',
+                        date: timestampToDateString(lessonData.date) || '',
                         driver_id: lessonData.driver_id || '',
-                        from: lessonData.from || '',
+                        driver_name: userDocSnap.exists() ? userDocSnap.data() ? ((userDocSnap.data().first_name??'')+' '+(userDocSnap.data().last_name??'')) : '' : '',
+                        from: timestampToTimeString(lessonData.from) || '',
                         time: lessonData.time || '',
-                        to: lessonData.to || '',
+                        to: timestampToTimeString(lessonData.to) || '',
                         user_id: lessonData.user_id || '',
                     });
                 } else {
@@ -130,7 +150,21 @@ export default function Page({ params }) {
             toast.error(`Error: ${error.message}`);
         }
     };
+    const onPickUpAddressChange = (val) => {
+        setFormData((prev) => ({
+            ...prev,
+            pick_up_address_lat: val.lat,
+            pick_up_address_lng: val.lng,
+        }));
+    }
 
+    const onDropOffAddressChange = (val) => {
+        setFormData((prev) => ({
+            ...prev,
+            drop_off_address_lat: val.lat,
+            drop_off_address_lng: val.lng,
+        }));
+    }
     return (
         <>
             <div className="update">
@@ -153,13 +187,13 @@ export default function Page({ params }) {
                             </div>
                             <div>
                                 <label htmlFor="driver_id" className="text-sm text-gray-700 block mb-1 font-medium">
-                                    Driver ID
+                                    Driver
                                 </label>
                                 <input
                                     type="text"
                                     name="driver_id"
                                     id="driver_id"
-                                    value={formData.driver_id}
+                                    value={formData.driver_name}
                                     readOnly
                                     className="bg-gray-200 border border-gray-200 rounded py-1 px-3 block text-gray-500 w-full"
                                 />
@@ -203,19 +237,17 @@ export default function Page({ params }) {
                                     className="bg-gray-100 border border-gray-200 rounded py-1 px-3 block focus:ring-blue-500 focus:border-blue-500 text-gray-700 w-full"
                                 />
                             </div>
-                            <div>
-                                <label htmlFor="user_id" className="text-sm text-gray-700 block mb-1 font-medium">
-                                    User ID
+                            <div style={{ height: 300 }}>
+                                <label className="text-sm text-gray-700 block mb-1 font-medium">
+                                    Pick Up Address
                                 </label>
-                                <input
-                                    type="text"
-                                    name="user_id"
-                                    id="user_id"
-                                    value={formData.user_id}
-                                    onChange={handleChange}
-                                    className="bg-gray-100 border border-gray-200 rounded py-1 px-3 block focus:ring-blue-500 focus:border-blue-500 text-gray-700 w-full"
-                                    placeholder="Enter user ID"
-                                />
+                                <MapComponent locationPicker={true} onChange={onPickUpAddressChange}  />
+                            </div>
+                            <div style={{ height: 300 }}>
+                                <label className="text-sm text-gray-700 block mb-1 font-medium">
+                                    Drop Off Address
+                                </label>
+                                <MapComponent locationPicker={true} onChange={onDropOffAddressChange}  />
                             </div>
                         </div>
                         <div className="space-x-4 mt-8">

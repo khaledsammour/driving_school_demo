@@ -5,6 +5,7 @@ import { doc, addDoc, collection, getDocs, query, where, Timestamp, getDoc, setD
 import { db } from "@/app/firebase";
 import toast from "react-hot-toast";
 import { useRouter } from "next/navigation";
+import MapComponent from "@/app/components/DriverMap";
 
 export default function Page() {
     const router = useRouter();
@@ -16,6 +17,10 @@ export default function Page() {
         time: "",
         to: "",
         user_id: "",
+        pick_up_address_lat: "",
+        pick_up_address_lng: "",
+        drop_off_address_lat: "",
+        drop_off_address_lng: "",
     });
     const [drivers, setDrivers] = useState([]);
 
@@ -71,9 +76,9 @@ export default function Page() {
     };
 
     const validateForm = () => {
-        const { date, from, to, driver_id } = formData;
+        const { date, from, to, driver_id, pick_up_address_lat, drop_off_address_lat } = formData;
 
-        if (!date || !from || !to || !driver_id) {
+        if (!date || !from || !to || !driver_id || !pick_up_address_lat || !drop_off_address_lat) {
             toast.error("Please fill in all required fields.");
             return false;
         }
@@ -171,6 +176,22 @@ export default function Page() {
         }
     };
 
+    const onPickUpAddressChange = (val) => {
+        setFormData((prev) => ({
+            ...prev,
+            pick_up_address_lat: val.lat,
+            pick_up_address_lng: val.lng,
+        }));
+    }
+
+    const onDropOffAddressChange = (val) => {
+        setFormData((prev) => ({
+            ...prev,
+            drop_off_address_lat: val.lat,
+            drop_off_address_lng: val.lng,
+        }));
+    }
+
     return (
         <>
             <div className="create">
@@ -262,6 +283,18 @@ export default function Page() {
                                     onChange={handleChange}
                                     className="bg-gray-100 border border-gray-200 rounded py-1 px-3 block focus:ring-blue-500 focus:border-blue-500 text-gray-700 w-full"
                                 />
+                            </div>
+                            <div style={{ height: 300 }}>
+                                <label className="text-sm text-gray-700 block mb-1 font-medium">
+                                    Pick Up Address
+                                </label>
+                                <MapComponent locationPicker={true} onChange={onPickUpAddressChange}  />
+                            </div>
+                            <div style={{ height: 300 }}>
+                                <label className="text-sm text-gray-700 block mb-1 font-medium">
+                                    Drop Off Address
+                                </label>
+                                <MapComponent locationPicker={true} onChange={onDropOffAddressChange}  />
                             </div>
                         </div>
                         <div className="space-x-4 mt-8">

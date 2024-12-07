@@ -1,13 +1,28 @@
 import React, { useEffect, useState } from "react";
-import { MapContainer, TileLayer, Marker, Popup } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet";
 import { FaCar } from "react-icons/fa"; // Import car icon from react-icons
 import { renderToString } from "react-dom/server"; // Render React components as strings
 
-const MapComponent = () => {
+const MapComponent = ({locationPicker=false, onChange=null}) => {
   const [currentPosition, setCurrentPosition] = useState(null);
+  const [position, setPosition] = useState(null)
   const [pins, setPins] = useState([]);
+
+  const LocationMarker = () => {
+    const map = useMapEvents({
+      click(e) {
+        setPosition(e.latlng)
+        onChange ? onChange(e.latlng) : null
+        map.flyTo(e.latlng, map.getZoom())
+      },
+    })
+  
+    return position === null ? null : (
+      <Marker position={position} icon={userIcon}></Marker>
+    )
+  }
 
   useEffect(() => {
     // Get user's current location
@@ -15,7 +30,7 @@ const MapComponent = () => {
       (position) => {
         const { latitude, longitude } = position.coords;
         setCurrentPosition([latitude, longitude]);
-
+        setPosition([latitude, longitude]);
         // Add more distant nearby pins
         const nearbyPins = [
           [latitude + 0.05, longitude],      // Further north
@@ -50,27 +65,24 @@ const MapComponent = () => {
   });
 
   return (
-    <div style={{ height: "100vh", width: "100%" }}>
+    <div style={{ height: locationPicker ? "100%" : "100vh", width: "100%" }}>
       {currentPosition && (
         <MapContainer
           center={currentPosition}
-          zoom={13}
+          zoom={locationPicker ? 16 : 13}
           style={{ height: "100%", width: "100%" }}
         >
           <TileLayer
-            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+            url="https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png"
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
           />
           {/* User's Location Marker */}
-          <Marker position={currentPosition} icon={userIcon}>
-            <Popup>You are here!</Popup>
-          </Marker>
+          {!locationPicker && <Marker position={currentPosition} icon={userIcon}></Marker>}
        
-          {pins.map((pin, index) => (
-            <Marker key={index} position={pin} icon={carIcon}>
-              <Popup>Driver {index + 1}</Popup>
-            </Marker>
+          {!locationPicker && pins.map((pin, index) => (
+            <Marker key={index} position={pin} icon={carIcon}></Marker>
           ))}
+          {locationPicker && <LocationMarker />}
         </MapContainer>
       )}
     </div>

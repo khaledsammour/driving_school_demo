@@ -18,8 +18,8 @@ export default function ProfilePage() {
         last_name: '',
         email: '',
         address: '',
-        gender: '',
-        language: '',
+        gender: 'male',
+        language: 'english',
         phone: '',
         licenseInfo: '',
         password: '',
@@ -81,6 +81,7 @@ export default function ProfilePage() {
         try {
             if(!formData.first_name || !formData.middle_name || !formData.third_name || !formData.date || !formData.last_name || !formData.email || !formData.address || !formData.gender || !formData.language || !formData.phone || !formData.licenseInfo){
                 toast.error(`All fields are required`);
+                return
             }
             const user = auth.currentUser;
 
