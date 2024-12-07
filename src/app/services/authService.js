@@ -87,26 +87,9 @@ export const Login = async (email, password) => {
         );
         return loginUser.user;
     } else if(loginUser){
+        await signOut(auth); 
         throw new Error("You should verify your email first");
     }
-};
-
-
-
-export const checkUserLoggedIn = (callback) => {
-  onAuthStateChanged(auth, (user) => {
-    if (user) {
-  
-      console.log('User is logged in:', user);
-      console.log('User is logged in:', user.uid);
-        // localStorage.setItem('IdUser', user.uid);
-      callback(true, user);
-    } else {
-     
-      console.log('User is registered but not logged in.');
-      callback(false, null);
-    }
-  });
 };
 
 

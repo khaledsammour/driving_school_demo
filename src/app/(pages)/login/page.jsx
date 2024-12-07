@@ -7,6 +7,8 @@ import ImgLogin from '@/app/assets/login.jpg';
 import { Login } from '@/app/services/authService';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { AiFillEye, AiFillEyeInvisible } from 'react-icons/ai';
+import { doc, getDoc } from "firebase/firestore";
+import { db } from "../../firebase";
 
 export default function Page() {
     const [error, setError] = useState('');
@@ -46,7 +48,23 @@ export default function Page() {
             if (searchParams.has("namePackage") && searchParams.has("pricePackage")) {
                 router.push(`/payment?namePackage=${searchParams.get("namePackage")}&pricePackage=${searchParams.get("pricePackage")}`);
             } else {
-                router.push('/');
+                var userId = localStorage.getItem('IdUser');
+                const userRef = doc(db, "users", userId);
+                const userSnapshot = await getDoc(userRef);
+                if (userSnapshot.exists()) {
+                    const fetchedUser = userSnapshot.data();
+                    if(fetchedUser.type== 'user'){
+                        router.push('/user');
+                    } else if (fetchedUser.type== 'driver'){
+                        router.push('/driver');
+                    } else if(fetchedUser.type== 'admin'){
+                        router.push('/admin');
+                    } else {
+                        router.push('/');
+                    }
+                } else{
+                    router.push('/');
+                }
             }
         } catch (error) {
             console.log(error);

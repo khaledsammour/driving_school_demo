@@ -71,20 +71,22 @@ export default function Header() {
     }, []);
 
     useEffect(() => {
-        checkUserLoggedIn(async (loggedIn, callbackUser) => {   
-            if (callbackUser?.uid){   
-                const userRef = doc(db, "users", callbackUser?.uid);
+        const checkLoggedId = async () => {
+            var userId = localStorage.getItem('IdUser');
+            if (userId) {
+                const userRef = doc(db, "users", userId);
                 const userSnapshot = await getDoc(userRef);
                 if (userSnapshot.exists()) {
                     const fetchedUser = userSnapshot.data();
-                    setUser(fetchedUser);  
-                    setIsLoggedIn(loggedIn);
-                    console.log(fetchedUser);
-                } else {
-                    console.log("No such user document!");
+                    setUser(fetchedUser);
+                    setIsLoggedIn(true);
                 }
-            }    
-        });
+            } else {
+                setUser(null);
+                setIsLoggedIn(false);
+            }
+        }
+        checkLoggedId();
     }, []);
 
     const toggleLangMenu = () => {
@@ -172,8 +174,8 @@ export default function Header() {
                     <div className={`${isOpen ? 'block' : 'hidden'} justify-between items-center w-full lg:flex lg:w-auto lg:order-1`} id="mobile-menu-2">
                         <ul className="flex flex-col mt-4 font-medium lg:flex-row lg:space-x-8 lg:mt-0">
                             {isLoggedIn && <li className="lg:hidden block">
-                                <Link href={user.type === "user" ? "/user" : user.type === "driver" ? "/driver" : "/admin" } className={`block py-2 pr-4 pl-3 rounded ${pathname === "/user" ? "text-blue-700" : "text-gray-700"
-                                        } lg:p-0`}>
+                                <Link href={user.type === "user" ? "/user" : user.type === "driver" ? "/driver" : "/admin"} className={`block py-2 pr-4 pl-3 rounded ${pathname === "/user" ? "text-blue-700" : "text-gray-700"
+                                    } lg:p-0`}>
                                     Dashboard
                                 </Link>
                             </li>}
@@ -234,7 +236,7 @@ export default function Header() {
                             {isLoggedIn ? <li className="lg:hidden block">
                                 <Link
                                     href="#"
-                                    onClick={(e)=>{
+                                    onClick={(e) => {
                                         e.preventDefault()
                                         handleLogOut()
                                     }}
