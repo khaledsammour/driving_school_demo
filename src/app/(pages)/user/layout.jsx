@@ -28,8 +28,8 @@ export default function Layout({ children }) {
         setShowRate(false);
     };
 
-    const handleLogOut = () => {
-        Logout();
+    const handleLogOut = async () => {
+        await Logout();
         toast.success("Successfully logged out!");
         router.push("/login");
     };
