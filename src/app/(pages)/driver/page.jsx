@@ -162,7 +162,7 @@ export default function UserPage() {
                             color: "bg-gradient-to-r from-yellow-300 to-yellow-500",
                             icon: <FaStar className="text-white text-4xl" />,
                             label: "Rating",
-                            value: (userData?.rate?.reduce((acc, val) => acc + Number(val), 0) /  userData?.rate?.length).toFixed(1) ?? '0'
+                            value: isNaN((userData?.rate?.reduce((acc, val) => acc + Number(val), 0) /  userData?.rate?.length).toFixed(1)) ? '0' : (userData?.rate?.reduce((acc, val) => acc + Number(val), 0) /  userData?.rate?.length).toFixed(1) ?? '0'
                         },
                         {
                             color: "bg-gradient-to-r from-blue-400 to-blue-600",
@@ -179,7 +179,7 @@ export default function UserPage() {
                         {
                             color: "bg-gradient-to-r from-purple-300 to-purple-500",
                             icon: <MdToday className="text-white text-4xl" />,
-                            label: "Today open hours",
+                            label: "Today scheduled hours",
                             value: hoursToday
                         },
                         {

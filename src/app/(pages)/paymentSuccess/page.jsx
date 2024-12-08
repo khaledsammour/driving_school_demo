@@ -15,7 +15,7 @@ export default function Page() {
     useEffect(() => {
         if (typeof window !== 'undefined') {
             const storedUserId = localStorage.getItem("IdUser");
-            const storedPackageId = localStorage.getItem("PackageId");
+            const storedPackageId = localStorage.getItem("selectedPackage");
 
             if (storedUserId) {
                 setUserId(storedUserId);
@@ -99,7 +99,9 @@ export default function Page() {
     };
 
 
-    return (
+    return !packageInfo ? (
+        <></>
+    ) : (
         <div className="bg-gray-100 min-h-screen flex items-center justify-center">
             <div className="bg-white shadow-lg rounded-xl p-8 max-w-lg w-full">
                 <div className="text-center">

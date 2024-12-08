@@ -15,24 +15,23 @@ if (!process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY) {
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
 
-export default function Page() {
-    const searchParams = useSearchParams();
+export default function Page({ params }) {
+    const { id } = params;
     const [dataPackage, setDataPackage] = useState(null);
-    const PackageId = searchParams.get("PackageId");
     if (window !== undefined) {
-        localStorage.setItem("PackageId", PackageId);
+        localStorage.setItem("id", id);
     }
     const router = useRouter();
-    if (!PackageId) {
+    if (!id) {
         router.push("/not-found");
     }
 
-    useEffect(() => {
+    useEffect(() => {        
         const fetchPackage = async () => {
-            if (!PackageId) return;
-
+            if (!id) return;
+            localStorage.removeItem('selectedPackage')
             try {
-                const docRef = doc(db, "packages", PackageId);
+                const docRef = doc(db, "packages", id);
                 const docSnap = await getDoc(docRef);
 
                 if (docSnap.exists()) {
@@ -47,7 +46,7 @@ export default function Page() {
         };
 
         fetchPackage();
-    }, [PackageId]);
+    }, [id]);
 
     if (!dataPackage) {
         return <Loader />;

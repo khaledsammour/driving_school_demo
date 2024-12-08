@@ -27,9 +27,13 @@ export const Register = async (email, password, additionalData = {}) => {
     try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
-
-        const fileUrl = "https://firebasestorage.googleapis.com/v0/b/formula-one-d1f9a.firebasestorage.app/o/contracts%2Fcontract.jpg?alt=media&token=ef8b9ca6-a57f-4e79-bcad-19e1d76e8921";
-        const uploadedFilePath = await uploadFileFromUrl(fileUrl, user.uid);
+        let uploadedFilePath = ''
+        try {
+            const fileUrl = "https://firebasestorage.googleapis.com/v0/b/formula-one-d1f9a.firebasestorage.app/o/contracts%2Fcontract.jpg?alt=media&token=ef8b9ca6-a57f-4e79-bcad-19e1d76e8921";
+            uploadedFilePath = await uploadFileFromUrl(fileUrl, user.uid);
+        } catch (error) {
+            console.log(error);
+        }
         await setDoc(doc(db, "users", user.uid), {
             email: user.email,
             uid: user.uid,

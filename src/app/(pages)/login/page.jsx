@@ -45,8 +45,9 @@ export default function Page() {
 
         try {
             await Login(email, password);
-            if (searchParams.has("namePackage") && searchParams.has("pricePackage")) {
-                router.push(`/payment?namePackage=${searchParams.get("namePackage")}&pricePackage=${searchParams.get("pricePackage")}`);
+            let selectedPackage = localStorage.getItem('selectedPackage')
+            if (selectedPackage) {
+                router.push(`/payment/${selectedPackage}`);
             } else {
                 var userId = localStorage.getItem('IdUser');
                 const userRef = doc(db, "users", userId);

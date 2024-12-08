@@ -303,24 +303,24 @@ export default function TableLessons({ type }) {
                                 />
                             </TableCell>
                             <TableCell>
-                                <Tooltip title="Edit">
+                                {(type === "user" || type === "admin") && <Tooltip title="Edit">
                                     <IconButton color="primary">
                                         <Link href={`/${type}/lessons/edit/${lesson.id}`}><FaEdit /></Link>
                                     </IconButton>
-                                </Tooltip>
+                                </Tooltip>}
                                 <Tooltip title="View">
                                     <IconButton color="secondary" >
                                         <Link href={`/${type}/lessons/view/${lesson.id}`}><LuView /></Link>
                                     </IconButton>
                                 </Tooltip>
-                                <Tooltip title="Delete">
+                                {type === "admin" && <Tooltip title="Delete">
                                     <IconButton
                                         onClick={(e) => handleDelete(e, lesson)}
                                         color="error"
                                     >
                                         <FaTrash />
                                     </IconButton>
-                                </Tooltip>
+                                </Tooltip>}
                                 <Tooltip title="mark as completed">
                                     <IconButton
                                         onClick={() => handleMarkAsCompleted(lesson)}

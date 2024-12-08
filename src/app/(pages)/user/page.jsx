@@ -35,9 +35,9 @@ export default function UserPage() {
                     if (userSnapshot.exists()) {
                         const user = userSnapshot.data();
                         setUserData(user);
-                        fetchUserPayments(userId);
-                        if (user.package) {
-                            fetchPackageData(user.package);
+                        fetchUserPayments(userId);                        
+                        if (user.package_id) {
+                            fetchPackageData(user.package_id);
                         }
                     } else {
                         console.log("No such user document!");

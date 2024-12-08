@@ -28,7 +28,11 @@ class CheckoutForm extends React.Component {
         const checkoutSession =
             await stripexx.paymentIntents.create({
                 currency: 'usd',
-                amount: amount * 100
+                amount: amount * 100,
+                payment_method_types: ['card'],
+                automatic_payment_methods: {
+                    enabled: false,
+                },
             });
 
         const { client_secret: clientSecret } = { client_secret: checkoutSession.client_secret }
@@ -37,7 +41,8 @@ class CheckoutForm extends React.Component {
             elements,
             clientSecret,
             confirmParams: {
-                return_url: 'https://master-lake.vercel.app/paymentSuccess',
+                // return_url: 'https://master-lake.vercel.app/paymentSuccess',
+                return_url: 'http://localhost:3000/paymentSuccess'
             },
 
         });

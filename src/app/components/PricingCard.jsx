@@ -1,8 +1,10 @@
 "use client";
 import Link from 'next/link';
 import React, { useState, useEffect } from 'react';
+import { useRouter } from "next/navigation";
 
 export default function PricingCard({ id, Tittle, price, discount, features }) {
+    const router = useRouter();
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     console.log(id, "iiiiiiiiiiiiiiiii");
 
@@ -60,6 +62,15 @@ export default function PricingCard({ id, Tittle, price, discount, features }) {
                     href={{
                         pathname: `${isAuthenticated ? '/payment' : '/login'}`,
                         query: { PackageId: id },
+                    }}
+                    onClick={(e)=>{
+                        e.preventDefault()
+                        localStorage.setItem('selectedPackage', id)
+                        if(isAuthenticated){
+                            router.push('/payment')
+                        } else {
+                            router.push('/login')
+                        }
                     }}
                     className="inline-flex items-center justify-center w-full h-12 px-6 mb-4 font-medium tracking-wide text-white transition duration-200 bg-gray-800 rounded shadow-md hover:bg-gray-900 focus:shadow-outline focus:outline-none"
                 >
