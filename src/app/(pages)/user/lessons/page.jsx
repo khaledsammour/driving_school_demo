@@ -3,7 +3,7 @@ import TableLessons from '@/app/components/TableLessons';
 import Link from 'next/link';
 import React, { useEffect, useState } from "react";
 import { MdOutlinePlayLesson } from "react-icons/md";
-import { query, collection, where, getDocs } from "firebase/firestore";
+import { query, collection, where, getDocs, getDoc, doc } from "firebase/firestore";
 import toast from "react-hot-toast";
 
 import { db } from "@/app/firebase";
@@ -31,6 +31,7 @@ export default function Page() {
                 const docSnap = await getDoc(docRef);
                 if (docSnap.exists()) {
                     const userData = docSnap.data();
+                    console.log("🚀 ~ fetchUser ~ userData:", userData)
                     setUser(userData);
                 } else {
                     console.log("No such document!");
@@ -79,7 +80,7 @@ export default function Page() {
             e.preventDefault(); // Prevent navigation if license not accepted
             toast.error("Your license must be accepted to add a new lesson.");
         }
-        if (!user?.is_verify){
+        if (!user?.is_verify) {
             e.preventDefault(); // Prevent navigation if license not accepted
             toast.error("You should complete your profile")
         }
