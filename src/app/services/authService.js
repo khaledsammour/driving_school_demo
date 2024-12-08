@@ -1,15 +1,35 @@
 
-import { createUserWithEmailAndPassword , signInWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
-import { auth , db } from "../firebase";
-import { doc, setDoc , serverTimestamp } from "firebase/firestore";
-import { onAuthStateChanged , signOut } from 'firebase/auth';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword, sendEmailVerification } from "firebase/auth";
+import { auth, db, storage } from "../firebase";
+import { doc, setDoc, serverTimestamp } from "firebase/firestore";
+import { onAuthStateChanged, signOut } from 'firebase/auth';
 import toast from "react-hot-toast";
+import { ref, uploadBytes } from "firebase/storage";
+
+
+
+const uploadFileFromUrl = async (fileUrl, uid,) => {
+    try {
+        const response = await fetch(fileUrl);
+        const fileBlob = await response.blob();
+
+        const fileRef = ref(storage, `contracts/${uid}`);
+        await uploadBytes(fileRef, fileBlob);
+        console.log("File uploaded successfully");
+        return `contracts/${uid}`;
+    } catch (error) {
+        console.error("Error uploading file: ", error);
+        throw new Error("Failed to upload file.");
+    }
+};
 
 export const Register = async (email, password, additionalData = {}) => {
     try {
         const userCredential = await createUserWithEmailAndPassword(auth, email, password);
         const user = userCredential.user;
 
+        const fileUrl = "https://firebasestorage.googleapis.com/v0/b/formula-one-d1f9a.firebasestorage.app/o/contracts%2Fcontract.jpg?alt=media&token=ef8b9ca6-a57f-4e79-bcad-19e1d76e8921";
+        const uploadedFilePath = await uploadFileFromUrl(fileUrl, user.uid);
         await setDoc(doc(db, "users", user.uid), {
             email: user.email,
             uid: user.uid,
@@ -32,8 +52,10 @@ export const Register = async (email, password, additionalData = {}) => {
             car_test: additionalData.car_test || "",
             is_profile_complete: false,
             is_verify: false,
+            contract_file: uploadedFilePath,
             createdAt: serverTimestamp(),
         });
+
         await sendEmailVerification(user);
 
         return user;
@@ -51,8 +73,6 @@ export const Register = async (email, password, additionalData = {}) => {
 
 
 
-
-
 export const Login = async (email, password) => {
     if (!email || !password) {
         throw new Error("Email and password must be provided.");
@@ -60,7 +80,7 @@ export const Login = async (email, password) => {
     let loginUser = null
     try {
         loginUser = await signInWithEmailAndPassword(auth, email, password);
-    } catch (error) {        
+    } catch (error) {
         if (error.code === 'auth/user-not-found') {
             throw new Error("No user found with this email. Please register first.");
         } else if (error.code === 'auth/wrong-password') {
@@ -73,7 +93,7 @@ export const Login = async (email, password) => {
             throw new Error("Login failed. Please try again later.");
         }
     }
-    if (loginUser && loginUser.user.emailVerified){
+    if (loginUser && loginUser.user.emailVerified) {
         localStorage.setItem('IdUser', loginUser.user.uid);
         localStorage.setItem('typeUser', loginUser.user.type);
         localStorage.setItem('email', email ?? null);
@@ -95,7 +115,7 @@ export const Login = async (email, password) => {
 
 export const Logout = async () => {
     try {
-        await signOut(auth); 
+        await signOut(auth);
         console.log("Logout successful");
     } catch (error) {
         console.error("Logout error:", error.message);
